@@ -7,11 +7,19 @@
 #define Grn 51, 255, 102
 #define Red 255, 10, 51
 
+/* Prototypes */
+void clean();
 
-int main (char board[][HEIGHT]){
+int SDL (char board[][HEIGHT]){
 
-	SDL_Surface* fore = NULL;
-    SDL_Surface* back = NULL;
+	/* Screen attributes */
+	const int SCREEN_WIDTH = 640;
+	const int SCREEN_HEIGHT = 480;
+	const int SCREEN_BPP = 32;
+
+	/* Surfaces */
+	SDL_Surface *fore = NULL;
+    SDL_Surface *back = NULL;
 
 	SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -41,6 +49,15 @@ int main (char board[][HEIGHT]){
 
 	SDL_Delay(2000);
 
-	SDL_Quit();
+	clean();
+}
 
+void clean(){
+
+    /* Free images */
+    SDL_FreeSurface(fore);
+    SDL_FreeSurface(back);
+    
+    /* Quit SDL */
+    SDL_Quit();    
 }
