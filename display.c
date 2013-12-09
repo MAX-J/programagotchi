@@ -16,9 +16,16 @@ int SDL (char board[][HEIGHT]);
 
 int main (void){
 
-	char board[WIDTH][HEIGHT] = {{'#'}};
+  	char board[WIDTH][HEIGHT];
 
-	SDL(board);
+  	for (int h = 0; h <HEIGHT; h++){
+    	for (int w = 0; w <WIDTH; w++){	
+      	board[h][w] = '#';
+    	}
+  	}
+  	board[12][97] = 'G';
+  	
+  	SDL(board);
 
 	return 0;
 }
@@ -34,7 +41,7 @@ int SDL (char board[][HEIGHT]){
 	SDL_Rect rectangle;
    	rectangle.w = SQH;
    	rectangle.h = SQH;
-
+	do{
 	for (int h = 0; h <HEIGHT; h++){
 		for (int w = 0; w <WIDTH; w++){
 
@@ -58,7 +65,7 @@ int SDL (char board[][HEIGHT]){
 				Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
       			rectangle.x = (h*SQH);
       			rectangle.y = (w*SQH);
-      			SDL_RenderDrawRect(sw.renderer, &rectangle);
+      			SDL_RenderFillRect(sw.renderer, &rectangle);
 				break;
 
 				default:
@@ -67,11 +74,17 @@ int SDL (char board[][HEIGHT]){
 			}
 		}
 	}
+	// Updates window - no graphics appear on some devices until this is finished
+	SDL_RenderPresent(sw.renderer);
+	SDL_UpdateWindowSurface(sw.win);
+	// Checks if anyone has triggered the SDL window to end
+	Neill_SDL_Events(&sw);
+	}while(!sw.finished);
 
 	SDL_RenderPresent(sw.renderer);
     SDL_UpdateWindowSurface(sw.win); 
 
-	SDL_Delay(200);
+	SDL_Delay(100);
 
 	return 0;
 }
