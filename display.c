@@ -1,65 +1,87 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "SDL.h"
+#include "neillsdl2.h"
 
 #define Blu 51, 204, 255
 #define Grn 51, 255, 102
 #define Red 255, 10, 51
 
+#define HEIGHT 70
+#define WIDTH 110
+
 /* Prototypes */
 void clean();
+int SDL (char board[][HEIGHT]);
 
-int SDL (char screen[][HEIGHT]){
+int main (void){
 
-	/* Screen attributes */
-	const int WIDTH = 640;
-	const int HEIGHT = 480;
-	const int BPP = 32;
+	char board[WIDTH][HEIGHT] = {{'#'}};
 
-	/* Surfaces */
-	SDL_Surface *fore = NULL;
-    SDL_Surface *back = NULL;
-
-    /* Initialisation*/
-	SDL_Init(SDL_INIT_EVERYTHING);
-
-	for (int h = 0; h <HEIGHT; h++){
-		for (int w = 0; w <WIDTH; w++){
-
-			/* Renders appropriate image from character */
-			switch(board[h][w]){
-
-				case '#':
-				/* render wall, set colour, x, y and render square */
-				break;
-
-				case 'G':
-				/* render gotchi */
-				break:
-
-				case '.';
-				/* render clear */
-
-				default:
-				/* render default */
-			}
-		}
-	}
-
-	SDL_Delay(200);
-
-	clean();
+	SDL(board);
 
 	return 0;
 }
 
-void clean(){
+int SDL (char board[][HEIGHT]){
 
-    /* Free images */
-    SDL_FreeSurface(fore);
-    SDL_FreeSurface(back);
-    
-    /* Quit SDL */
-    SDL_Quit();    
+    SDL_Simplewin sw;
+
+    /* Initialisation*/
+	Neill_SDL_Init(&sw);
+
+	int SQH = (WHEIGHT/HEIGHT);
+	SDL_Rect rectangle;
+   	rectangle.w = SQH;
+   	rectangle.h = SQH;
+
+	for (int h = 0; h <HEIGHT; h++){
+		for (int w = 0; w <WIDTH; w++){
+
+			switch(board[h][w]){
+
+				case '#':
+				Neill_SDL_SetDrawColour(&sw, 134, 24, 123);
+      			rectangle.x = (h*SQH);
+      			rectangle.y = (w*SQH);
+      			SDL_RenderDrawRect(sw.renderer, &rectangle);
+				break;
+
+				case 'G':
+				Neill_SDL_SetDrawColour(&sw, 245, 2, 56);
+      			rectangle.x = (h*SQH);
+      			rectangle.y = (w*SQH);
+      			SDL_RenderDrawRect(sw.renderer, &rectangle);
+				break;
+
+				case '.':
+				Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
+      			rectangle.x = (h*SQH);
+      			rectangle.y = (w*SQH);
+      			SDL_RenderDrawRect(sw.renderer, &rectangle);
+				break;
+
+				default:
+				/* render default */
+				break;
+			}
+		}
+	}
+
+	SDL_RenderPresent(sw.renderer);
+    SDL_UpdateWindowSurface(sw.win); 
+
+	SDL_Delay(200);
+
+	return 0;
 }
+
+// void clean(){
+
+//     /* Free images */
+//     SDL_FreeSurface(fore);
+//     SDL_FreeSurface(back);
+    
+//     /* Quit SDL */
+//     SDL_Quit();    
+// }
