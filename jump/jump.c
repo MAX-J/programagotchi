@@ -4,7 +4,7 @@
 
 int main(int argc,char** argv)
 {
-        FILE* fp;
+       
         int i = 0;
         int j = 0;
         int k = 0;
@@ -20,39 +20,17 @@ int main(int argc,char** argv)
                 printf("Usage:game boardfile\n");
                 return 0;
         }
-        printf("LETS JUMP\n");
-        fp = fopen(argv[1],"r");
+	if( readfile(argv[1])) 
+	{
+		return 1;
+	}       
 	/*if(checkboard()  == -1)
 	{
 		return 1;
 	}*/
-        for( j = 0;j< HEIGHT;j++)
-        {
-                memset(screen[j],'\0',sizeof(screen[j]));
-        }
-        if( fp != NULL)
-        {
-                while( fp != NULL)
-                {
-                        i++;
-                        if(i < HEIGHT)
-                        {
-                                fscanf(fp,"%s",screen[i]);                
-                        }
-                        else
-                        {
-                                break;
-                        }
-                }
-                
-        }
-        else
-        {
-                printf("Read file error.\n");
-                return 0;
-        }
-        fclose(fp);
-        for(j =1;j < i;j++)
+        printf("LETS JUMP\n");
+       
+	for(j =0;j < HEIGHT;j++)
         {
                 for(k = 0;k< WIDTH;k++)
                 {
@@ -71,9 +49,9 @@ int main(int argc,char** argv)
                         }
                 }
         }
-        for( j = 1;j < i;j++)
+        for( j = 0;j < HEIGHT;j++)
         {
-                        printf("%2d:%s\n",j,screen[j]);
+                        printf("%2d:%s\n",j+1,screen[j]);
         }
         while(score != 100 )
         {
@@ -92,15 +70,20 @@ int main(int argc,char** argv)
                         scanf("%d",&height);
                         printf("Step = ");
                         scanf("%d",&time);
-                        if( gameturn(height,time) ==0)
+			k = gameturn(height,time);
+			if(k == 0)
                         {
-                                for( j = 1;j < i;j++)
+                                for( j = 0;j < HEIGHT;j++)
                                 {
                                         printf("%2d:%s\n",j,screen[j]);
                                 }
                                 printf("Your score is %d\n",score);
                         }
-                        getchar();
+			else if( k == -1) {
+                        	getchar();
+				break;
+			}
+			getchar();
                 }
                 else
                 {
@@ -111,6 +94,42 @@ int main(int argc,char** argv)
         printf("Game over!\n");
         printf("Your score is %d!\n",score);
         return 1;
+}
+
+
+int readfile(char* filename)
+{
+	FILE* fp;
+	fp = fopen(filename,"r");
+	int j = 0;
+	for( j = 0;j< HEIGHT;j++)
+	{
+		memset(screen[j],'\0',sizeof(screen[j]));
+	}
+	j = 0;
+	if( fp != NULL)
+	{
+		while( fp != NULL)
+		{
+			if(j < HEIGHT)
+			{
+				fscanf(fp,"%s",screen[j]);	
+				printf("%s\n",screen[j]);
+				j++;	
+			}
+			else
+			{
+				break;
+			}
+		}	
+	}
+	else
+	{
+		printf("read file error \n");
+		return 1;
+	}
+	fclose(fp);
+	return 0;
 }
 
 
@@ -137,7 +156,7 @@ int gameturn(int height,int step)
                 {
                         printf("Ouch!you meet a barrier!\n");
                         printf("Please input a valid value!\n");
-                        return 0;
+                        return 1;
                 }
 		else if(screen[newrow][newcol] == 's' ||
 			screen[newrow][newcol] == 'S')
