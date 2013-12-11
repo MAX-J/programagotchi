@@ -14,21 +14,21 @@ int main (void){
 
     char board[HEIGHT][WIDTH];
 
-    for (int w = 0; w <WIDTH; w++){
-      for (int h = 0; h <HEIGHT; h++){  
-        board[h][w] = '.';
-      }
-    }
+  //   for (int w = 0; w <WIDTH; w++){
+  //     for (int h = 0; h <HEIGHT; h++){  
+  //       board[h][w] = '.';
+  //     }
+  //   }
 
-  for(int i=0; i<6; i++){
-  board[69-i][52+i] = '#';
-  board[69][52+i] = 'y';
-  }
+  // for(int i=0; i<6; i++){
+  // board[69-i][52+i] = '#';
+  // board[69][52+i] = 'y';
+  // }
     
-  for(int i=0; i<6; i++){
-  board[68][36+i] = '.';
-  board[68][36+i+1] = 'G';
-  }
+  // for(int i=0; i<6; i++){
+  // board[68][36+i] = '.';
+  // board[68][36+i+1] = 'G';
+  // }
 
   SDL(board);
 

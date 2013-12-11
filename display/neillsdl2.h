@@ -1,8 +1,8 @@
 #include <SDL.h>
 #include <math.h>
 
-#define WWIDTH 1200
-#define WHEIGHT 800
+#define WWIDTH 1100
+#define WHEIGHT 700
 
 #define SDL_8BITCOLOUR 256
 
