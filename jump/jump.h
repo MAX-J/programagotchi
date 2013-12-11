@@ -9,3 +9,4 @@ char laststatus;
 
 int gameturn(int height,int step);
 int checkboard();
+int readfile(char* filename);
