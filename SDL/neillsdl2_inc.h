@@ -1,12 +1,15 @@
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
 
-#define WWIDTH 560
-#define WHEIGHT 600
+#define WWIDTH 171
+#define WHEIGHT 175
 
 #define SDL_8BITCOLOUR 256
+
+#define FONTCHARS 256
+#define FONTBYTESCHAR 8
+#define FNT_FONTHEIGHT 8
+#define FNT_FONTWIDTH 8
 
 #ifndef M_PI
 #define M_PI           3.14159265358979323846
@@ -25,3 +28,7 @@ void Neill_SDL_Events(SDL_Simplewin *sw);
 void Neill_SDL_SetDrawColour(SDL_Simplewin *sw, Uint8 r, Uint8 g, Uint8 b);
 void Neill_SDL_RenderFillCircle(SDL_Renderer *rend, int cx, int cy, int r);
 void Neill_SDL_RenderDrawCircle(SDL_Renderer *rend, int cx, int cy, int r);
+
+void Neill_SDL_DrawText(SDL_Simplewin *sw, const char* text, int x, int y);
+unsigned char* Neill_SDL_GetFont();
+

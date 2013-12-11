@@ -1,63 +1,136 @@
-//Using SDL and standard IO 
-#include <SDL2/SDL.h> 
-#include <stdio.h>
-#include <stdlib.h>
+#include "incdisplay.h"
+#include "neillsdl2_inc.h"
 
-//Screen dimension constants 
-const int SCREEN_WIDTH = 360; 
-const int SCREEN_HEIGHT = 480;
- 
-void run()
-{ 
-  //char c;
-  //int close = 0;
-  //The window we'll be rendering to 
-  SDL_Window* window = NULL; 
-  //The surface contained by the window 
-  SDL_Surface* screenSurface = NULL;
-  SDL_Surface* image = NULL;
-  //Initialize SDL 
-  if(SDL_Init(SDL_INIT_VIDEO) < 0) { 
-    printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError()); 
-  }
-  else { 
-    //Create window 
-    window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN); 
-    if(window == NULL) { 
-      printf("Window could not be created! SDL_Error: %s\n", SDL_GetError()); 
+SDL_Simplewin sw; 
+
+int SDL_Events_newmanting(Display *d);
+
+void SDL_Events_ting(Display *d);
+
+void UpdateWindow(SDL_Simplewin sw);
+
+void GotchiMovement(Display *d);
+
+void Gametimewindow();
+
+// Move the Gotchi in the incubator.
+int main()
+{
+  //const char *leveltext = "Lvl: 1.";
+  int W = 360, H = 480;
+  Display *d = start(W, H, "./newinc.bmp", "./gotchipod.bmp");
+  int count = 0;
+  while(1) { 
+    count++;
+    GotchiMovement(d);
+    if(count % 15 == 0) {
+      Gametimewindow();
+      do {
+	GotchiMovement(d);
+	Neill_SDL_Events(&sw);
+      }while(!sw.finished);
     }
-    else { 
-      //Get window surface 
-      screenSurface = SDL_GetWindowSurface(window); 
-      //Fill the surface white 
-      SDL_FillRect(screenSurface, NULL, SDL_MapRGB( screenSurface->format, 0xFF, 0xFF, 0xFF)); 
-      //Load splash image
-      image = SDL_LoadBMP("./incubatorsmall.bmp");
-      if(image == NULL) {
-	printf("Unable to load image %s! SDL Error: %s\n", "./incubatorsmall.bmp", SDL_GetError());
-	exit(1);
-      }
-      //Apply the image
-      SDL_BlitSurface(image, NULL, screenSurface, NULL);
-      //Update the surface 
-      SDL_UpdateWindowSurface(window); 
-      //Wait five seconds 
-      SDL_Delay(5000); 
-    } 
+    SDL_Events_newmanting(d);
   }
-  /*do {
-    printf("Do you want to close the window? Y/N\n");
-    scanf("%c", &c);
-    if(c == 'Y') {
-      close = 1;
-    }
-    }while(close != 1);*/
-  //Destroy window 
-  SDL_DestroyWindow(window); 
-  //Quit SDL subsystems 
-  SDL_Quit();  
+  return 0;
 }
 
+// Gobble all events & ignore most
+int SDL_Events_newmanting(Display *d)
+{
+  SDL_Event event;
+   while(SDL_PollEvent(&event)) 
+   {      
+     switch (event.type){
+     case SDL_QUIT:
+       atexit(SDL_Quit);
+       return 0;  
+     case SDL_KEYDOWN:
+     switch(event.key.keysym.sym){
+        case SDLK_0:
+          Gametimewindow();
+	  do {
+	    GotchiMovement(d);
+	    Neill_SDL_Events(&sw);
+	  }while(!sw.finished);
+	  //Neill_SDL_Init(&sw);
+	  return 1;
+        case SDLK_1:
+          Gametimewindow();
+	  do {
+	    GotchiMovement(d);
+	    Neill_SDL_Events(&sw);
+	  }while(!sw.finished);
+	  //Neill_SDL_Init(&sw);
+	  return 1;          
+        case SDLK_2:
+          Gametimewindow();
+	  do {
+	    GotchiMovement(d);
+	    Neill_SDL_Events(&sw);
+	  }while(!sw.finished);
+	  //Neill_SDL_Init(&sw);
+	  return 1;
+        case SDLK_3:
+	  do {
+	    GotchiMovement(d);
+	    Neill_SDL_Events(&sw);
+	  }while(!sw.finished);
+          Gametimewindow();
+	  //Neill_SDL_Init(&sw);
+	  return 1;          
+        default:
+          return 0;
+      }
+    }
+  }
+   return 0;
+}
 
- 
+// Updates window - no graphics appear on some devices until this is finished
+void UpdateWindow(SDL_Simplewin sw) 
+{
+  SDL_RenderPresent(sw.renderer);
+  SDL_UpdateWindowSurface(sw.win);
+  SDL_Delay(1000);
+}
 
+void GotchiMovement(Display *d)
+{
+  int x = 150, y = 200;
+  paint(d, x, y);
+  x = x;
+  y = y - 1;
+  paint(d, x, y);
+  x = x + 1;
+  y = y + 1;
+  paint(d, x, y);
+  x = x - 1;
+  y = y + 1;
+  paint(d, x, y);
+  x = x - 1;
+  y = y - 1;
+  paint(d, x, y);
+}
+
+void Gametimewindow()
+{
+  SDL_Surface *hello = NULL;
+  SDL_Surface *surf = NULL;
+  const char *text = "Fancy a game?";
+  const char *moretext = "Click y to play.";
+  Neill_SDL_Init(&sw);
+  surf = SDL_GetWindowSurface(sw.win);
+  hello = SDL_LoadBMP("./gotchi.bmp");
+  SDL_BlitSurface(hello, NULL, surf, NULL);
+  Neill_SDL_SetDrawColour(&sw, 0, 255, 255);
+  Neill_SDL_DrawText(&sw, text, 30, 166);
+  UpdateWindow(sw);
+  Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
+  SDL_RenderClear(sw.renderer);
+  SDL_RenderPresent(sw.renderer);
+  SDL_BlitSurface(hello, NULL, surf, NULL);
+  Neill_SDL_SetDrawColour(&sw, 0, 255, 255);
+  Neill_SDL_DrawText(&sw, moretext, 25, 166);
+  UpdateWindow(sw);
+}
