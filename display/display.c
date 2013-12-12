@@ -1,15 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "neillsdl2.h"
+#include "display.h"
 
-#define HEIGHT 70
-#define WIDTH 110
-
-/* Prototypes */
-void clean();
-int SDL (char board[][WIDTH]);
-
+/*
 int main (void){
 
     char board[HEIGHT][WIDTH];
@@ -34,6 +25,7 @@ int main (void){
 
   return 0;
 }
+*/
 
 int SDL (char board[][WIDTH]){
 
