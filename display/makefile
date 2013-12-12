@@ -1,7 +1,7 @@
 CFLAGS = `sdl2-config --cflags` -O4 -Wall -pedantic -std=c99 -lm
 INCS = neillsdl2.h display.h
-TARGET = display
-SOURCES =  neillsdl2.c $(TARGET).c
+TARGET = rungotchi
+SOURCES =  neillsdl2.c display.c $(TARGET).c
 LIBS =  `sdl2-config --libs`
 CC = gcc
 
