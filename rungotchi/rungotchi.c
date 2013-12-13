@@ -17,7 +17,7 @@
 #define STR_LENGTH 100
 #define DELAY 50
 
-int move(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj, int rowshift, int colshift);
+void move(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj, int rowshift, int colshift);
 void UpdateDisplay(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH]);
 void RemoveSpaces(char *inputstr, char *newstr);
 
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
   char selectedobj;
   char displaygrid[GRID_HEIGHT][GRID_WIDTH];
   char *i;
-  int n, j, row, col, rowshift, colshift;
+  int n, j, row, col, rowshift, colshift, objectmatch;
   int distance, numchars;
   SDL_Simplewin sw;
   FILE *fin;
@@ -50,7 +50,6 @@ int main(int argc, char *argv[])
   fclose(fin);
   UpdateDisplay(sw,displaygrid);
   
-  
   //---LOOP UNTIL CLOSED -- GET ENDLESS COMMANDS FROM USER---//
   while (sw.finished == 0) {
   
@@ -61,9 +60,11 @@ int main(int argc, char *argv[])
     
     //get input command - put all in while loop for multiple commands!
     printf("\nEnter Command: ");
-    scanf("%s",inputstr); //UPDATE: NEED TO UPDATE TO HANDLE SPACES FROM TERMINAL INPUT!!!
+    fgets(inputstr,STR_LENGTH,stdin); //fgets stronger than scanf for multiple-word input
     RemoveSpaces(inputstr,formattedstr); //remove spaces to simplify processing    
     i = formattedstr;
+    
+    
     
     //--------'MOVE' COMMANDS----------//
     if (strstr(i,"move") == i) {
@@ -76,18 +77,18 @@ int main(int argc, char *argv[])
       else {
 	//scroll list of valid 'object strings' and match with command
 	//set the associated code character as 'selected object' when found
+	objectmatch = 0;
 	while (objstrings[n] != NULL) {
 	  if (strstr(i,objstrings[n]) == i) {
 	    selectedobj = objcodes[n];  
+	    i = i + strlen(objstrings[n]);
 	  }
 	  n++;
 	}
-	//error if no matches
-	if (selectedobj == '\0') {
-	  //ERROR: INVALID OBJECT IDENTIFIER!
+	//no match for specified object!
+	if (objectmatch == 0) {
+	  printf("\nno such object!\n");
 	}
-	//move str pointer forwards by the length of the relevant object identifier
-	i = i + strlen(objstrings[n-1]);
       }
       //handle the 'initial direction' part of the string//
       if (strstr(i,"up") == i) {
@@ -152,14 +153,35 @@ int main(int argc, char *argv[])
       }
 
       // apply the move - loop depending on the 'distance' for GOTCHI to travel
-      for  (j = 1; j <= distance; j++) {
-	if (move(displaygrid,selectedobj,rowshift,colshift) == 0) {
-	  return 0; //some error - message handled by 'move'
-	}
+      for (j = 1; j <= distance; j++) {
+	move(displaygrid,selectedobj,rowshift,colshift);
 	UpdateDisplay(sw,displaygrid);
 	SDL_Delay(DELAY);
       }
     }
+    
+    
+    //--------'ADD' COMMANDS----------//
+    else if (strstr(i,"add") == i) {
+      i = i + 3;
+      //scroll list of valid 'object strings' and match with command
+      //add the associated 'character code' to the board if matched, otherwise no action
+      objectmatch = 0;
+      while (objstrings[n] != NULL) {
+	if (strstr(i,objstrings[n]) == i) {
+	  addobject(objcodes[n]); 
+	  objectmatch = 1;
+	  i = i + strlen(objstrings[n]);
+	}
+	n++;
+      }
+      //no match for the specified object
+      if (objectmatch == 0) {
+	printf("\nno such object!\n");
+      }
+    }
+    
+    
     
     
     //--------'XXXX' COMMANDS----------//
@@ -180,7 +202,7 @@ int main(int argc, char *argv[])
 
 
 // move object on the display grid //
-int move(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj, int rowshift, int colshift) {
+void move(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj, int rowshift, int colshift) {
   //output int for success/fail?
   int row, col, newrow, newcol;
   for (row = 0; row < GRID_HEIGHT; row++) {
@@ -190,18 +212,17 @@ int move(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj, int rowshi
 	  newrow = row + rowshift; newcol = col + colshift;
 	  // no action if move would go 'off edge' or overlap with an existing object 
 	  if (newrow < 0 || newrow >= GRID_HEIGHT || newcol < 0 || newcol >= GRID_WIDTH || displaygrid[newrow][newcol] != '.') {
-	    return 1; //move not possible but still valid object code etc.
+	    return; //move not possible but still valid object code etc.
 	  }
 	  // move the selected obj and set previous location to blank
 	  displaygrid[newrow][newcol] = selectedobj;
 	  displaygrid[row][col] = '.';
-	  return 1; 
+	  return;
       }
     }
   }
   //if get this far, selected object doesn't exist on the grid
   printf("Attempted to move object that hasn't been added yet!");
-  return 0;
 }
 
 
