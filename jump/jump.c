@@ -5,7 +5,7 @@
 int main(int argc,char** argv)
 {
        
-        int i = 0;
+       
         int j = 0;
         int k = 0;
         int startflag = 0;
@@ -93,6 +93,11 @@ int main(int argc,char** argv)
         }
         printf("Game over!\n");
         printf("Your score is %d!\n",score);
+	if(score < 100)
+	{
+		printf("You have not got all of candies.\n");
+		return 0;
+	}
         return 1;
 }
 
