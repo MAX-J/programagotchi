@@ -1,7 +1,12 @@
 #include "incdisplay.h"
 #include "neillsdl2_inc.h"
 
-SDL_Simplewin sw; 
+#define HEIGHT 70
+#define WIDTH 110
+
+SDL_Simplewin sw;
+SDL_Simplewin gamewin;
+char gamearray[HEIGHT][WIDTH];
 
 int SDL_Events_newmanting(Display *d);
 
@@ -97,13 +102,15 @@ void UpdateWindow(SDL_Simplewin sw)
 
 void GotchiMovement(Display *d)
 {
-  int x = 150, y = 200;
+  int x, y;
+  x = 150;
+  y = 200;
   paint(d, x, y);
   x = x;
   y = y - 1;
   paint(d, x, y);
-  x = x + 1;
-  y = y + 1;
+  x = x + 10;
+  y = y + 10;
   paint(d, x, y);
   x = x - 1;
   y = y + 1;

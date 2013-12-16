@@ -1,6 +1,6 @@
 CFLAGS = `sdl2-config --cflags` -O4 -Wall -pedantic -std=c99 -lm
 INCS = incdisplay.h neillsdl2_inc.h
-TARGET = sdl
+TARGET = main
 SOURCES =  incdisplay.c neillsdl2_inc.c $(TARGET).c
 LIBS =  `sdl2-config --libs`
 CC = gcc
