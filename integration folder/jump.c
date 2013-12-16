@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include <memory.h>
-#include <jump.h>
+#include "jump.h"
 
-int main(int argc,char** argv)
+int currentrow = 0;
+int currentcol = 0;
+int score = 0;
+
+int jump(char gamearray[HEIGHT][WIDTH])
 {
-       
-        int i = 0;
+        FILE *file = fopen("jump.txt", "r");
+        //int i = 0;
         int j = 0;
         int k = 0;
         int startflag = 0;
@@ -14,13 +18,13 @@ int main(int argc,char** argv)
         int time = 0;
 
         char command;
-        if( argc  != 2)
+        /*if( argc  != 2)
         {
                 printf("Invalid argument!\n");
                 printf("Usage:game boardfile\n");
                 return 0;
-        }
-	if( readfile(argv[1])) 
+		}*/
+	if( readfile(file))
 	{
 		return 1;
 	}       
@@ -97,10 +101,10 @@ int main(int argc,char** argv)
 }
 
 
-int readfile(char* filename)
+int readfile(FILE *fp)
 {
-	FILE* fp;
-	fp = fopen(filename,"r");
+  //FILE* fp;
+  //fp = fopen(filename,"r");
 	int j = 0;
 	for( j = 0;j< HEIGHT;j++)
 	{

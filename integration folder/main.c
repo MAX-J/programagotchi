@@ -1,5 +1,6 @@
 #include "incdisplay.h"
 #include "neillsdl2_inc.h"
+#include "jump.h"
 
 #define HEIGHT 70
 #define WIDTH 110
@@ -28,13 +29,13 @@ int main()
   while(1) { 
     count++;
     GotchiMovement(d);
-    if(count % 15 == 0) {
+    /*if(count % 15 == 0) {
       Gametimewindow();
       do {
 	GotchiMovement(d);
 	Neill_SDL_Events(&sw);
       }while(!sw.finished);
-    }
+      }*/
     SDL_Events_newmanting(d);
   }
   return 0;
@@ -61,11 +62,12 @@ int SDL_Events_newmanting(Display *d)
 	  //Neill_SDL_Init(&sw);
 	  return 1;
         case SDLK_1:
-          Gametimewindow();
-	  do {
+          //Gametimewindow();
+	  //do {
 	    GotchiMovement(d);
-	    Neill_SDL_Events(&sw);
-	  }while(!sw.finished);
+	    jump(gamearray);
+	    //Neill_SDL_Events(&sw);
+	    //}while(!sw.finished);
 	  //Neill_SDL_Init(&sw);
 	  return 1;          
         case SDLK_2:
