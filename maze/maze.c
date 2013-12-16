@@ -8,7 +8,7 @@
 #define WIDTH 110
 #define EXIT exit(2)
 
-char** loadLevel(FILE **ifp, int argc, char* argv[], int level);
+char** createChallengeWindow(FILE **ifp, int argc, char* argv[], int level);
 
 char** createInitialgamestate (int width, int height);
 
@@ -16,14 +16,16 @@ int main(int argc, char* argv[]){
 	FILE *ifp;
 
 	int level;
+	char** initialgamestate;
 
-	loadLevel(&ifp, argc, argv, level);
+	initialgamestate = createChallengeWindow(&ifp, argc, argv, level);
 
+	
 	return 0;
 }
 
 
-char** loadLevel(FILE **ifp, int argc, char* argv[], int level){
+char** createChallengeWindow(FILE **ifp, int argc, char* argv[], int level){
 	char** initialgamestate;
 	
 	
@@ -35,6 +37,8 @@ char** loadLevel(FILE **ifp, int argc, char* argv[], int level){
     }
 	
 	initialgamestate = createInitialgamestate (WIDTH, HEIGHT);
+	
+	return initialgamestate;
 
 }
 
