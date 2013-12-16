@@ -27,12 +27,7 @@ int main (void){
 }
 */
 
-int SDL (char board[][WIDTH]){
-
-  SDL_Simplewin sw;
-
-  /* Initialisation*/
-  Neill_SDL_Init(&sw);
+int SDL (char board[][WIDTH], SDL_Simplewin sw)){
 
   int SQH = (WWIDTH/WIDTH);
   SDL_Rect rectangle;
