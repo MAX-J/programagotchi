@@ -6,28 +6,46 @@
 
 #define HEIGHT 70
 #define WIDTH 110
-#define EXIT exit(2)
+#define EXIT exit(1)
 
-char** createChallengeWindow(FILE **ifp, int argc, char* argv[], int level);
+/* Take SDL window and empty array from AY */
+/* Use SDL functions in own function to use graphics */
+/* Make header file containing pointer to 2d array and SDL window */
 
-char** createInitialgamestate (int width, int height);
+/* Opens file, creates empty array, stores level in array, returns pointer to array */
+char** loadLevel(FILE **ifp, int argc, char* argv[], int level);
+
+/* Called by loadLevel, creates an empty 110 wide x 70 high array using calloc*/ 
+char** createEmptystate (int width, int height);
+
+/* Called by loadLevel, store game state from file into array */
+void storeGamestate(FILE **ifp, char** gamestate);
+
 
 int main(int argc, char* argv[]){
-	FILE *ifp;
-
-	int level;
+	FILE *ifp= NULL;
+	int level, i ,j;
 	char** initialgamestate;
 
-	initialgamestate = createChallengeWindow(&ifp, argc, argv, level);
-
+	initialgamestate = loadLevel(&ifp, argc, argv, level);
+	
+	
+	for(i = 0; i <  HEIGHT; i++){
+		for(j = 0; j < WIDTH; j++){
+			if(j%WIDTH == 0){
+				printf("\n");
+			}
+			printf("%c", initialgamestate[i][j]);
+		}
+	}
 	
 	return 0;
 }
 
 
-char** createChallengeWindow(FILE **ifp, int argc, char* argv[], int level){
+char** loadLevel(FILE **ifp, int argc, char* argv[], int level){
 	char** initialgamestate;
-	
+	int i, j;
 	
 	*ifp = fopen(argv[1], "r");
 
@@ -36,39 +54,35 @@ char** createChallengeWindow(FILE **ifp, int argc, char* argv[], int level){
 		return (char **)EXIT_FAILURE;
     }
 	
-	initialgamestate = createInitialgamestate (WIDTH, HEIGHT);
+	initialgamestate = createEmptystate (WIDTH, HEIGHT);
+		
+	storeGamestate(ifp, initialgamestate);
 	
 	return initialgamestate;
-
 }
 
 void storeGamestate(FILE **ifp, char** gamestate){
-	int i;
-		
+	int i, j;
+	
 	/*For each board row*/ 
     for (i = 0; i < HEIGHT; i++) {
-    	if((fscanf(*ifp, " %s", (char*)&gamestate[i]) != 1)) {						
+    	if((fscanf(*ifp, " %s", (char*)gamestate[i]) != 1)) {						
     		printf("Correct values not found. Exiting...\n");
     		EXIT;
     	}
-		/* Check that the length of each row is as expected */	
-		if(strlen(gamestate[i])!= WIDTH){
-			printf("Board not as expected. Exiting......\n");
-			EXIT;
-		}	
 	}
-		
-	fclose(*ifp);		
+	fclose(*ifp);
 }
 
-char** createInitialgamestate (int width, int height){
+char** createEmptystate(int width, int height){
 	char** initialgamestate;
 	int i;
 	
-	initialgamestate = (char **) malloc(height*sizeof(char*));
+	initialgamestate = (char **) calloc(height, sizeof(char*));
 	
 	for( i = 0; i < height; i++){
-		initialgamestate[i] = (char*) malloc(width*sizeof(char));
+		initialgamestate[i] = (char*) calloc(width, sizeof(char));
 	}
+	
 	return initialgamestate;
 }
