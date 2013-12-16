@@ -11,7 +11,7 @@
 
 /* Prototypes */
 void clean();
-int SDL (char board[][WIDTH]);
+int SDL (char board[][WIDTH], SDL_Simplewin sw);
 
 #endif
 
