@@ -21,26 +21,39 @@ char** createEmptystate (int width, int height);
 /* Called by loadLevel, store game state from file into array */
 void storeGamestate(FILE **ifp, char** gamestate);
 
+/* Show game state*/
+void showGamestate(char** gamestate);
+
 
 int main(int argc, char* argv[]){
+	
 	FILE *ifp= NULL;
-	int level, i ,j;
+	int level;
 	char** initialgamestate;
 
 	initialgamestate = loadLevel(&ifp, argc, argv, level);
 	
 	
+	
+	showGamestate(initialgamestate);
+	
+	
+	return 0;
+}
+
+void showGamestate(char** gamestate){
+	int i, j;
+
 	for(i = 0; i <  HEIGHT; i++){
 		for(j = 0; j < WIDTH; j++){
 			if(j%WIDTH == 0){
 				printf("\n");
 			}
-			printf("%c", initialgamestate[i][j]);
+			printf("%c", gamestate[i][j]);
 		}
 	}
-	
-	return 0;
 }
+
 
 
 char** loadLevel(FILE **ifp, int argc, char* argv[], int level){
