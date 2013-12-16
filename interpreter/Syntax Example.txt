@@ -1,0 +1,8 @@
+  function throw height hangtime
+    add ball
+    loop 4
+      move ball up and right
+      move gotchi up and right
+      wait hangtime
+    end loop
+  end function
