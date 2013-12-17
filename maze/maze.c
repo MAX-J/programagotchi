@@ -1,12 +1,6 @@
 /*#include "display.h"*/
+#include "programagotchi.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#define HEIGHT 70
-#define WIDTH 110
-#define EXIT exit(1)
 
 /* Take SDL window and empty array from AY */
 /* Use SDL functions in own function to use graphics */
@@ -21,7 +15,6 @@ char** createEmptystate (int width, int height);
 /* Called by loadLevel, store game state from file into array */
 void storeGamestate(FILE **ifp, char** gamestate);
 
-/* Show game state*/
 void showGamestate(char** gamestate);
 
 
