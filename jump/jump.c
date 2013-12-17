@@ -1,6 +1,14 @@
-#include <stdio.h>
-#include <memory.h>
-#include <jump.h>
+#include "programagotchi.h"
+
+char screen[HEIGHT][WIDTH];
+int currentrow = 0;
+int currentcol = 0;
+int score = 0;
+char laststatus;
+
+int gameturn(int height,int step);
+int checkboard();
+int readfile(char* filename);
 
 int main(int argc,char** argv)
 {
