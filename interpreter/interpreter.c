@@ -4,9 +4,9 @@
 //start With only 'MOVE' and maybe 'ADD' (object) - get working then add other 'function' stuff
 
 #include "interpreter.h"
+
 #include <stdio.h>
 #include <stdlib.h>
-#include "neillsdl2_font.h"
 #include <string.h>
 
 #define WHITE 255,255,255
@@ -389,7 +389,7 @@ void RemoveSpaces(char *inputstr, char *newstr)
   char *i = inputstr;
   char *j = newstr;
   while(*i != '\0') {
-    if (*i != ' ') 
+    if (*i != ' ' && *i != '\n') 
     {
       *j = *i;
       j++;

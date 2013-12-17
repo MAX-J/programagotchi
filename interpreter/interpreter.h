@@ -1,3 +1,5 @@
+#include "neillsdl2_font.h"
+
 #define GRID_HEIGHT 20
 #define GRID_WIDTH 20
 
