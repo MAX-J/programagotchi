@@ -2,10 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <memory.h>
 #include "neillsdl2_font.h"
 
 #define HEIGHT 70
 #define WIDTH 110
+#define EXIT exit(2)
 
 //display
 void clean();
