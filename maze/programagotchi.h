@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <memory.h>
-#include "neillsdl2_font.h"
+/*#include "neillsdl2_font.h"*/
 
 #define HEIGHT 70
 #define WIDTH 110
@@ -11,9 +11,9 @@
 
 //display
 void clean();
-int SDL (char board[][WIDTH], SDL_Simplewin sw);
+/*int SDL (char board[][WIDTH], SDL_Simplewin sw);*/
 
 //interpreter
-void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *inputstr); 
+/*void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *inputstr);*/ 
 
 

@@ -1,10 +1,15 @@
-#include <stdio.h>
-#include <memory.h>
-#include "jump.h"
+#include "programagotchi.h"
 
+int jump(char gamearray[HEIGHT][WIDTH]);
+char screen[HEIGHT][WIDTH];
 int currentrow = 0;
 int currentcol = 0;
 int score = 0;
+char laststatus;
+
+int gameturn(int height,int step);
+int checkboard();
+int readfile(FILE *fp);
 
 int jump(char gamearray[HEIGHT][WIDTH])
 {
@@ -136,7 +141,7 @@ int readfile(FILE *fp)
 	return 0;
 }
 
-
+/* Changes game from current state to next state*/
 int gameturn(int height,int step)
 {
 
@@ -191,7 +196,7 @@ int gameturn(int height,int step)
         return 0;
 }
 
-
+/* Test: Checks boundary, */
 int checkboard()
 {
 	int i = 0;
@@ -215,6 +220,8 @@ int checkboard()
 				return -1;
 			}
 	}
+	
+	/* Counts amount of candy in window */
 	for( i = 0;i<HEIGHT;i++)
 	{
 		for(j = 0;j<WIDTH;j++)
@@ -226,6 +233,7 @@ int checkboard()
 				}
 		}
 	}
+	/* For valid game state need ten pieces of candy or more */
 	if(s_countter < 10)
 	{
 		printf("not enough 'c'\n");
