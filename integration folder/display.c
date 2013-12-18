@@ -5,6 +5,7 @@ int SDL (char board[][WIDTH], SDL_Simplewin sw)){
   int SQH = (WWIDTH/WIDTH);
   int RDS = (WHEIGHT/HEIGHT);
   SDL_Rect rectangle;
+  SDL_Rect circle;
   rectangle.w = SQH;
   rectangle.h = SQH;
 
@@ -13,7 +14,7 @@ int SDL (char board[][WIDTH], SDL_Simplewin sw)){
     for (int w = 0; w <WIDTH; w++){
       for (int h = 0; h <HEIGHT; h++){
     
-      switch(board[h][w]){
+        switch(board[h][w]){
 
         /*
         G Gotchi
@@ -82,29 +83,18 @@ int SDL (char board[][WIDTH], SDL_Simplewin sw)){
         rectangle.y = (h*SQH);
         SDL_RenderFillRect(sw.renderer, &rectangle);
         break;
+        }
       }
     }
-  }
-  // Updates window - no graphics appear on some devices until this is finished
-  SDL_RenderPresent(sw.renderer);
-  SDL_UpdateWindowSurface(sw.win);
-  // Checks if anyone has triggered the SDL window to end
-  Neill_SDL_Events(&sw);
+    // Updates window - no graphics appear on some devices until this is finished
+    SDL_RenderPresent(sw.renderer);
+    SDL_UpdateWindowSurface(sw.win);
+    // Checks if anyone has triggered the SDL window to end
+    Neill_SDL_Events(&sw);
   }while(!sw.finished);
 
     Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
     SDL_RenderClear(sw.renderer);
     Neill_SDL_Events(&sw);
-
-  return 0;
+    return 0;
 }
-
-// void clean(){
-
-//     /* Free images */
-//     SDL_FreeSurface(fore);
-//     SDL_FreeSurface(back);
-    
-//     /* Quit SDL */
-//     SDL_Quit();    
-// }
