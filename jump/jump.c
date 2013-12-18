@@ -171,8 +171,8 @@ int gameturn(int height,int step)
                         printf("Please input a valid value!\n");
                         return 1;
                 }
-		else if(screen[newrow][newcol] == 's' ||
-			screen[newrow][newcol] == 'S')
+		else if(screen[newrow][newcol] == 'x' ||
+			screen[newrow][newcol] == 'X')
 		{
 			printf("oh my god!you jump to a hole!\n");
 			return -1;
