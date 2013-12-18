@@ -3,7 +3,7 @@
 int SDL (char board[][WIDTH], SDL_Simplewin sw){
 
   int SQH = (WWIDTH/WIDTH);
-  int RDS = (WHEIGHT/HEIGHT);
+  int RDS = 6;
   SDL_Rect rectangle;
   SDL_Rect circle;
   rectangle.w = SQH;
