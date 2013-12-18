@@ -1,38 +1,13 @@
 #include "display.h"
 
-/*
-int main (void){
-
-    char board[HEIGHT][WIDTH];
-
-  //   for (int w = 0; w <WIDTH; w++){
-  //     for (int h = 0; h <HEIGHT; h++){  
-  //       board[h][w] = '.';
-  //     }
-  //   }
-
-  // for(int i=0; i<6; i++){
-  // board[69-i][52+i] = '#';
-  // board[69][52+i] = 'y';
-  // }
-    
-  // for(int i=0; i<6; i++){
-  // board[68][36+i] = '.';
-  // board[68][36+i+1] = 'G';
-  // }
-
-  SDL(board);
-
-  return 0;
-}
-*/
-
 int SDL (char board[][WIDTH], SDL_Simplewin sw)){
 
   int SQH = (WWIDTH/WIDTH);
+  int RDS = (WHEIGHT/HEIGHT);
   SDL_Rect rectangle;
   rectangle.w = SQH;
   rectangle.h = SQH;
+
 
   do{
     for (int w = 0; w <WIDTH; w++){
@@ -45,6 +20,7 @@ int SDL (char board[][WIDTH], SDL_Simplewin sw)){
         1 Barrier
         C Candy(each one get 10 score, when you get all of them,100,win)
         S Hazard
+        B Ball
         E Exit
         . Free space
         # Border/wall
@@ -77,6 +53,13 @@ int SDL (char board[][WIDTH], SDL_Simplewin sw)){
         rectangle.x = (w*SQH);
         rectangle.y = (h*SQH);
         SDL_RenderFillRect(sw.renderer, &rectangle);
+        break;
+
+        case 'B':
+        Neill_SDL_SetDrawColour(&sw, 121, 134, 9);
+        circle.x = (w*SQH);
+        circle.y = (h*SQH);
+        Neill_SDL_RenderFillCircle(sw.renderer, circle.x, circle.y, RDS);
         break;
 
         case 'E':
@@ -112,8 +95,6 @@ int SDL (char board[][WIDTH], SDL_Simplewin sw)){
     Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
     SDL_RenderClear(sw.renderer);
     Neill_SDL_Events(&sw);
-
-  SDL_Delay(100);
 
   return 0;
 }
