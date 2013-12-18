@@ -1,9 +1,11 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <memory.h>
-#include "neillsdl2_font.h"
+#include <math.h>
+#include <SDL.h>
+#include "neillsdl2_inc.h"
+#include "incdisplay.h"
 
 #define HEIGHT 70
 #define WIDTH 110
