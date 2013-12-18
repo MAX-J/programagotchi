@@ -1,10 +1,10 @@
-#include "neillsdl2_font.h"
-#incude <stdio.h>
+#include "neillsdl2_inc.h"
+
 // Set up a simple (WIDTH, HEIGHT) window.
 // Attempt to hide the renderer etc. from user.
 void Neill_SDL_Init(SDL_Simplewin *sw)
 {
-
+   
 
    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
       fprintf(stderr, "\nUnable to initialize SDL:  %s\n", SDL_GetError());
@@ -36,20 +36,21 @@ void Neill_SDL_Init(SDL_Simplewin *sw)
    Neill_SDL_SetDrawColour(sw, 0, 0, 0);
    SDL_RenderClear(sw->renderer);
    SDL_RenderPresent(sw->renderer);
-
+   SDL_SetWindowTitle(sw->win, "Game time!");
 }
 
 // Gobble all events & ignore most
 void Neill_SDL_Events(SDL_Simplewin *sw)
-{
-   SDL_Event event;
+{ 
+  SDL_Event event;
    while(SDL_PollEvent(&event)) 
    {      
        switch (event.type){
           case SDL_QUIT:
           case SDL_MOUSEBUTTONDOWN:
        case SDL_KEYDOWN:
-         sw->finished = 1;
+	    SDL_DestroyWindow(sw->win);
+	    sw->finished = 1;
        }
     }
 }

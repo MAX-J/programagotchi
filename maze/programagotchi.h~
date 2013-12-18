@@ -3,7 +3,7 @@
 #include <string.h>
 #include <memory.h>
 #include <math.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "neillsdl2_inc.h"
 #include "incdisplay.h"
 

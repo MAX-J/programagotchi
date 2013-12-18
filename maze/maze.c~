@@ -82,7 +82,7 @@ char** loadLevel(FILE **ifp, int level){
 }
 
 void storeGamestate(FILE **ifp, char** gamestate){
-	int i;
+	int i, j;
 	
 	/*For each board row*/ 
     for (i = 0; i < HEIGHT; i++) {

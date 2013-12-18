@@ -1,112 +1,77 @@
-#include "neillsdl2_font.h"
-#incude <stdio.h>
-// Set up a simple (WIDTH, HEIGHT) window.
-// Attempt to hide the renderer etc. from user.
-void Neill_SDL_Init(SDL_Simplewin *sw)
+#include "incdisplay.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <SDL2/SDL.h>
+
+struct display
 {
+SDL_Window *window;
+SDL_Surface *surface;
+SDL_Surface *bg;
+SDL_Surface *fg;
+SDL_Renderer *renderer;
+};
 
-
-   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-      fprintf(stderr, "\nUnable to initialize SDL:  %s\n", SDL_GetError());
-      SDL_Quit();
-      exit(1);
-   } 
-
-   sw->finished = 0;
-   
-   sw->win= SDL_CreateWindow("SDL Window",
-                          SDL_WINDOWPOS_UNDEFINED,
-                          SDL_WINDOWPOS_UNDEFINED,
-                          WWIDTH, WHEIGHT,
-                          SDL_WINDOW_SHOWN);
-   if(sw->win == NULL){
-      fprintf(stderr, "\nUnable to initialize SDL Window:  %s\n", SDL_GetError());
-      SDL_Quit();
-      exit(1);
-   }
-
-   sw->renderer = SDL_CreateRenderer(sw->win, -1, 0);
-   if(sw->renderer == NULL){
-      fprintf(stderr, "\nUnable to initialize SDL Renderer:  %s\n", SDL_GetError());
-      SDL_Quit();
-      exit(1);
-   }
-
-   // Set screen to black
-   Neill_SDL_SetDrawColour(sw, 0, 0, 0);
-   SDL_RenderClear(sw->renderer);
-   SDL_RenderPresent(sw->renderer);
-
+static void report()
+{
+fprintf(stderr, "SDL error: %s\n", SDL_GetError());
+SDL_Quit();
+exit(1);
 }
 
-// Gobble all events & ignore most
-void Neill_SDL_Events(SDL_Simplewin *sw)
+Display *start(int w, int h, char *bg, char *fg)
 {
-   SDL_Event event;
-   while(SDL_PollEvent(&event)) 
-   {      
-       switch (event.type){
-          case SDL_QUIT:
-          case SDL_MOUSEBUTTONDOWN:
-       case SDL_KEYDOWN:
-         sw->finished = 1;
-       }
-    }
+  Display *d = malloc(sizeof(Display));
+ int err = SDL_Init(SDL_INIT_EVERYTHING);
+ if (err != 0) report();
+ d->window = SDL_CreateWindow("", 100, 100, w, h, 0);
+ if (d->window == NULL) report();
+ d->surface = SDL_GetWindowSurface(d->window);
+ if (d->surface == NULL) report();
+ d->bg = SDL_LoadBMP(bg);
+ if (d->bg == NULL) report();
+ d->fg = SDL_LoadBMP(fg);
+ if (d->fg == NULL) report();
+ SDL_SetWindowTitle(d->window, "Incubator");
+ return d;
+}
+
+static void img(Display *d, SDL_Surface *i, int x, int y)
+{
+SDL_Rect rectData = { x, y, i->w, i->h };
+SDL_Rect *rect = &rectData;
+int err = SDL_BlitSurface(i, NULL, d->surface, rect);
+if (err != 0) report();
+}
+
+void paint(Display *d, int x, int y)
+{
+img(d, d->bg, 0, 0);
+img(d, d->fg, x, y);
+int err = SDL_UpdateWindowSurface(d->window);
+if (err != 0) report();
+SDL_Event eventData;
+SDL_Event *event = &eventData;
+while (SDL_PollEvent(event) == 1)
+{
+if (event->type == SDL_QUIT) { SDL_Quit(); exit(0); }
+}
+SDL_Delay(200);
 }
 
 
-// Trivial wrapper to avoid complexities of renderer & alpha channels
-void Neill_SDL_SetDrawColour(SDL_Simplewin *sw, Uint8 r, Uint8 g, Uint8 b)
-{
-
-   SDL_SetRenderDrawColor(sw->renderer, r, g, b, SDL_ALPHA_OPAQUE);
-
-}
-
-// Filled Circle centred at (cx,cy) of radius r, see :
-// http://content.gpwiki.org/index.php/SDL:Tutorials:Drawing_and_Filling_Circles
-void Neill_SDL_RenderFillCircle(SDL_Renderer *rend, int cx, int cy, int r)
-{
-
-   for (double dy = 1; dy <= r; dy += 1.0) {
-        double dx = floor(sqrt((2.0 * r * dy) - (dy * dy)));
-        SDL_RenderDrawLine(rend, cx-dx, cy+r-dy, cx+dx, cy+r-dy);
-        SDL_RenderDrawLine(rend, cx-dx, cy-r+dy, cx+dx, cy-r+dy);
-   }
-
-}
-
-// Circle centred at (cx,cy) of radius r, see :
-// http://content.gpwiki.org/index.php/SDL:Tutorials:Drawing_and_Filling_Circles
-void Neill_SDL_RenderDrawCircle(SDL_Renderer *rend, int cx, int cy, int r)
-{
-
-   double dx, dy;
-   dx = floor(sqrt((2.0 * r ) ));
-   SDL_RenderDrawLine(rend, cx-dx, cy+r, cx+dx, cy+r);
-   SDL_RenderDrawLine(rend, cx-dx, cy-r, cx+dx, cy-r);
-   for (dy = 1; dy <= r; dy += 1.0) {
-        dx = floor(sqrt((2.0 * r * dy) - (dy * dy)));
-        SDL_RenderDrawPoint(rend, cx+dx, cy+r-dy);
-        SDL_RenderDrawPoint(rend, cx+dx, cy-r+dy);
-        SDL_RenderDrawPoint(rend, cx-dx, cy+r-dy);
-        SDL_RenderDrawPoint(rend, cx-dx, cy-r+dy);
-   }
-
-}
-
-/* Based on :
+ /* Based on :
  sdl_picofont
    http://nurd.se/~noname/sdl_picofont
    File authors:      Fredrik Hultin
    License: GPLv2
 */
-void Neill_SDL_DrawText(SDL_Simplewin *sw, const char* text, int ox, int oy)
+void MAXJ_SDL_DrawText(Display *sw, const char* text, int ox, int oy)
 {
    unsigned int i, x, y, col, row, len;
    unsigned char *fnt, chr;
 
-   fnt = Neill_SDL_GetFont();
+   fnt = MAXJ_SDL_GetFont();
    col = row = 0;
    len = strlen(text);
    for(i = 0; i < len; i++){
@@ -147,7 +112,7 @@ void Neill_SDL_DrawText(SDL_Simplewin *sw, const char* text, int ox, int oy)
 }
 
 // Hide the details of font_pearl_8x8 away here
-unsigned char* Neill_SDL_GetFont()
+unsigned char* MAXJ_SDL_GetFont()
 {
    static const unsigned char spf_font[FONTCHARS*FONTBYTESCHAR] = {
    /* 0 0x00      */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -408,4 +373,12 @@ unsigned char* Neill_SDL_GetFont()
    /* 255 0xff 'ÿ' */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
    };
    return (unsigned char*)(&spf_font);
+}
+
+// Trivial wrapper to avoid complexities of renderer & alpha channels
+void MAXJ_SDL_SetDrawColour(Display *sw, Uint8 r, Uint8 g, Uint8 b)
+{
+
+   SDL_SetRenderDrawColor(sw->renderer, r, g, b, SDL_ALPHA_OPAQUE);
+
 }
