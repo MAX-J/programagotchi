@@ -1,4 +1,4 @@
-#include "display.h"
+#include "programagotchi.h"
 
 int SDL (char board[][WIDTH], SDL_Simplewin sw)){
 
