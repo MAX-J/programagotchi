@@ -15,7 +15,7 @@
 int SDL (char board[][WIDTH], SDL_Simplewin sw);
 
 //interpreter
-void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *inputstr); 
+void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *inputstr); 
 
 /* Opens file, creates empty array, stores level in array, returns pointer to array */
 char** loadLevel(FILE **ifp, int level);

@@ -17,16 +17,15 @@ enum direction {left,right,above,below};
 typedef enum direction Direction;
 
 
-void moveobject(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj, int rowshift, int colshift);
-void addobject(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj, Direction dir);
-int objectongrid(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj);
-void UpdateDisplay(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH]);
+void moveobject(char displaygrid[HEIGHT][WIDTH], char selectedobj, int rowshift, int colshift);
+void addobject(char displaygrid[HEIGHT][WIDTH], char selectedobj, Direction dir);
+int objectongrid(char displaygrid[HEIGHT][WIDTH], char selectedobj);
 void RemoveSpaces(char *inputstr, char *newstr);
 
 
 
 //----parse individual 'command' lines (from fcn file OR terminal input)-----//
-void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *commandstr) {
+void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commandstr) {
 
   char selectedobj = NULL_CHAR;
   char formattedstr[STR_LENGTH], *i;
@@ -138,7 +137,7 @@ void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], cha
     // apply the move - loop depending on the 'distance' for GOTCHI to travel
     for (j = 1; j <= distance; j++) {
       moveobject(displaygrid,selectedobj,rowshift,colshift);
-      UpdateDisplay(sw,displaygrid);
+      SDL(displaygrid,sw);
       SDL_Delay(DELAY);
     }
   }
@@ -197,7 +196,7 @@ void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], cha
     }
     //add the object to grid and refresh display
     addobject(displaygrid,selectedobj,dir);       
-    UpdateDisplay(sw,displaygrid);
+    SDL(displaygrid,sw);
   }
   
   
@@ -218,15 +217,15 @@ void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], cha
 
 
 // move object on the display grid //
-void moveobject(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj, int rowshift, int colshift) {
+void moveobject(char displaygrid[HEIGHT][WIDTH], char selectedobj, int rowshift, int colshift) {
   int row, col, newrow, newcol;
-  for (row = 0; row < GRID_HEIGHT; row++) {
-    for (col = 0; col < GRID_WIDTH; col++) {
+  for (row = 0; row < HEIGHT; row++) {
+    for (col = 0; col < WIDTH; col++) {
       //find the CURRENT location of the 'selected object'
       if (displaygrid[row][col] == selectedobj) {
 	  newrow = row + rowshift; newcol = col + colshift;
 	  // no action if move would go 'off edge' or overlap with an existing object 
-	  if (newrow < 0 || newrow >= GRID_HEIGHT || newcol < 0 || newcol >= GRID_WIDTH || displaygrid[newrow][newcol] != '.') {
+	  if (newrow < 0 || newrow >= HEIGHT || newcol < 0 || newcol >= WIDTH || displaygrid[newrow][newcol] != '.') {
 	    return; 
 	  }
 	  // move the selected obj and set previous location to blank
@@ -241,11 +240,11 @@ void moveobject(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj, int
 
 
 // add object to the display grid (next to the GOTCHI) //
-void addobject(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj, Direction dir) {
+void addobject(char displaygrid[HEIGHT][WIDTH], char selectedobj, Direction dir) {
   int row, col, newrow = 0, newcol = 0;
   //find the current location of the GOTCHI
-  for (row = 0; row < GRID_HEIGHT; row++) {
-    for (col = 0; col < GRID_WIDTH; col++) {
+  for (row = 0; row < HEIGHT; row++) {
+    for (col = 0; col < WIDTH; col++) {
       if (displaygrid[row][col] == 'G') {
 	//set location (adjacent to GOTCHI) depending on dir
 	switch (dir) {
@@ -263,7 +262,7 @@ void addobject(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj, Dire
 	    break; 
 	}
 	//error if new object location overlaps or goes off edge
-	if (newrow < 0 || newrow >= GRID_HEIGHT || newcol < 0 || newcol >= GRID_WIDTH || displaygrid[newrow][newcol] != '.') {
+	if (newrow < 0 || newrow >= HEIGHT || newcol < 0 || newcol >= WIDTH || displaygrid[newrow][newcol] != '.') {
 	  printf("\nnot enough room to add object!\n");
 	  return; 
 	}
@@ -277,61 +276,16 @@ void addobject(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj, Dire
 
 
 //check if a particular object character is already on the display grid //
-int objectongrid(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj) {
+int objectongrid(char displaygrid[HEIGHT][WIDTH], char selectedobj) {
   int row, col;
-  for (row = 0; row < GRID_HEIGHT; row++) {
-    for (col = 0; col < GRID_WIDTH; col++) {  
+  for (row = 0; row < HEIGHT; row++) {
+    for (col = 0; col < WIDTH; col++) {  
       if (displaygrid[row][col] == selectedobj) {
 	return 1; //on grid!
       }
     }
   }
   return 0; //not on grid!
-}
-
-
-
-
-/*----OUTPUT BOARD TO SDL WINDOW-----*/
-void UpdateDisplay(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH])
-{
-  int row, col;
-  SDL_Rect rectangle;
-  // fix dimensions of rectangles and circles 
-  rectangle.w = rectangle.h = MIN(WWIDTH/GRID_WIDTH,WHEIGHT/GRID_HEIGHT);
-  const int rad = rectangle.w / 2; 
-  // run through all characters in the board 
-  for (row = 0; row < GRID_HEIGHT; row++) {
-    for (col = 0; col < GRID_WIDTH; col++) { 
-      // calculate x-y position of the corner of each square 
-      rectangle.x = col*rectangle.w;
-      rectangle.y = row*rectangle.h;
-      /* fill all squares white */
-      Neill_SDL_SetDrawColour(&sw,WHITE); 
-      SDL_RenderFillRect(sw.renderer, &rectangle);
-      //update display for object locations
-      switch (displaygrid[row][col]) {
-	//gotchi: add pink block
-	case 'G':
-	  Neill_SDL_SetDrawColour(&sw,BLUE); 
-	  SDL_RenderFillRect(sw.renderer, &rectangle); 
-	  break;
-	//obstacles: add black block
-	case '1':
-	  Neill_SDL_SetDrawColour(&sw,BLACK); 
-	  SDL_RenderFillRect(sw.renderer, &rectangle); 
-	  break;
-	//'ball' object: add black circle
-	case 'B':
-	  Neill_SDL_SetDrawColour(&sw,BLACK); 
-	  Neill_SDL_RenderFillCircle(sw.renderer,rectangle.x+rad,rectangle.y+rad,rad);
-	  break;
-      }
-    }
-  }
-  /* update the window 'in one go' for each board */
-  SDL_RenderPresent(sw.renderer);
-  SDL_UpdateWindowSurface(sw.win); 
 }
 
 
