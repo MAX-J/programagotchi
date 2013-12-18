@@ -1,7 +1,7 @@
 CFLAGS = `sdl2-config --cflags` -O4 -Wall -pedantic -std=c99 -lm
-INCS = incdisplay.h neillsdl2_inc.h
+INCS = programagotchi.h incdisplay.h neillsdl2_inc.h jump.h
 TARGET = main
-SOURCES =  incdisplay.c neillsdl2_inc.c $(TARGET).c
+SOURCES =  incdisplay.c neillsdl2_inc.c jump.c interpreter.c $(TARGET).c
 LIBS =  `sdl2-config --libs`
 CC = gcc
 

@@ -1,6 +1,7 @@
-#include "incdisplay.h"
-#include "neillsdl2_inc.h"
-#include "jump.h"
+//#include "incdisplay.h"
+//#include "neillsdl2_inc.h"
+//#include "jump.h"
+#include "programagotchi.h"
 
 #define HEIGHT 70
 #define WIDTH 110
@@ -18,6 +19,8 @@ void UpdateWindow(SDL_Simplewin sw);
 void GotchiMovement(Display *d);
 
 void Gametimewindow();
+
+void read2array(FILE * file, char gamearray[HEIGHT][WIDTH]);
 
 // Move the Gotchi in the incubator.
 int main()
@@ -72,6 +75,11 @@ int SDL_Events_newmanting(Display *d)
 	  return 1;          
         case SDLK_2:
           Gametimewindow();
+	  FILE *file;
+	  file = fopen("level1.txt", "r");
+	  read2array(file, gamearray);
+	  Neill_SDL_Init(&gamewin);
+	  runcommand(gamewin, gamearray, "move up 10"); 
 	  do {
 	    GotchiMovement(d);
 	    Neill_SDL_Events(&sw);
@@ -142,4 +150,19 @@ void Gametimewindow()
   Neill_SDL_SetDrawColour(&sw, 0, 255, 255);
   Neill_SDL_DrawText(&sw, moretext, 25, 166);
   UpdateWindow(sw);
+}
+
+void read2array(FILE * file, char gamearray[HEIGHT][WIDTH])
+{
+    int m, n;
+    char c;
+    for (m = 0; m < HEIGHT; m++) {
+	for (n = 0; n <= WIDTH; n++) {
+	    if (n == 0) {
+		gamearray[m][n] = '0';
+	    }
+	    c = getc(file);
+	    gamearray[m][n - 1] = c;
+	}
+    }
 }
