@@ -136,7 +136,7 @@ int readfile(FILE *fp)
 	return 0;
 }
 
-
+/* Changes game from current state to next state*/
 int gameturn(int height,int step)
 {
 
@@ -191,7 +191,7 @@ int gameturn(int height,int step)
         return 0;
 }
 
-
+/* Test: Checks boundary, */
 int checkboard()
 {
 	int i = 0;
@@ -215,6 +215,8 @@ int checkboard()
 				return -1;
 			}
 	}
+	
+	/* Counts amount of candy in window */
 	for( i = 0;i<HEIGHT;i++)
 	{
 		for(j = 0;j<WIDTH;j++)
@@ -226,6 +228,7 @@ int checkboard()
 				}
 		}
 	}
+	/* For valid game state need ten pieces of candy or more */
 	if(s_countter < 10)
 	{
 		printf("not enough 'c'\n");
