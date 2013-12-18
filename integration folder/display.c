@@ -81,7 +81,7 @@ int SDL (char board[][WIDTH], SDL_Simplewin sw){
         Neill_SDL_SetDrawColour(&sw, 134, 112, 255);
         rectangle.x = (w*SQH);
         rectangle.y = (h*SQH);
-        SDL_RenderDrawRect(sw.renderer, &rectangle);
+        SDL_RenderFillRect(sw.renderer, &rectangle);
         break;
 
         default:
