@@ -9,8 +9,6 @@ int SDL (char board[][WIDTH], SDL_Simplewin sw){
   rectangle.w = SQH;
   rectangle.h = SQH;
 
-
-  do{
     for (int w = 0; w <WIDTH; w++){
       for (int h = 0; h <HEIGHT; h++){
     
@@ -96,12 +94,5 @@ int SDL (char board[][WIDTH], SDL_Simplewin sw){
     // Updates window - no graphics appear on some devices until this is finished
     SDL_RenderPresent(sw.renderer);
     SDL_UpdateWindowSurface(sw.win);
-    // Checks if anyone has triggered the SDL window to end
-    Neill_SDL_Events(&sw);
-  }while(!sw.finished);
-
-    Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
-    SDL_RenderClear(sw.renderer);
-    Neill_SDL_Events(&sw);
     return 0;
 }
