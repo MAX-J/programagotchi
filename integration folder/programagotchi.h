@@ -12,7 +12,6 @@
 #define EXIT exit(2)
 
 //display
-void clean();
 int SDL (char board[][WIDTH], SDL_Simplewin sw);
 
 //interpreter

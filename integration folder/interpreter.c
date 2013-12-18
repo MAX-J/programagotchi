@@ -25,45 +25,6 @@ void RemoveSpaces(char *inputstr, char *newstr);
 
 
 
-int main(int argc, char *argv[]) 
-{
-  
-  int row, col;
-  char commandstr[STR_LENGTH];
-  char displaygrid[GRID_HEIGHT][GRID_WIDTH];
-  SDL_Simplewin sw;
-  FILE *fin;
-
-  //Init SDL
-  Neill_SDL_Init(&sw);
-
-  //Read initial grid from file (no need to validate)
-  fin = fopen("testgrid.txt","r");
-  for (row = 0; row < GRID_HEIGHT; row++) {
-    for (col = 0; col < GRID_WIDTH+1; col++) { // +1 to include '/n' column
-      fscanf(fin,"%c",&displaygrid[row][col]); 
-    }
-  }
-  fclose(fin);
-  UpdateDisplay(sw,displaygrid);
-  
-  //---LOOP UNTIL CLOSED -- GET ENDLESS COMMANDS FROM USER---//
-  while (sw.finished == 0) {
-    //get input command 
-    printf("\nEnter Command: ");
-    fgets(commandstr,STR_LENGTH,stdin);
-    //remove spaces to simplify processing 
-    //parse the command line
-    runcommand(sw,displaygrid,commandstr); 
-  }
-  
-  //finish
-  atexit(SDL_Quit);  
-  return 0;
-}
-
-
-
 //----parse individual 'command' lines (from fcn file OR terminal input)-----//
 void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *commandstr) {
 
@@ -372,7 +333,6 @@ void UpdateDisplay(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH])
   SDL_RenderPresent(sw.renderer);
   SDL_UpdateWindowSurface(sw.win); 
 }
-
 
 
 
