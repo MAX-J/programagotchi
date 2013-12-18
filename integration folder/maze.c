@@ -18,7 +18,7 @@ void storeGamestate(FILE **ifp, char** gamestate);
 void showGamestate(char** gamestate);
 
 
-int main(int argc, char* argv[]){
+/*int main(int argc, char* argv[]){
 	
 	FILE *ifp= NULL;
 	int level = 2;
@@ -32,7 +32,7 @@ int main(int argc, char* argv[]){
 	
 	
 	return 0;
-}
+}*/
 
 void showGamestate(char** gamestate){
 	int i, j;
