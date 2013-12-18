@@ -7,7 +7,7 @@
 /* Make header file containing pointer to 2d array and SDL window */
 
 /* Opens file, creates empty array, stores level in array, returns pointer to array */
-char** loadLevel(FILE **ifp, int argc, char* argv[], int level);
+char** loadLevel(FILE **ifp, int level);
 
 /* Called by loadLevel, creates an empty 110 wide x 70 high array using calloc*/ 
 char** createEmptystate (int width, int height);
@@ -21,10 +21,10 @@ void showGamestate(char** gamestate);
 int main(int argc, char* argv[]){
 	
 	FILE *ifp= NULL;
-	int level;
+	int level = 2;
 	char** initialgamestate;
 
-	initialgamestate = loadLevel(&ifp, argc, argv, level);
+	initialgamestate = loadLevel(&ifp, level);
 	
 	
 	
@@ -49,12 +49,24 @@ void showGamestate(char** gamestate){
 
 
 
-char** loadLevel(FILE **ifp, int argc, char* argv[], int level){
+char** loadLevel(FILE **ifp, int level){
 	char** initialgamestate;
 	int i, j;
 	
-	*ifp = fopen(argv[1], "r");
-
+	switch(level){
+		case 1:
+			*ifp = fopen("level1.txt", "r");
+			break;
+		
+		case 2:
+			*ifp = fopen("level2.txt", "r");
+			break;
+			
+		default:
+			getchar();
+			*ifp = fopen("level1.txt", "r");
+	}
+	
     if (*ifp == NULL) {		
 		printf("No such file found. Exiting...\n");
 		return (char **)EXIT_FAILURE;
