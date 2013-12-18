@@ -5,10 +5,12 @@
 
 #define HEIGHT 70
 #define WIDTH 110
+#define STR_LENGTH 100
 
-SDL_Simplewin sw;
-SDL_Simplewin gamewin;
-char gamearray[HEIGHT][WIDTH];
+  char commandstr[STR_LENGTH];
+  SDL_Simplewin sw;
+  SDL_Simplewin gamewin;
+  char gamearray[HEIGHT][WIDTH];
 
 int SDL_Events_newmanting(Display *d);
 
@@ -29,6 +31,7 @@ int main()
   int W = 360, H = 480;
   Display *d = start(W, H, "./newinc.bmp", "./gotchipod.bmp");
   int count = 0;
+
   while(1) { 
     count++;
     GotchiMovement(d);
@@ -49,6 +52,7 @@ int SDL_Events_newmanting(Display *d)
 {
   SDL_Event event;
   FILE *file;
+  char moves[100];
    while(SDL_PollEvent(&event)) 
    {      
      switch (event.type){
@@ -80,11 +84,14 @@ int SDL_Events_newmanting(Display *d)
 	  read2array(file, gamearray);
 	  Neill_SDL_Init(&gamewin);
 	  //SDL(gamearray, gamewin);
-
+	  SDL(gamearray, gamewin);
 	  do {
 	    GotchiMovement(d);
-	    runcommand(gamewin, gamearray, "move right 100"); 
-	    runcommand(gamewin, gamearray, "move down 10");
+	    printf("\nEnter Command: ");
+	    fgets(commandstr,STR_LENGTH,stdin);
+	    //remove spaces to simplify processing 
+	    //parse the command line
+	    runcommand(gamewin, gamearray, commandstr); 
 	    
 	    Neill_SDL_Events(&gamewin);
 	  }while(!gamewin.finished);
@@ -97,7 +104,35 @@ int SDL_Events_newmanting(Display *d)
 	  }while(!sw.finished);
           Gametimewindow();*/
 	  //Neill_SDL_Init(&sw);
-	  return 1;          
+	  file = fopen("level1.txt", "r");
+	  read2array(file, gamearray);
+	  Neill_SDL_Init(&gamewin);
+	  do {
+	    GotchiMovement(d);
+	    runcommand(gamewin, gamearray, "move right 2");
+	    SDL(gamearray, gamewin);
+	    runcommand(gamewin, gamearray, "move down 2");   
+	    Neill_SDL_Events(&gamewin);
+	  }while(!gamewin.finished);
+	  return 1;    
+	  case SDLK_4:
+	  /*do {
+	    GotchiMovement(d);
+	    Neill_SDL_Events(&sw);
+	  }while(!sw.finished);
+          Gametimewindow();*/
+	  //Neill_SDL_Init(&sw);
+	  file = fopen("level2.txt", "r");
+	  read2array(file, gamearray);
+	  Neill_SDL_Init(&gamewin);
+	  do {
+	    GotchiMovement(d);
+	    runcommand(gamewin, gamearray, "move right 2");
+	    SDL(gamearray, gamewin);
+	    runcommand(gamewin, gamearray, "move down 2");   
+	    Neill_SDL_Events(&gamewin);
+	  }while(!gamewin.finished);
+	  return 1;        
         default:
           return 0;
       }
@@ -162,7 +197,7 @@ void read2array(FILE * file, char gamearray[HEIGHT][WIDTH])
     char c;
     for (m = 0; m < HEIGHT; m++) {
 	for (n = 0; n < WIDTH; n++) {
-	    c = getc(file);
+	    c = fgetc(file);
 	    gamearray[m][n] = c;
 	}
     }
