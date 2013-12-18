@@ -1,6 +1,6 @@
 #include "programagotchi.h"
 
-int SDL (char board[][WIDTH], SDL_Simplewin sw)){
+int SDL (char board[][WIDTH], SDL_Simplewin sw){
 
   int SQH = (WWIDTH/WIDTH);
   int RDS = (WHEIGHT/HEIGHT);
@@ -43,7 +43,7 @@ int SDL (char board[][WIDTH], SDL_Simplewin sw)){
         break;
 
         case 'G':
-        Neill_SDL_SetDrawColour(&sw, 114, 148, 56);
+        Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
         rectangle.x = (w*SQH);
         rectangle.y = (h*SQH);
         SDL_RenderFillRect(sw.renderer, &rectangle);

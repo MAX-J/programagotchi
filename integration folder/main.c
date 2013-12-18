@@ -48,6 +48,7 @@ int main()
 int SDL_Events_newmanting(Display *d)
 {
   SDL_Event event;
+  FILE *file;
    while(SDL_PollEvent(&event)) 
    {      
      switch (event.type){
@@ -74,24 +75,27 @@ int SDL_Events_newmanting(Display *d)
 	  //Neill_SDL_Init(&sw);
 	  return 1;          
         case SDLK_2:
-          Gametimewindow();
-	  FILE *file;
-	  file = fopen("level1.txt", "r");
+          //Gametimewindow();
+	  file = fopen("jump.txt", "r");
 	  read2array(file, gamearray);
 	  Neill_SDL_Init(&gamewin);
-	  runcommand(gamewin, gamearray, "move up 10"); 
+	  //SDL(gamearray, gamewin);
+
 	  do {
 	    GotchiMovement(d);
-	    Neill_SDL_Events(&sw);
-	  }while(!sw.finished);
+	    runcommand(gamewin, gamearray, "move right 100"); 
+	    runcommand(gamewin, gamearray, "move down 10");
+	    
+	    Neill_SDL_Events(&gamewin);
+	  }while(!gamewin.finished);
 	  //Neill_SDL_Init(&sw);
 	  return 1;
         case SDLK_3:
-	  do {
+	  /*do {
 	    GotchiMovement(d);
 	    Neill_SDL_Events(&sw);
 	  }while(!sw.finished);
-          Gametimewindow();
+          Gametimewindow();*/
 	  //Neill_SDL_Init(&sw);
 	  return 1;          
         default:
@@ -157,12 +161,9 @@ void read2array(FILE * file, char gamearray[HEIGHT][WIDTH])
     int m, n;
     char c;
     for (m = 0; m < HEIGHT; m++) {
-	for (n = 0; n <= WIDTH; n++) {
-	    if (n == 0) {
-		gamearray[m][n] = '0';
-	    }
+	for (n = 0; n < WIDTH; n++) {
 	    c = getc(file);
-	    gamearray[m][n - 1] = c;
+	    gamearray[m][n] = c;
 	}
     }
 }
