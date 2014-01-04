@@ -1,15 +1,25 @@
 // assumes only one of each 'object' type on the board at a time (e.g. one ball)
 
-//start with ONLY COMMAND LINE (one 'line' at a time) - then add FILE READING etc.
-//start With only 'MOVE' and maybe 'ADD' (object) - get working then add other 'function' stuff
+//UPDATE: More 'statuses' required for things like 'HIT_SHARK' or 'ATE_CANDY'
+//(these statuses END THE MOVE and get passed back up to original caller)
+//could also have local statuses that end a 'movement loop' but allow processing to continue
+//(such as hitting a wall or something - doesn't need to end process but stops current 'movement loop');
 
-#include "programagotchi.h"
+//UPDATE: Need to include 'EAT' as a BASE COMMAND!
+//(should be quite straightforward)
+//NOTE: What if you eat something and then there are further commands in fcn or something?
+//wouldn't really make sense to RETURN after eating the candy...
+//so HOW DO YOU LET THE ORIGINAL GAME KNOW? (needs to update scores etc... tricky...)
+//(this could apply for some other stuff that 'games' need to know about too...)
+
+
+#include "interpreter.h"
 
 #define WHITE 255,255,255
 #define BLACK 0,0,0
 #define BLUE 0,0,255
 #define MIN(a,b) ((a) < (b) ? (a) : (b)) /* standard min fcn (net/lecture notes) */
-#define STR_LENGTH 100
+//CHANGEHERE(STR_LENGTH IS MOVED TO H FILE AND INCREASED TO 400)
 #define DELAY 50
 #define NULL_CHAR 'N'
 
@@ -65,12 +75,15 @@ int main(int argc, char *argv[])
 
 
 //----parse individual 'command' lines (from fcn file OR terminal input)-----//
-void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *commandstr) {
+int runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *commandstr) {
 
   char selectedobj = NULL_CHAR;
-  char formattedstr[STR_LENGTH], *i;
-  int n = 0, rowshift = 0, colshift = 0, distance = 1, numchars, j;
+  //CHANGEHERE(filestr)
+  char formattedstr[STR_LENGTH], filestr[STR_LENGTH], *i;
+  int n = 0, rowshift = 0, colshift = 0, distance = 1, numchars, j, ret;
   Direction dir = right; 
+  //CHANGEHERE
+  FILE *ftemp;
   
   //define all 'objects' that may be added grid
   const char *objstrings[5] = {"gotchi","ball",NULL,NULL,NULL};
@@ -101,12 +114,12 @@ void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], cha
       //no match for specified object!
       if (selectedobj == NULL_CHAR) {
 	printf("\nERROR: Invalid object!\n");
-	return;
+	return BAD_COMMAND;
       }
       //match found but object not added to display grid yet
       if (objectongrid(displaygrid,selectedobj) == 0) {
 	printf("\nERROR: Need to add object before you can move it!\n");
-	return;
+	return BAD_COMMAND;
       }
     }
     //handle the 'initial direction' part of the string//
@@ -128,11 +141,8 @@ void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], cha
     }
     else {
       printf("ERROR: Expecting up, down, left or right");
-      return;
+      return BAD_COMMAND;
     }
-    
-    //UPDATE: NOT CHECKING END OF STRING PROPERLY!! CATCHES ERRORS WHEN IT SHOULDN'T!
-    
     //if end of string not reached, handle additional parts
     if (*i != '\0') {
       //digit next - means direction distance specified here
@@ -159,7 +169,7 @@ void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], cha
       }
       else {
 	printf("ERROR: Expecting 'and up', 'and down', 'and left' or 'and right', or a number");
-	return;
+	return BAD_COMMAND;
       }
     }
     //if end of str STILL not reached, expect number at end representing 'distance'
@@ -171,7 +181,7 @@ void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], cha
       }
       else {
 	printf("ERROR: Expecting a positive integer at end of command");
-	return;
+	return BAD_COMMAND;
       }
     }
     // apply the move - loop depending on the 'distance' for GOTCHI to travel
@@ -197,17 +207,14 @@ void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], cha
     //no match for the specified object
     if (selectedobj == NULL_CHAR) {
       printf("\nERROR: Invalid object!\n");
-      return;
+      return BAD_COMMAND;
     }
     //match found, but object has already been added to grid
     if (objectongrid(displaygrid,selectedobj) == 1) {
       printf("\nERROR: Object has already been added!\n");
-      return;
+      return BAD_COMMAND;
     }
     //end of string not reached - expect 'direction' specifier
-    
-    //UPDATE: NOT CHECKING END OF STRING PROPERLY!! CATCHES ERRORS WHEN IT SHOULDN'T!
-    
     if (*i != '\0') {
       if (strstr(i,"left") == i) {
 	dir = left;
@@ -227,7 +234,7 @@ void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], cha
       }
       else {
 	printf("\nERROR: Expecting left, right, above or below\n");
-	return;
+	return BAD_COMMAND;
       }
     }
     //no direction specifier - assume right-hand side placement
@@ -239,21 +246,39 @@ void runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], cha
     UpdateDisplay(sw,displaygrid);
   }
   
-  
+  //CHANGEHERE(COPY WHOLE SECTION!)
   //------NO 'BASE' COMMAND RECOGNISED---------//
+  //revert to custom function files
   else {
-    
-    //---UPDATE: FIRST SEARCH FOR VALID FUNCTIONS (.txt files) THAT MATCH THE STRING!-----//
-    // CALL THE 'FUNCTION READER' (which will end up referring back to this parser!)
-    
-    //otherwise...
-    printf("\nERROR: Command not recognised\n");
-    return;    
-  
+    //check for '.gfn' (gotchi function) file in current folder matching the command
+    //if none matching, then this must be a bad command
+    strcpy(filestr,commandstr);
+    strcat(strtok(filestr," \t\n\0"),".gfn");
+    if ((ftemp = fopen(filestr,"r")) == NULL) {
+      printf("\nERROR: Command not recognised\n");
+      return BAD_COMMAND;    
+    }
+    //if match found, parse the file as a 'function'
+    //note: use unformatted command str (without spaces removed)
+    else {
+      fclose(ftemp);
+      ret = parsefcn(sw,displaygrid,filestr,commandstr);
+      //--------------HANDLE THE 'STATUS CHAIN'-----------------//
+      /* anything apart from SUCCESS means that the current 'move'
+       * should come to an end, and the status message should be 
+       * passed all the way back up to the original caller to 
+       * 'runcommand' (probably one of the game modules) */
+      if (ret != SUCCESS) {
+	//for 'bad commands' also add error message to the 'stack'
+	if (ret == BAD_COMMAND) {
+	  printf("\nERROR in runcommand: Problem parsing file WHATEVER\n");
+	}
+	return ret;
+      }
+    }
   }
-  
+  return SUCCESS;
 }
-
 
 
 // move object on the display grid //
@@ -330,7 +355,6 @@ int objectongrid(char displaygrid[GRID_HEIGHT][GRID_WIDTH], char selectedobj) {
 
 
 
-
 /*----OUTPUT BOARD TO SDL WINDOW-----*/
 void UpdateDisplay(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH])
 {
@@ -372,7 +396,6 @@ void UpdateDisplay(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH])
   SDL_RenderPresent(sw.renderer);
   SDL_UpdateWindowSurface(sw.win); 
 }
-
 
 
 

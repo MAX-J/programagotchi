@@ -1,0 +1,7 @@
+//test comments
+function jump d h
+move up 5
+move up and d h
+move d h
+move down and d h
+end function
