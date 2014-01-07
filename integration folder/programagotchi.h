@@ -7,12 +7,13 @@
 #include "neillsdl2_inc.h"
 #include "incdisplay.h"
 
+#define MAX 32
 #define HEIGHT 70
 #define WIDTH 110
 #define EXIT exit(2)
 
 //display
-int SDL (char board[][WIDTH], SDL_Simplewin sw);
+int SDL (char board[][WIDTH], char String[MAX], SDL_Simplewin sw);
 
 //interpreter
 void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *inputstr); 
