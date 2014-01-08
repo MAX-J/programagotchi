@@ -1,5 +1,6 @@
 /*#include "display.h"*/
-#include "programagotchi.h"
+#include "./programagotchi.h"
+
 
 
 /* Take SDL window and empty array from AY */
@@ -15,28 +16,81 @@ char** createEmptystate (int width, int height);
 /* Called by loadLevel, store game state from file into array */
 void storeGamestate(FILE **ifp, char** gamestate);
 
-void showGamestate(char** gamestate);
+void showGamestate(char gamearray[HEIGHT][WIDTH]);
 
+void moveBaddies(char gamearray[HEIGHT][WIDTH], int counter);
 
-void run(){
-	
-	FILE *ifp= NULL;
-	int level = 2;
-	char** initialgamestate;
+void moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j);
 
-	initialgamestate = loadLevel(&ifp, level);
+void checkExit(char gamearray[HEIGHT][WIDTH]);
+
+void playMaze(char gamearray[HEIGHT][WIDTH], int counter){
+	
+	int counter = 0;
 	
 	
-	SDL(initialgamestate, sw);
+	Neill_SDL_Init(&gamewin);
+	
+	SDL(gamearray, "Welcome to Sewer City", gamewin);
+	
+	counter = moveBaddies(gamearray, counter);
+
+	showGamestate(gamearray);
 	
 	
-	/*showGamestate(initialgamestate);*/
-	
-	
+	return 0;
 	
 }
 
-void showGamestate(char** gamestate){
+int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter){
+	int i,j;
+	for(j = 0; j < HEIGHT; j++){
+		for(i = 0; i < WIDTH; i++){
+			if(gamearray[i][j] == 'S'){
+				moveHorizontally(gamearray, i , j);
+			}
+		}
+	}
+	
+	return counter;
+}
+
+int checkExit(char gamearray[HEIGHT][WIDTH]){
+	
+	int i, j;
+	
+	for(j = 0; j < HEIGHT; j++){
+		for(i = 0; i < WIDTH; i++){
+			if(gamearray[i][j] == 'E' && gamearray[i-1][j] =='){
+				moveHorizontally(gamearray, i , j);
+			}
+		}
+	}
+	
+	return 0;
+}
+
+
+int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter){
+	
+	if(gamearray[i][j - 1] == '.' && counter >= 0){
+		gamearray[i][j] = '.';
+		gamearray[i][j-1] = 'S';
+		counter++;
+		if(counter == 5){
+			counter = -5;
+		}
+	}
+	
+	else if(gamearray[i][j - 1] == '.' && counter < 0){
+		gamearray[i][j] = '.';
+		gamearray[i][j+1] = 'S';
+		counter++;
+	}
+	return counter;
+}
+				
+void showGamestate(char gamearray[HEIGHT][WIDTH]){
 	int i, j;
 
 	for(i = 0; i <  HEIGHT; i++){
@@ -44,7 +98,7 @@ void showGamestate(char** gamestate){
 			if(j%WIDTH == 0){
 				printf("\n");
 			}
-			printf("%c", gamestate[i][j]);
+			printf("%c", gamearray[i][j]);
 		}
 	}
 }
