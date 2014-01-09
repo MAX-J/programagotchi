@@ -137,7 +137,7 @@ void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *command
     // apply the move - loop depending on the 'distance' for GOTCHI to travel
     for (j = 1; j <= distance; j++) {
       moveobject(displaygrid,selectedobj,rowshift,colshift);
-      SDL(displaygrid,sw);
+      SDL(displaygrid, "hello " ,sw);
       SDL_Delay(DELAY);
     }
   }
@@ -196,7 +196,7 @@ void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *command
     }
     //add the object to grid and refresh display
     addobject(displaygrid,selectedobj,dir);       
-    SDL(displaygrid,sw);
+    SDL(displaygrid,"",sw);
   }
   
   

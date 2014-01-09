@@ -84,7 +84,7 @@ int SDL_Events_newmanting(Display *d)
 	  read2array(file, gamearray);
 	  Neill_SDL_Init(&gamewin);
 	  //SDL(gamearray, gamewin);
-	  SDL(gamearray, gamewin);
+	  SDL(gamearray,"Time to jump", gamewin);
 	  do {
 	    GotchiMovement(d);
 	    printf("\nEnter Command: ");
@@ -110,7 +110,7 @@ int SDL_Events_newmanting(Display *d)
 	  do {
 	    GotchiMovement(d);
 	    runcommand(gamewin, gamearray, "move right 2");
-	    SDL(gamearray, gamewin);
+	    SDL(gamearray,"Hello", gamewin);
 	    runcommand(gamewin, gamearray, "move down 2");   
 	    Neill_SDL_Events(&gamewin);
 	  }while(!gamewin.finished);
@@ -128,7 +128,7 @@ int SDL_Events_newmanting(Display *d)
 	  do {
 	    GotchiMovement(d);
 	    runcommand(gamewin, gamearray, "move right 2");
-	    SDL(gamearray, gamewin);
+	    SDL(gamearray,"Hello", gamewin);
 	    runcommand(gamewin, gamearray, "move down 2");   
 	    Neill_SDL_Events(&gamewin);
 	  }while(!gamewin.finished);
