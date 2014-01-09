@@ -5,11 +5,11 @@
 //what if fcn calls other fcns etc... what gets thrown to text editor??
 
 
-#include "interpreter.h"
+#include "programagotchi.h"
 
 struct varstruct {
-  char name[STR_LENGTH];
-  char value[STR_LENGTH];
+  char name[STRLEN];
+  char value[STRLEN];
   struct varstruct *next;
 };
 typedef struct varstruct varstruct;
@@ -28,14 +28,14 @@ char *skipspace(char *str);
 
 
 //
-int parsefcn(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *filestr, char *commandstr) {
+int parsefcn(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *filestr, char *commandstr) {
 
   FILE *fin;
   varstruct *varlist = NULL;
   loopstruct loopinfo;
   loopinfo.inloop = loopinfo.startline = 0;
   loopinfo.currentloop = loopinfo.numloops = 0;
-  char str[STR_LENGTH], cstr[STR_LENGTH], fline[STR_LENGTH];
+  char str[STRLEN], cstr[STRLEN], fline[STRLEN];
   char *formattedstr, *i, *a, *b, *stopchar;
   int line = 0, endfcn = 0, ret;
   
@@ -48,7 +48,7 @@ int parsefcn(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *
   do { 
     //
     line++;
-    if (fgets(str,STR_LENGTH,fin) == NULL) {
+    if (fgets(str,STRLEN,fin) == NULL) {
       printf("\nERROR: No 'function' line in the file!\n");
       return BAD_COMMAND;
     }
@@ -95,7 +95,7 @@ int parsefcn(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *
   do { 
     //
     line++;
-    if (fgets(str,STR_LENGTH,fin) == NULL) {
+    if (fgets(str,STRLEN,fin) == NULL) {
       printf("\nERROR: 'function' without 'end function'!\n");
       return BAD_COMMAND;
     }
@@ -149,7 +149,7 @@ int parsefcn(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *
 	if (loopinfo.currentloop < loopinfo.numloops) {
 	  rewind(fin);
 	  for (int n = 1; n <= loopinfo.startline; n++) {
-	    fgets(str,STR_LENGTH,fin);
+	    fgets(str,STRLEN,fin);
 	  }
 	  line = loopinfo.startline;
 	  loopinfo.currentloop++;
@@ -186,7 +186,7 @@ int parsefcn(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *
   } while (endfcn == 0);
   
   //check below end of function (only comments allowed)
-  while (fgets(str,STR_LENGTH,fin) != NULL) {
+  while (fgets(str,STRLEN,fin) != NULL) {
     line++;
     i = skipspace(str);
     if (strstr(i,"//") != i && *i != '\n' && *i != '\0') {
@@ -250,12 +250,12 @@ varstruct *addvar(varstruct *varlist, char *name, char *val) {
 char *replacevars(varstruct *varlist, char *str) {
   //
   varstruct *v = varlist;
-  char *newstr, *a, *b, *i;
+  char *newstr = NULL, *a, *b, *i;
   int n, replacevar;
   //run through each variable in the list
   while (v != NULL) {
     //new memory needed for each variable 'sweep'
-    newstr = (char *)malloc(STR_LENGTH*sizeof(char));
+    newstr = (char *)malloc(STRLEN*sizeof(char));
     a = i = str;
     b = newstr;
     //run through all occurences of the CURRENT variable in str
