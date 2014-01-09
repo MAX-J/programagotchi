@@ -48,10 +48,10 @@ int SDL(char board[][WIDTH], char string[MAX],  SDL_Simplewin sw){
         break;
 
         case 'G':
-        Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
+        /*Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
         rectangle.x = (w*SQH);
         rectangle.y = (h*SQH+OFF);
-        SDL_RenderFillRect(sw.renderer, &rectangle);
+        SDL_RenderFillRect(sw.renderer, &rectangle);*/
         break;
 
         case 'S':
@@ -111,14 +111,14 @@ int SDL(char board[][WIDTH], char string[MAX],  SDL_Simplewin sw){
 	if(board[h][w] == 'G') {
 	  Neill_SDL_SetDrawColour(&sw, 0, 255, 0);
 	  circle.x = ((w+0.5)*SQH);
-	  circle.y = ((h+0.5)*SQH);
+	  circle.y = ((h+0.5)*SQH+OFF);
 	  Neill_SDL_RenderFillCircle(sw.renderer, circle.x, circle.y, RDS);
 	  Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
 	  circle.x = ((w+0.1)*SQH);
-	  circle.y = ((h+0.25)*SQH);
+	  circle.y = ((h+0.25)*SQH+OFF);
 	  Neill_SDL_RenderFillCircle(sw.renderer, circle.x, circle.y, RDS/3);
 	  circle.x = ((w+0.95)*SQH);
-	  circle.y = ((h+0.25)*SQH);
+	  circle.y = ((h+0.25)*SQH+OFF);
 	  Neill_SDL_RenderFillCircle(sw.renderer, circle.x, circle.y, RDS/3);
 	}
       }
