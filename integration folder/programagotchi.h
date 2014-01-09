@@ -22,6 +22,9 @@
 #define ON_HAZARD 2
 #define ATE_CANDY 3
 
+#define WIN 1
+#define LOSE 0
+
 //display
 int SDL (char board[][WIDTH], char String[MAX], SDL_Simplewin sw);
 

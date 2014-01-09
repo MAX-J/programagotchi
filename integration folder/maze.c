@@ -1,105 +1,85 @@
 /*#include "display.h"*/
-#include "programagotchi.h"
+#include "./programagotchi.h"
 
+int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter);
 
-/* Take SDL window and empty array from AY */
-/* Use SDL functions in own function to use graphics */
-/* Make header file containing pointer to 2d array and SDL window */
+int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter);
 
-/* Opens file, creates empty array, stores level in array, returns pointer to array */
-char** loadLevel(FILE **ifp, int level);
-
-/* Called by loadLevel, creates an empty 110 wide x 70 high array using calloc*/ 
-char** createEmptystate (int width, int height);
-
-/* Called by loadLevel, store game state from file into array */
-void storeGamestate(FILE **ifp, char** gamestate);
-
-void showGamestate(char** gamestate);
-
-
-int main(int argc, char* argv[]){
+int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
 	
-	FILE *ifp= NULL;
-	int level = 2;
-	char** initialgamestate;
+	int counter = 0;
+	int state = 0;
+	char str[STRLEN];
+	
+	SDL(gamearray, "Welcome to Sewer City", gamewin);
+	
+	do{
+		do{
+			printf("Enter Command:");
+			scanf("%s", &str); 
+	
+			state = runcommand(gamewin, gamearray, str);
+			
+		}while(state != -1);
+		
+		if(state == QUIT_COMMAND){
+			SDL(gamearray, "Exiting Game", gamewin);
+			return LOSE;
+		}
+		
+		else if(state == ON_EXIT){
+			SDL(gamearray, "Level Completed. Congralutations", gamewin);
+			return WIN;
+		}
+		
+		else if(state == ON_HAZARD){
+			SDL(gamearray, "Level Completed. Congralutations", gamewin);
+			return LOSE;
+		}
 
-	initialgamestate = loadLevel(&ifp, level);
+		SDL(gamearray, "Type in next move", gamewin);
+		
+		counter = moveBaddies(gamearray, counter);
+		
+		counter++;
+		
+		SDL(gamearray, "", gamewin);
+		
+	}while(state == NO_ACTION);
 	
+	return LOSE;
 	
-	
-	showGamestate(initialgamestate);
-	
-	
-	return 0;
 }
 
-void showGamestate(char** gamestate){
-	int i, j;
-
-	for(i = 0; i <  HEIGHT; i++){
-		for(j = 0; j < WIDTH; j++){
-			if(j%WIDTH == 0){
-				printf("\n");
+int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter){
+	int i,j;
+	for(j = 0; j < HEIGHT; j++){
+		for(i = 0; i < WIDTH; i++){
+			if(gamearray[i][j] == 'S'){
+				moveHorizontally(gamearray, i , j, counter);
 			}
-			printf("%c", gamestate[i][j]);
 		}
 	}
+	
+	return counter;
 }
 
-
-
-char** loadLevel(FILE **ifp, int level){
-	char** initialgamestate;
-	int i, j;
+int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter){
 	
-	switch(level){
-		case 1:
-			*ifp = fopen("level1.txt", "r");
-			break;
-		
-		case 2:
-			*ifp = fopen("level2.txt", "r");
-			break;
-			
-		default:
-			*ifp = fopen("level1.txt", "r");
+	if(gamearray[i][j - 1] == '.' && counter >= 0){
+		gamearray[i][j] = '.';
+		gamearray[i][j-1] = 'S';
+		counter++;
+		if(counter == 5){
+			counter = -5;
+		}
 	}
 	
-    if (*ifp == NULL) {		
-		printf("No such file found. Exiting...\n");
-		return (char **)EXIT_FAILURE;
-    }
-	
-	initialgamestate = createEmptystate (WIDTH, HEIGHT);
-		
-	storeGamestate(ifp, initialgamestate);
-	
-	return initialgamestate;
-}
-
-void storeGamestate(FILE **ifp, char** gamestate){
-	int i, j;
-	
-	/*For each board row*/ 
-    for (i = 0; i < HEIGHT; i++) {
-    	if((fscanf(*ifp, " %s", (char*)gamestate[i]) != 1)) {						
-    		printf("Correct values not found. Exiting...\n");
-    		EXIT;
-    	}
+	else if(gamearray[i][j - 1] == '.' && counter < 0){
+		gamearray[i][j] = '.';
+		gamearray[i][j+1] = 'S';
+		counter++;
 	}
-	fclose(*ifp);
+	return counter;
 }
-
-char** createEmptystate(int width, int height){
-	char** initialgamestate;
-	int i;
-	
-	initialgamestate = (char **) calloc(height, sizeof(char*));
-	
-	for( i = 0; i < height; i++){
-		initialgamestate[i] = (char*) calloc(width, sizeof(char));
-	}
-	
-	return initialgamestate;
-}
+				
