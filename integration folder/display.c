@@ -34,63 +34,63 @@ int SDL(char board[][WIDTH], char string[MAX],  SDL_Simplewin sw){
         case '1':
         Neill_SDL_SetDrawColour(&sw, 134, 24, 123);
         rectangle.x = (w*SQH);
-        rectangle.y = (h*SQHy+OFF);
+        rectangle.y = (h*SQH+OFF);
         SDL_RenderDrawRect(sw.renderer, &rectangle);
         break;
 
         case '#':
         Neill_SDL_SetDrawColour(&sw, 245, 251, 255);
         rectangle.x = (w*SQH);
-        rectangle.y = (h*SQHy+OFF);
+        rectangle.y = (h*SQH+OFF);
         SDL_RenderDrawRect(sw.renderer, &rectangle);
         break;
 
         case 'G':
         Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
         rectangle.x = (w*SQH);
-        rectangle.y = (h*SQHy+OFF);
+        rectangle.y = (h*SQH+OFF);
         SDL_RenderFillRect(sw.renderer, &rectangle);
         break;
 
         case 'S':
         Neill_SDL_SetDrawColour(&sw, 245, 2, 56);
         rectangle.x = (w*SQH);
-        rectangle.y = (h*SQHy+OFF);
+        rectangle.y = (h*SQH+OFF);
         SDL_RenderFillRect(sw.renderer, &rectangle);
         break;
 
         case 'B':
         Neill_SDL_SetDrawColour(&sw, 121, 134, 9);
         circle.x = (w*SQH);
-        circle.y = (h*SQHy+OFF);
+        circle.y = (h*SQH+OFF);
         Neill_SDL_RenderFillCircle(sw.renderer, circle.x, circle.y, RDS);
         break;
 
         case 'E':
         Neill_SDL_SetDrawColour(&sw, 12, 201, 178);
         rectangle.x = (w*SQH);
-        rectangle.y = (h*SQHy+OFF);
+        rectangle.y = (h*SQH+OFF);
         SDL_RenderFillRect(sw.renderer, &rectangle);
         break;
 
         case '.':
         Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
         rectangle.x = (w*SQH);
-        rectangle.y = (h*SQHy+OFF);
+        rectangle.y = (h*SQH+OFF);
         SDL_RenderFillRect(sw.renderer, &rectangle);
         break;
 
         case 'C':
         Neill_SDL_SetDrawColour(&sw, 134, 112, 255);
         rectangle.x = (w*SQH);
-        rectangle.y = (h*SQHy+OFF);
+        rectangle.y = (h*SQH+OFF);
         SDL_RenderFillRect(sw.renderer, &rectangle);
         break;
 
         default:
         Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
         rectangle.x = (w*SQH);
-        rectangle.y = (h*SQHy+OFF);
+        rectangle.y = (h*SQH+OFF);
         SDL_RenderFillRect(sw.renderer, &rectangle);
         break;
         }
