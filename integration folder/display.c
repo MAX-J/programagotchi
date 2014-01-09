@@ -9,10 +9,11 @@ int SDL(char board[][WIDTH], char string[MAX],  SDL_Simplewin sw){
   SDL_Rect circle;
   rectangle.w = SQH;
   rectangle.h = SQH;
-  int stringx = WWIDTH/2;
+  int stringx = (WWIDTH/2)-(strlen(string)*SQH);
   int stringy = OFF/2;
- Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
- Neill_SDL_DrawText(&sw, string, stringx, stringy);
+ 
+    Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
+    Neill_SDL_DrawText(&sw, string, stringx, stringy);
     
     for (int w = 0; w <WIDTH; w++){
       for (int h = 0; h <HEIGHT; h++){
