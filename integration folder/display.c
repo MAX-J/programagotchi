@@ -4,7 +4,7 @@ int SDL(char board[][WIDTH], char string[MAX],  SDL_Simplewin sw){
 
   int SQH = (WWIDTH/WIDTH);
   int RDS = 6;
-  int OFF = 40;
+  int OFF = 80;
   SDL_Rect rectangle;
   SDL_Rect circle;
   rectangle.w = SQH;
@@ -25,6 +25,7 @@ int SDL(char board[][WIDTH], char string[MAX],  SDL_Simplewin sw){
         C Candy(each one get 10 score, when you get all of them,100,win)
         S Hazard
         B Ball
+        W Net
         E Exit
         . Free space
         # Border/wall
@@ -64,6 +65,13 @@ int SDL(char board[][WIDTH], char string[MAX],  SDL_Simplewin sw){
         circle.x = (w*SQH);
         circle.y = (h*SQH+OFF);
         Neill_SDL_RenderFillCircle(sw.renderer, circle.x, circle.y, RDS);
+        break;
+
+        case 'W':
+        Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
+        circle.x = (w*SQH);
+        circle.y = (h*SQH+OFF);
+        SDL_RenderDrawRect(sw.renderer, &rectangle);
         break;
 
         case 'E':
