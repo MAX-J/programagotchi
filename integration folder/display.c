@@ -9,7 +9,7 @@ int SDL(char board[][WIDTH], char string[MAX],  SDL_Simplewin sw){
   SDL_Rect circle;
   rectangle.w = SQH;
   rectangle.h = SQH;
-  int stringx = (WWIDTH/2)-(strlen(string)*SQH);
+  int stringx = (WWIDTH/2)-strlen(string);
   int stringy = OFF/2;
  
     Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
