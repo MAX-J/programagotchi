@@ -2,7 +2,7 @@
 
 // Set up a simple (WIDTH, HEIGHT) window.
 // Attempt to hide the renderer etc. from user.
-void Neill_SDL_Init(SDL_Simplewin *sw)
+void Neill_SDL_Init(SDL_Simplewin *sw, char *WindowTitle)
 {
    
 
@@ -14,11 +14,7 @@ void Neill_SDL_Init(SDL_Simplewin *sw)
 
    sw->finished = 0;
    
-   sw->win= SDL_CreateWindow("SDL Window",
-                          SDL_WINDOWPOS_UNDEFINED,
-                          SDL_WINDOWPOS_UNDEFINED,
-                          WWIDTH, WHEIGHT,
-                          SDL_WINDOW_SHOWN);
+   sw->win= SDL_CreateWindow("Challenge Arena", 1000, 0, WWIDTH, WHEIGHT, SDL_WINDOW_SHOWN);
    if(sw->win == NULL){
       fprintf(stderr, "\nUnable to initialize SDL Window:  %s\n", SDL_GetError());
       SDL_Quit();
@@ -36,7 +32,41 @@ void Neill_SDL_Init(SDL_Simplewin *sw)
    Neill_SDL_SetDrawColour(sw, 0, 0, 0);
    SDL_RenderClear(sw->renderer);
    SDL_RenderPresent(sw->renderer);
-   SDL_SetWindowTitle(sw->win, "Game time!");
+   SDL_SetWindowTitle(sw->win, WindowTitle);
+}
+
+// Attempt to hide the renderer etc. from user.
+void Mini_SDL_Init(SDL_Simplewin *sw, char *WindowTitle)
+{
+   
+
+   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+      fprintf(stderr, "\nUnable to initialize SDL:  %s\n", SDL_GetError());
+      SDL_Quit();
+      exit(1);
+   } 
+
+   sw->finished = 0;
+   
+   sw->win= SDL_CreateWindow("Challenge Arena", 400, 50, MINIWIDTH, MINIHEIGHT, SDL_WINDOW_BORDERLESS);
+   if(sw->win == NULL){
+      fprintf(stderr, "\nUnable to initialize SDL Window:  %s\n", SDL_GetError());
+      SDL_Quit();
+      exit(1);
+   }
+
+   sw->renderer = SDL_CreateRenderer(sw->win, -1, 0);
+   if(sw->renderer == NULL){
+      fprintf(stderr, "\nUnable to initialize SDL Renderer:  %s\n", SDL_GetError());
+      SDL_Quit();
+      exit(1);
+   }
+
+   // Set screen to black
+   Neill_SDL_SetDrawColour(sw, 0, 0, 0);
+   SDL_RenderClear(sw->renderer);
+   SDL_RenderPresent(sw->renderer);
+   SDL_SetWindowTitle(sw->win, WindowTitle);
 }
 
 // Gobble all events & ignore most
@@ -59,9 +89,7 @@ void Neill_SDL_Events(SDL_Simplewin *sw)
 // Trivial wrapper to avoid complexities of renderer & alpha channels
 void Neill_SDL_SetDrawColour(SDL_Simplewin *sw, Uint8 r, Uint8 g, Uint8 b)
 {
-
    SDL_SetRenderDrawColor(sw->renderer, r, g, b, SDL_ALPHA_OPAQUE);
-
 }
 
 // Filled Circle centred at (cx,cy) of radius r, see :

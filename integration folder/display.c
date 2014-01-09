@@ -105,6 +105,25 @@ int SDL(char board[][WIDTH], char string[MAX],  SDL_Simplewin sw){
         }
       }
     }
+	
+	   for (int w = 0; w <WIDTH; w++){
+      for (int h = 0; h <HEIGHT; h++){
+	if(board[h][w] == 'G') {
+	  Neill_SDL_SetDrawColour(&sw, 0, 255, 0);
+	  circle.x = ((w+0.5)*SQH);
+	  circle.y = ((h+0.5)*SQH);
+	  Neill_SDL_RenderFillCircle(sw.renderer, circle.x, circle.y, RDS);
+	  Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
+	  circle.x = ((w+0.1)*SQH);
+	  circle.y = ((h+0.25)*SQH);
+	  Neill_SDL_RenderFillCircle(sw.renderer, circle.x, circle.y, RDS/3);
+	  circle.x = ((w+0.95)*SQH);
+	  circle.y = ((h+0.25)*SQH);
+	  Neill_SDL_RenderFillCircle(sw.renderer, circle.x, circle.y, RDS/3);
+	}
+      }
+    }
+	
     // Updates window - no graphics appear on some devices until this is finished
     SDL_RenderPresent(sw.renderer);
     SDL_UpdateWindowSurface(sw.win);
