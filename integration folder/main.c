@@ -100,7 +100,7 @@ int SDL_Events_Games(Display *d, SDL_Simplewin sw, int level[4])
 		   }
 		   YourLevel(sw, level[LVL]);
 		   read2array(file, gamearray);
-		   SDL(gamearray, gamewin);
+		   SDL(gamearray, "", gamewin);
 		   do {
 		     printf("\nEnter Command: ");
 		     fgets(commandstr,STR_LENGTH,stdin);
