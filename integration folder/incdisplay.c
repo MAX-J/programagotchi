@@ -71,6 +71,12 @@ void Incubator(Display *d, int x, int y)
   paint(d, x, y);
 }
 
+void CloseIncubator(Display *d)
+{
+  atexit(SDL_Quit);
+  SDL_DestroyWindow(d->window); 
+}
+
 void MAXJ_SDL_DrawText(Display *d, const char* text, int ox, int oy)
 {
    unsigned int i, x, y, col, row, len;
