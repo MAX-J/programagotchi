@@ -1,30 +1,11 @@
 /*#include "display.h"*/
 #include "./programagotchi.h"
 
+int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter);
 
+int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter);
 
-/* Take SDL window and empty array from AY */
-/* Use SDL functions in own function to use graphics */
-/* Make header file containing pointer to 2d array and SDL window */
-
-/* Opens file, creates empty array, stores level in array, returns pointer to array */
-char** loadLevel(FILE **ifp, int level);
-
-/* Called by loadLevel, creates an empty 110 wide x 70 high array using calloc*/ 
-char** createEmptystate (int width, int height);
-
-/* Called by loadLevel, store game state from file into array */
-void storeGamestate(FILE **ifp, char** gamestate);
-
-void showGamestate(char gamearray[HEIGHT][WIDTH]);
-
-void moveBaddies(char gamearray[HEIGHT][WIDTH], int counter);
-
-void moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j);
-
-void checkExit(char gamearray[HEIGHT][WIDTH]);
-
-void playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
+int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
 	
 	int counter = 0;
 	int state = 0;
@@ -37,7 +18,7 @@ void playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
 			printf("Enter Command:");
 			scanf("%s", &str); 
 	
-			state = runcommand(gamewin, displaygrid, str);
+			state = runcommand(gamewin, gamearray, str);
 			
 		}while(state != -1);
 		
@@ -75,29 +56,13 @@ int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter){
 	for(j = 0; j < HEIGHT; j++){
 		for(i = 0; i < WIDTH; i++){
 			if(gamearray[i][j] == 'S'){
-				moveHorizontally(gamearray, i , j);
+				moveHorizontally(gamearray, i , j, counter);
 			}
 		}
 	}
 	
 	return counter;
 }
-
-int checkExit(char gamearray[HEIGHT][WIDTH]){
-	
-	int i, j;
-	
-	for(j = 0; j < HEIGHT; j++){
-		for(i = 0; i < WIDTH; i++){
-			if(gamearray[i][j] == 'E' && gamearray[i-1][j] =='){
-				moveHorizontally(gamearray, i , j);
-			}
-		}
-	}
-	
-	return 0;
-}
-
 
 int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter){
 	
@@ -118,73 +83,3 @@ int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter){
 	return counter;
 }
 				
-void showGamestate(char gamearray[HEIGHT][WIDTH]){
-	int i, j;
-
-	for(i = 0; i <  HEIGHT; i++){
-		for(j = 0; j < WIDTH; j++){
-			if(j%WIDTH == 0){
-				printf("\n");
-			}
-			printf("%c", gamearray[i][j]);
-		}
-	}
-}
-
-
-
-char** loadLevel(FILE **ifp, int level){
-	char** initialgamestate;
-	int i, j;
-	
-	switch(level){
-		case 1:
-			*ifp = fopen("level1.txt", "r");
-			break;
-		
-		case 2:
-			*ifp = fopen("level2.txt", "r");
-			break;
-			
-		default:
-			getchar();
-			*ifp = fopen("level1.txt", "r");
-	}
-	
-    if (*ifp == NULL) {		
-		printf("No such file found. Exiting...\n");
-		return (char **)EXIT_FAILURE;
-    }
-	
-	initialgamestate = createEmptystate (WIDTH, HEIGHT);
-		
-	storeGamestate(ifp, initialgamestate);
-	
-	return initialgamestate;
-}
-
-void storeGamestate(FILE **ifp, char** gamestate){
-	int i;
-	
-	/*For each board row*/ 
-    for (i = 0; i < HEIGHT; i++) {
-    	if((fscanf(*ifp, " %s", (char*)gamestate[i]) != 1)) {						
-    		printf("Correct values not found. Exiting...\n");
-    		EXIT;
-    	}
-	}
-	fclose(*ifp);
-}
-
-char** createEmptystate(int width, int height){
-	char** initialgamestate;
-	int i;
-	
-	initialgamestate = (char **) calloc(height, sizeof(char*));
-	
-	for( i = 0; i < height; i++){
-		initialgamestate[i] = (char*) calloc(width, sizeof(char));
-	}
-	
-	return initialgamestate;
-}
