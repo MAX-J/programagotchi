@@ -9,7 +9,6 @@
 #define BLACK 0,0,0
 #define BLUE 0,0,255
 #define MIN(a,b) ((a) < (b) ? (a) : (b)) /* standard min fcn (net/lecture notes) */
-#define STR_LENGTH 100
 #define DELAY 50
 #define NULL_CHAR 'N'
 
@@ -23,14 +22,14 @@ int objectongrid(char displaygrid[HEIGHT][WIDTH], char selectedobj);
 void RemoveSpaces(char *inputstr, char *newstr);
 
 
-
 //----parse individual 'command' lines (from fcn file OR terminal input)-----//
 void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commandstr) {
 
   char selectedobj = NULL_CHAR;
-  char formattedstr[STR_LENGTH], *i;
+  char formattedstr[STRLEN], filestr[STRLEN], *i;
   int n = 0, rowshift = 0, colshift = 0, distance = 1, numchars, j;
   Direction dir = right; 
+  FILE *ftemp;
   
   //define all 'objects' that may be added grid
   const char *objstrings[5] = {"gotchi","ball",NULL,NULL,NULL};
@@ -137,7 +136,7 @@ void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *command
     // apply the move - loop depending on the 'distance' for GOTCHI to travel
     for (j = 1; j <= distance; j++) {
       moveobject(displaygrid,selectedobj,rowshift,colshift);
-      SDL(displaygrid, "hello " ,sw);
+      SDL(displaygrid,"",sw);
       SDL_Delay(DELAY);
     }
   }
@@ -198,20 +197,38 @@ void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *command
     addobject(displaygrid,selectedobj,dir);       
     SDL(displaygrid,"",sw);
   }
-  
-  
+   
   //------NO 'BASE' COMMAND RECOGNISED---------//
+  //revert to custom function files
   else {
-    
-    //---UPDATE: FIRST SEARCH FOR VALID FUNCTIONS (.txt files) THAT MATCH THE STRING!-----//
-    // CALL THE 'FUNCTION READER' (which will end up referring back to this parser!)
-    
-    //otherwise...
-    printf("\nERROR: Command not recognised\n");
-    return;    
-  
+    //check for '.gfn' (gotchi function) file in current folder matching the command
+    //if none matching, then this must be a bad command
+    strcpy(filestr,commandstr);
+    strcat(strtok(filestr," \t\n\0"),".gfn");
+    if ((ftemp = fopen(filestr,"r")) == NULL) {
+      printf("\nERROR: Command not recognised\n");
+      return BAD_COMMAND;    
+    }
+    //if match found, parse the file as a 'function'
+    //note: use unformatted command str (without spaces removed)
+    else {
+      fclose(ftemp);
+      ret = parsefcn(sw,displaygrid,filestr,commandstr);
+      //--------------HANDLE THE 'STATUS CHAIN'-----------------//
+      /* anything apart from SUCCESS means that the current 'move'
+       * should come to an end, and the status message should be 
+       * passed all the way back up to the original caller to 
+       * 'runcommand' (probably one of the game modules) */
+      if (ret != SUCCESS) {
+	//for 'bad commands' also add error message to the 'stack'
+	if (ret == BAD_COMMAND) {
+	  printf("\nERROR in runcommand: Problem parsing file WHATEVER\n");
+	}
+	return ret;
+      }
+    }
   }
-  
+  return SUCCESS;
 }
 
 

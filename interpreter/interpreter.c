@@ -20,6 +20,7 @@
 #define BLUE 0,0,255
 #define MIN(a,b) ((a) < (b) ? (a) : (b)) /* standard min fcn (net/lecture notes) */
 //CHANGEHERE(STR_LENGTH IS MOVED TO H FILE AND INCREASED TO 400)
+//ALSO CHANGED TO 'STRLEN'
 #define DELAY 50
 #define NULL_CHAR 'N'
 
