@@ -171,6 +171,9 @@ int parsefcn(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *filestr, c
     //EVERYTHING ELSE EXCEPT COMMENTS: PASS TO 'RUNCOMMAND'//
     //must either be a 'base function' or something invalid
     else if (strstr(i,"//") != i && *i != '\n' && *i != '\0') {
+      
+      printf("\nattempting to run command: %s\n",formattedstr);
+      
       ret = runcommand(sw,displaygrid,formattedstr);
       //--------------HANDLE THE 'STATUS CHAIN'-----------------//
       /* anything apart from SUCCESS means that the current 'move'

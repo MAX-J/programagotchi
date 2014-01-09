@@ -1,11 +1,8 @@
 //test comments
-function jump height dir
+function jump dir height
 move up height
-move up and dir height
+move up and dir 3
 move right
-move down and dir height
+move down and dir 3
+move down height
 end function
-
-
-
-
