@@ -177,12 +177,10 @@ int parsefcn(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *
        * should come to an end, and the status message should be 
        * passed all the way back up to the original caller to 
        * 'runcommand' (probably one of the game modules) */
-      if (ret != SUCCESS) {
 	//for 'bad commands' also add error message to the 'stack'
-	if (ret == BAD_COMMAND) {
-	  printf("\nERROR: Problem running command at line WHATEVER\n");
-	}
-	return ret;
+      if (ret == BAD_COMMAND) {
+	printf("\nERROR: Problem running command at line WHATEVER\n");
+	return BAD_COMMAND;
       }
     }
   } while (endfcn == 0);
@@ -204,7 +202,7 @@ int parsefcn(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *
   } 
   
   //all good
-  return SUCCESS;
+  return NO_ACTION;
   
 } 
 

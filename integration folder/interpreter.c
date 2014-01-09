@@ -23,11 +23,11 @@ void RemoveSpaces(char *inputstr, char *newstr);
 
 
 //----parse individual 'command' lines (from fcn file OR terminal input)-----//
-void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commandstr) {
+int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commandstr) {
 
   char selectedobj = NULL_CHAR;
   char formattedstr[STRLEN], filestr[STRLEN], *i;
-  int n = 0, rowshift = 0, colshift = 0, distance = 1, numchars, j;
+  int n = 0, rowshift = 0, colshift = 0, distance = 1, numchars, j, ret;
   Direction dir = right; 
   FILE *ftemp;
   
@@ -60,12 +60,12 @@ void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *command
       //no match for specified object!
       if (selectedobj == NULL_CHAR) {
 	printf("\nERROR: Invalid object!\n");
-	return;
+	return BAD_COMMAND;
       }
       //match found but object not added to display grid yet
       if (objectongrid(displaygrid,selectedobj) == 0) {
 	printf("\nERROR: Need to add object before you can move it!\n");
-	return;
+	return BAD_COMMAND;
       }
     }
     //handle the 'initial direction' part of the string//
@@ -87,7 +87,7 @@ void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *command
     }
     else {
       printf("ERROR: Expecting up, down, left or right");
-      return;
+      return BAD_COMMAND;
     }
     
     //UPDATE: NOT CHECKING END OF STRING PROPERLY!! CATCHES ERRORS WHEN IT SHOULDN'T!
@@ -118,7 +118,7 @@ void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *command
       }
       else {
 	printf("ERROR: Expecting 'and up', 'and down', 'and left' or 'and right', or a number");
-	return;
+	return BAD_COMMAND;
       }
     }
     //if end of str STILL not reached, expect number at end representing 'distance'
@@ -130,7 +130,7 @@ void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *command
       }
       else {
 	printf("ERROR: Expecting a positive integer at end of command");
-	return;
+	return BAD_COMMAND;
       }
     }
     // apply the move - loop depending on the 'distance' for GOTCHI to travel
@@ -156,12 +156,12 @@ void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *command
     //no match for the specified object
     if (selectedobj == NULL_CHAR) {
       printf("\nERROR: Invalid object!\n");
-      return;
+      return BAD_COMMAND;
     }
     //match found, but object has already been added to grid
     if (objectongrid(displaygrid,selectedobj) == 1) {
       printf("\nERROR: Object has already been added!\n");
-      return;
+      return BAD_COMMAND;
     }
     //end of string not reached - expect 'direction' specifier
     
@@ -186,7 +186,7 @@ void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *command
       }
       else {
 	printf("\nERROR: Expecting left, right, above or below\n");
-	return;
+	return BAD_COMMAND;
       }
     }
     //no direction specifier - assume right-hand side placement
@@ -219,16 +219,13 @@ void runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *command
        * should come to an end, and the status message should be 
        * passed all the way back up to the original caller to 
        * 'runcommand' (probably one of the game modules) */
-      if (ret != SUCCESS) {
-	//for 'bad commands' also add error message to the 'stack'
-	if (ret == BAD_COMMAND) {
-	  printf("\nERROR in runcommand: Problem parsing file WHATEVER\n");
-	}
-	return ret;
+      if (ret == BAD_COMMAND) {
+	printf("\nERROR in runcommand: Problem parsing file WHATEVER\n");
+	return BAD_COMMAND;
       }
     }
   }
-  return SUCCESS;
+  return NO_ACTION;
 }
 
 

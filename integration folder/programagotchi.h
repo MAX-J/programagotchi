@@ -29,5 +29,5 @@
 int SDL (char board[][WIDTH], char String[MAX], SDL_Simplewin sw);
 
 //interpreter
-int runcommand(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *inputstr);
-int parsefcn(SDL_Simplewin sw, char displaygrid[GRID_HEIGHT][GRID_WIDTH], char *filestr, char *commandstr);
+int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *inputstr);
+int parsefcn(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *filestr, char *commandstr);
