@@ -87,7 +87,7 @@ int SDL_Events_Games(Display *d, int level[4])
 		     Neill_SDL_Init(&gamewin, "Maze Game Level 2");
 	     }
 	     //YourLevel(level[LVL]);
-	     Incubator(d, 0, 0);
+	     Incubator(d, 150, 200);
 	     read2array(file, gamearray);
 	     SDL(gamearray, "", gamewin);
 	     do {
@@ -130,8 +130,8 @@ int SDL_Events_Games(Display *d, int level[4])
 		 file = fopen("level2.txt", "r");
 		 Neill_SDL_Init(&gamewin, "Maze Game Level 2");
 	       }
-	       //YourLevel(level[LVL]);
 	       Incubator(d, 0, 0);
+	       paint(d, 150, 200);
 	       read2array(file, gamearray);
 	       SDL(gamearray, "", gamewin);
 	       do {
