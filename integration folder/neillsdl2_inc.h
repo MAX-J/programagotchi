@@ -11,8 +11,8 @@
 
 #define FONTCHARS 256
 #define FONTBYTESCHAR 8
-#define FNT_FONTHEIGHT 16
-#define FNT_FONTWIDTH 16
+#define FNT_FONTHEIGHT 8
+#define FNT_FONTWIDTH 8
 
 #ifndef M_PI
 #define M_PI           3.14159265358979323846
