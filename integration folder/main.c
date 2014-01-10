@@ -5,6 +5,9 @@
 #define MLVL 1
 #define BLVL 2
 #define LVL  3
+#define JUMP 0
+#define MAZE 1
+#define BBALL 2
 
 int SDL_Events_Games(Display *d, int level[4]);
 
@@ -22,6 +25,10 @@ int IncubatorButtonClicked(int x, int y);
 
 int XYInMenu(int x, int y);
 
+int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int level[4]);
+
+int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int game, int level);
+
 // Move the Gotchi in the incubator.
 int main()
 {
@@ -34,11 +41,9 @@ int main()
   fscanf(lvlfile, "%d %d %d", &level[JLVL], &level[MLVL], &level[BLVL]);
   fclose(lvlfile);
   level[LVL] = level[JLVL] +  level[MLVL] + level[BLVL];
-  /*level++;*/
   lvlfile = fopen("level.txt", "w");
   fprintf(lvlfile, "%d %d %d", level[JLVL], level[MLVL], level[BLVL]);
   fclose(lvlfile);
-  //YourLevel(level[LVL]);
   d = start(W, H, "./newinc.bmp", "./gotchipod.bmp");
   while(1) { 
     //MAXJ_SDL_DrawText(d, "level", 10, 10);
@@ -55,106 +60,26 @@ int main()
 // Gobble all events & ignore most
 int SDL_Events_Games(Display *d, int level[4])
 {
-  char commandstr[STR_LENGTH];
   char gamearray[HEIGHT][WIDTH];
   SDL_Simplewin gamewin;
   SDL_Event event;
-  SDL_Event event2;
-  FILE *file;
-  int a = 0, loop = 0;
   while(SDL_PollEvent(&event)) {      
      switch (event.type){
      case SDL_MOUSEBUTTONDOWN:
        if(IncubatorButtonClicked(event.button.x, event.button.y) == 1)  {
-	 Menu(d, 0, 0);
-	 loop = 1;
-       }
-       while(loop > 0) {
-       while(SDL_PollEvent(&event2)) {   
-	 switch (event2.type){
-	 case SDL_MOUSEBUTTONDOWN:
-	   if((a = XYInMenu(event2.button.x, event2.button.y)) > 0 && a <= 3) {
-	     if(a == 1) {
-		     file = fopen("jump.txt", "r");
-		     Neill_SDL_Init(&gamewin, "Jump Game Level 1");
-	     }
-	     if(a == 2) {
-	       file = fopen("level1.txt", "r");
-	       Neill_SDL_Init(&gamewin, "Maze Game Level 1");
-	     }
-	     if(a == 3) {
-	       file = fopen("level2.txt", "r");
-		     Neill_SDL_Init(&gamewin, "Maze Game Level 2");
-	     }
-	     //YourLevel(level[LVL]);
-	     Incubator(d, 150, 200);
-	     read2array(file, gamearray);
-	     SDL(gamearray, "", gamewin);
-	     do {
-	       printf("\nEnter Command: ");
-	       fgets(commandstr,STR_LENGTH,stdin);
-	       //remove spaces to simplify processing 
-	       //parse the command line
-	       runcommand(gamewin, gamearray, commandstr); 	    
-	       Neill_SDL_Events(&gamewin);
-	     }while(!gamewin.finished);
-	     loop = 0;
-	   }
-	   if(a == 0) {
-	     Incubator(d, 0, 0);
-	     loop = 0;
-	   }
-	 }
-       }
+	 Menu(d);
+	 SDL_Menu_Events(d, gamearray, gamewin, level);
        }
        return 0;
      case SDL_KEYDOWN:
        switch(event.key.keysym.sym){
        case SDLK_m:
-	 Menu(d, 0, 0);
-	 loop = 1;
-	 while(loop > 0) {
-	 while(SDL_PollEvent(&event2)) {   
-	   switch (event2.type){
-	   case SDL_MOUSEBUTTONDOWN:
-	     if((a = XYInMenu(event2.button.x, event2.button.y)) > 0 && a <= 3) {
-	       if(a == 1) {
-		 file = fopen("jump.txt", "r");
-		 Neill_SDL_Init(&gamewin, "Jump Game Level 1");
-	       }
-	       if(a == 2) {
-		 file = fopen("level1.txt", "r");
-		 Neill_SDL_Init(&gamewin, "Maze Game Level 1");
-	       }
-	       if(a == 3) {
-		 file = fopen("level2.txt", "r");
-		 Neill_SDL_Init(&gamewin, "Maze Game Level 2");
-	       }
-	       Incubator(d, 0, 0);
-	       paint(d, 150, 200);
-	       read2array(file, gamearray);
-	       SDL(gamearray, "", gamewin);
-	       do {
-		 printf("\nEnter Command: ");
-		 fgets(commandstr,STR_LENGTH,stdin);
-		 //remove spaces to simplify processing 
-		 //parse the command line
-		 runcommand(gamewin, gamearray, commandstr); 	    
-		 Neill_SDL_Events(&gamewin);
-	       }while(!gamewin.finished);
-	       loop = 0;
-	     }
-	     if(a == 0) {
-	       Incubator(d, 0, 0);
-	       loop = 0;
-	     }
-	   }
-	 }
-	 }
-	 return 0;
-       default:
-	 exit(1);
-	 return 0;
+	 Menu(d);
+	 SDL_Menu_Events(d, gamearray, gamewin, level);
+       return 0;
+     default:
+       exit(1);
+       return 0;
        }
      }
   }
@@ -235,18 +160,115 @@ int IncubatorButtonClicked(int x, int y)
 int XYInMenu(int x, int y)
 {
   if((x <= 325 && x >= 45) && (y <= 120 && y >= 30)) {
-    return 1;
+    return JUMP;
   }
   if((x <= 325 && x >= 45) && (y <= 230 && y >= 140)) {
-     return 2;
+     return MAZE;
   }
   if((x <= 325 && x >= 45) && (y <= 340 && y >= 250)) {
-    return 3;
+    return BBALL;
   }
   if((x <= 325 && x >= 45) && (y <= 450 && y >= 360)) {
-    return 0;
+    return 3;
   }
   return 4;
 }
 
+int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int level[4])
+{
+  int a, loop = 1, result = 0;
+  SDL_Event MenuEvent;
+  while(loop > 0) {
+    while(SDL_PollEvent(&MenuEvent)) {   
+      switch (MenuEvent.type){
+      case SDL_MOUSEBUTTONDOWN:
+	if((a = XYInMenu(MenuEvent.button.x, MenuEvent.button.y)) < 3) {
+	  if(a == JUMP) {
+	    SubMenu(d, level[JUMP]);
+	    result =SDL_SubMenu_Events(d, gamearray, gamewin, a, level[JUMP]);
+	    return result;
+	  }
+	  if(a == MAZE) {
+	    SubMenu(d, level[MAZE]);
+	    result = SDL_SubMenu_Events(d, gamearray, gamewin, a, level[MAZE]);
+	    return result;
+	  }
+	  if(a == BBALL) {
+	    SubMenu(d, level[BBALL]);
+	    result = SDL_SubMenu_Events(d, gamearray, gamewin, a, level[BBALL]);
+	    return result;
+	  }
+	  loop = 0;
+	}
+	if(a == 3) {
+	  Incubator(d);
+	  loop = 0;
+	}
+      }
+    }
+  }
+  return 0;
+}
 
+int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int game, int level)
+{
+  char commandstr[STR_LENGTH];
+  int a, loop = 1;
+  SDL_Event SubMenuEvent;
+  FILE *file;
+  while(loop > 0) {
+    while(SDL_PollEvent(&SubMenuEvent)) {   
+      switch (SubMenuEvent.type){
+      case SDL_MOUSEBUTTONDOWN:
+	if((a = XYInMenu(SubMenuEvent.button.x, SubMenuEvent.button.y)) < 3) {
+	  if(a == 0 && game == JUMP) {
+	    if(a < level) {
+	      file = fopen("jump.txt", "r");
+	      Neill_SDL_Init(&gamewin, "Jump Game Level 1");
+	    }
+	    else {
+	      loop++;
+	    }
+	  }
+	  if(a == 1 && game == JUMP) {
+	    if(a < level) {
+	      file = fopen("jump.txt", "r");
+	      Neill_SDL_Init(&gamewin, "Jump Game Level 2");
+	    }
+	    else {
+	      loop++;
+	    }
+	  }
+	  if(a == 2 && game == JUMP) {
+	    if(a < level) {
+	      file = fopen("jump.txt", "r");
+	      Neill_SDL_Init(&gamewin, "Jump Game Level 3");
+	    }
+	    else {
+	      loop++;
+	    }
+	  }
+	  if(loop == 1) {
+	    Incubator(d);
+	    read2array(file, gamearray);
+	    SDL(gamearray, "", gamewin);
+	    do {
+	      printf("\nEnter Command: ");
+	      fgets(commandstr,STR_LENGTH,stdin);
+	      //remove spaces to simplify processing 
+	      //parse the command line
+	      runcommand(gamewin, gamearray, commandstr); 	    
+	      Neill_SDL_Events(&gamewin);
+	    }while(!gamewin.finished);
+	  }
+	}
+	loop--;
+	if(a == 3) {
+	  Incubator(d);
+	  loop--;
+	}
+      }
+    }
+  }
+  return 0;
+}

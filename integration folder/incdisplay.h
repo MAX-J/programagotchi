@@ -12,8 +12,8 @@ void paint(Display *d, int x, int y);
 
 void MAXJ_SDL_DrawText(Display *d, const char* text, int x, int y);
 
-void Menu(Display *d, int x, int y);
+void Incubator(Display *d);
 
-void Incubator(Display *d, int x, int y);
+void Menu(Display *d);
 
-void CloseIncubator(Display *d);
+void SubMenu(Display *d, int level);

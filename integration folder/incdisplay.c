@@ -59,22 +59,32 @@ if (event->type == SDL_QUIT) { SDL_Quit(); exit(0); }
 SDL_Delay(200);
 }
 
-void Menu(Display *d, int x, int y)
-{
-  d->fg = SDL_LoadBMP("./fg.bmp");
-  paint(d, x, y);
-}
-
-void Incubator(Display *d, int x, int y)
+void Incubator(Display *d)
 {
   d->fg = SDL_LoadBMP("./gotchipod.bmp");
-  paint(d, x, y);
+  paint(d, 150, 200);
 }
 
-void CloseIncubator(Display *d)
+void Menu(Display *d)
 {
-  atexit(SDL_Quit);
-  SDL_DestroyWindow(d->window); 
+  d->fg = SDL_LoadBMP("./fg.bmp");
+  paint(d, 0, 0);
+}
+
+void SubMenu(Display *d, int level)
+{
+  if(level == 1) {
+      d->fg = SDL_LoadBMP("./one unlocked.bmp");
+      paint(d, 0, 0);
+  }
+  else if(level == 2) {
+      d->fg = SDL_LoadBMP("./two unlocked.bmp");
+      paint(d, 0, 0);
+  }
+  else {
+      d->fg = SDL_LoadBMP("./all unlocked.bmp");
+      paint(d, 0, 0);
+  }
 }
 
 void MAXJ_SDL_DrawText(Display *d, const char* text, int ox, int oy)

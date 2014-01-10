@@ -2,7 +2,7 @@
 #include <math.h>
 
 #define WWIDTH 1100
-#define WHEIGHT 700
+#define WHEIGHT 780
 
 #define MINIWIDTH  171
 #define MINIHEIGHT 180
