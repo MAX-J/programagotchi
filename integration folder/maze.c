@@ -1,26 +1,32 @@
 /*#include "display.h"*/
 #include "./programagotchi.h"
 
-int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter);
+int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter, SDL_Simplewin gamewin);
 
-int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter);
+int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter, SDL_Simplewin gamewin);
 
-int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
+int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	
 	int counter = 0;
 	int state = 0;
 	char str[STRLEN];
 	
 	SDL(gamearray, "Welcome to Sewer City", gamewin);
-	
+	  
 	do{
 		do{
 			printf("Enter Command:");
-			scanf("%s", &str); 
-	
-			state = runcommand(gamewin, gamearray, str);
 			
-		}while(state != -1);
+			fgets(str,STRLEN,stdin);
+			
+			if(str[0] == '\n'){
+				state = BAD_COMMAND;
+			}
+			else{
+				state = runcommand(gamewin, gamearray, str);
+				state = 0; /* Will be removed in future */
+			}
+		}while(state == BAD_COMMAND);
 		
 		if(state == QUIT_COMMAND){
 			SDL(gamearray, "Exiting Game", gamewin);
@@ -33,53 +39,85 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
 		}
 		
 		else if(state == ON_HAZARD){
-			SDL(gamearray, "Level Completed. Congralutations", gamewin);
+			SDL(gamearray, "You died", gamewin);
 			return LOSE;
 		}
-
+		
 		SDL(gamearray, "Type in next move", gamewin);
 		
-		counter = moveBaddies(gamearray, counter);
+		if(counter == 0 || counter == 1){
+			counter = moveBaddies(gamearray, counter, gamewin);
+		}
 		
-		counter++;
+		if(counter == ON_HAZARD){
+			SDL(gamearray, "You died", gamewin);
+			return LOSE;
+		}
 		
 		SDL(gamearray, "", gamewin);
 		
-	}while(state == NO_ACTION);
+		Neill_SDL_Events(&gamewin);
+	
+	}while(state == NO_ACTION || !gamewin.finished);
 	
 	return LOSE;
 	
 }
 
-int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter){
+int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter, SDL_Simplewin gamewin){
 	int i,j;
+	
 	for(j = 0; j < HEIGHT; j++){
 		for(i = 0; i < WIDTH; i++){
 			if(gamearray[i][j] == 'S'){
-				moveHorizontally(gamearray, i , j, counter);
+				j = moveHorizontally(gamearray, i , j, counter, gamewin);
+				i++;
+			}
+			if( j < 0){
+				return ON_HAZARD
 			}
 		}
 	}
+	counter = (counter+ 1)%2;
 	
 	return counter;
 }
 
-int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter){
-	
-	if(gamearray[i][j - 1] == '.' && counter >= 0){
-		gamearray[i][j] = '.';
-		gamearray[i][j-1] = 'S';
-		counter++;
-		if(counter == 5){
-			counter = -5;
+int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter, SDL_Simplewin gamewin){
+	int count = 0;
+		if((gamearray[i][j - 1] == 'G' || gamearray[i][j - 1] == '.') && counter == 0){
+			do{
+				if(gamearray[i][j - 1] == 'G'){
+					return -5; 
+				}	
+				gamearray[i][j] = '.';
+				gamearray[i][j-1] = 'S';
+				SDL(gamearray, "", gamewin);
+				j--;
+				count++;
+			}while(count != 5);
 		}
+		
+	else if((gamearray[i][j + 1] == 'G' || gamearray[i][j + 1] == '.') && counter == 1){
+		do{
+			if(gamearray[i][j + 1] == 'G'){
+				return -5; 
+			}
+			gamearray[i][j] = '.';
+			gamearray[i][j+1] = 'S';	
+			SDL(gamearray, "", gamewin);
+			j++;
+			count++;
+		}while(count!= 5);
 	}
-	
-	else if(gamearray[i][j - 1] == '.' && counter < 0){
-		gamearray[i][j] = '.';
-		gamearray[i][j+1] = 'S';
-		counter++;
-	}
-	return counter;
+
+	return j;
 }
+
+/*void Incubator(Display *d)
+{
+  d->fg = SDL_LoadBMP("./exit.bmp");
+  paint(d, 150, 200);
+}*/
+
 				
