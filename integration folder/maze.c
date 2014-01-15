@@ -37,7 +37,7 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 			}
 
 			if(state == ON_EXIT){
-				SDL(gamearray, "Level Completed. Congratulations",NO_SCORE, gamewin);
+				SDL(gamearray, "Level Completed. Congratulations",score, gamewin);
 				return WIN;
 			}
 
@@ -46,7 +46,7 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 
 		}while(state == BAD_COMMAND);
 		if(firstmove){
-			SDL(gamearray, "You did it. Congratulations",NO_SCORE, gamewin);
+			SDL(gamearray, "You did it. Congratulations",score, gamewin);
 			firstmove = 0;		
 		}		
 
@@ -56,7 +56,7 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 		}
 		
 		else if(state == ON_EXIT){
-			SDL(gamearray, "Level Completed. Congratulations",NO_SCORE, gamewin);
+			SDL(gamearray, "Level Completed. Congratulations",score, gamewin);
 			return WIN;
 		}
 		
@@ -74,7 +74,7 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 			return LOSE;
 		}
 		
-		SDL(gamearray, "Type in next move", 0, gamewin);
+		SDL(gamearray, "Type in next move", score, gamewin);
 		
 		Neill_SDL_Events(&gamewin);
 	
