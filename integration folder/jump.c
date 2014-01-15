@@ -22,7 +22,7 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 			}
 			else{
 				state = runcommand(gamewin,gamearray,str);
-				ptintf("%d",state);
+				printf("%d",state);
 				
 				if(state == ATE_CANDY){
 				SDL(gamearray,"You got candy",score+=10,gamewin);
