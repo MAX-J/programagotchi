@@ -13,6 +13,9 @@
 #define FONTBYTESCHAR 8
 #define FNT_FONTHEIGHT 8
 #define FNT_FONTWIDTH 8
+//JT: Seperate #defines for actual height and width of font
+#define FNT_HEIGHT 16
+#define FNT_WIDTH 16
 
 #ifndef M_PI
 #define M_PI           3.14159265358979323846
