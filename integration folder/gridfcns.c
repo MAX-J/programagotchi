@@ -58,7 +58,11 @@ int moveobject(char displaygrid[HEIGHT][WIDTH], char selectedobj, int rowshift, 
 	    displaygrid[row][col] = FREE_SPACE;
 	    return HIT_BASKET;
 	  }
-	  
+	  //--GOTCHI hits candy--//
+	  else if (selectedobj == GOTCHI && nextchar == CANDY) {
+	    displaygrid[newrow][newcol] = FREE_SPACE;
+	    return ATE_CANDY;
+	  }
 	  //--run into any other obstacle--//
 	  //stop object in current position. Return status depends on object in question
 	  else if (nextchar != FREE_SPACE) {
