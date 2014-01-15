@@ -1,6 +1,6 @@
 #include "programagotchi.h"
 
-int SDL(char board[][WIDTH], char string[MAX],  SDL_Simplewin sw){
+int SDL(char board[][WIDTH], char string[MAX], char score[MAX], SDL_Simplewin sw){
 
   int SQH = (WWIDTH/WIDTH);
   int RDS = 6;
@@ -10,11 +10,16 @@ int SDL(char board[][WIDTH], char string[MAX],  SDL_Simplewin sw){
   rectangle.w = SQH;
   rectangle.h = SQH;
   int stringx = (WWIDTH/2)-strlen(string);
+  int scorex = OFF/2;
   int stringy = OFF/2;
  
     Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
     Neill_SDL_DrawText(&sw, string, stringx, stringy);
-    
+
+    if(strlen(score) != 0){
+    Neill_SDL_DrawText(&sw, score, scorex, stringy);
+    }
+
     for (int w = 0; w <WIDTH; w++){
       for (int h = 0; h <HEIGHT; h++){
     
