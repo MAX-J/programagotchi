@@ -15,6 +15,7 @@
 #define EXIT exit(2)
 
 //
+#define NO_SCORE -1
 #define FREE_SPACE '.'
 #define BORDER '#'
 #define BARRIER '1'
@@ -40,7 +41,7 @@
 #define LOSE 0
 
 //display
-int SDL (char board[][WIDTH], char string[MAX], chat score[MAX], SDL_Simplewin sw);
+int SDL (char board[][WIDTH], char string[MAX], int score, SDL_Simplewin sw);
 
 //interpreter
 int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *inputstr);
