@@ -28,7 +28,6 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 			}
 			else{
 				state = runcommand(gamewin, gamearray, str);
-				state = 0; /* Will be removed in future */
 			}
 		}while(state == BAD_COMMAND);
 		if(firstmove){
