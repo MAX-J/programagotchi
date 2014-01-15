@@ -15,13 +15,27 @@
 #define EXIT exit(2)
 
 //
-#define QUIT_COMMAND -2
-#define BAD_COMMAND -1
-#define NO_ACTION 0
-#define ON_EXIT 1
-#define ON_HAZARD 2
-#define ATE_CANDY 3
+#define FREE_SPACE '.'
+#define BORDER '#'
+#define BARRIER '1'
+#define EXIT_POINT 'E'
+#define HAZARD 'S'
+#define CANDY 'C'
+#define NET 'W'
+#define GOTCHI 'G'
+#define BALL 'B'
 
+//
+#define NO_ACTION 0
+#define GENERAL_STOP -1
+#define BAD_COMMAND -2
+#define QUIT_COMMAND -3
+#define HIT_OBSTACLE -4
+#define ON_EXIT -5
+#define ON_HAZARD -6
+#define ATE_CANDY -7
+#define HIT_BASKET -8
+//
 #define WIN 1
 #define LOSE 0
 
