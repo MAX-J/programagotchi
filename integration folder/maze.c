@@ -11,7 +11,7 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	int state = 0;
 	char str[STRLEN];
 	
-	SDL(gamearray, "Welcome to Sewer City", gamewin);
+	SDL(gamearray, "Welcome to Sewer City", NO_SCORE,gamewin);
 	  
 	do{
 		do{
@@ -29,32 +29,32 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 		}while(state == BAD_COMMAND);
 		
 		if(state == QUIT_COMMAND){
-			SDL(gamearray, "Exiting Game", gamewin);
+			SDL(gamearray, "Exiting Game",NO_SCORE, gamewin);
 			return LOSE;
 		}
 		
 		else if(state == ON_EXIT){
-			SDL(gamearray, "Level Completed. Congralutations", gamewin);
+			SDL(gamearray, "Level Completed. Congralutations",NO_SCORE, gamewin);
 			return WIN;
 		}
 		
 		else if(state == ON_HAZARD){
-			SDL(gamearray, "You died", gamewin);
+			SDL(gamearray, "You died",NO_SCORE, gamewin);
 			return LOSE;
 		}
 		
-		SDL(gamearray, "Type in next move", gamewin);
+		SDL(gamearray, "Type in next move", NO_SCORE, gamewin);
 		
 		if(counter == 0 || counter == 1){
 			counter = moveBaddies(gamearray, counter, gamewin);
 		}
 		
 		if(counter == ON_HAZARD){
-			SDL(gamearray, "You died", gamewin);
+			SDL(gamearray, "You died", NO_SCORE, gamewin);
 			return LOSE;
 		}
 		
-		SDL(gamearray, "", gamewin);
+		SDL(gamearray, "", NO_SCORE, gamewin);
 		
 		Neill_SDL_Events(&gamewin);
 	
@@ -92,7 +92,7 @@ int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter, S
 				}	
 				gamearray[i][j] = '.';
 				gamearray[i][j-1] = 'S';
-				SDL(gamearray, "", gamewin);
+				SDL(gamearray, "", NO_SCORE,gamewin);
 				j--;
 				count++;
 			}while(count != 5);
@@ -105,7 +105,7 @@ int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter, S
 			}
 			gamearray[i][j] = '.';
 			gamearray[i][j+1] = 'S';	
-			SDL(gamearray, "", gamewin);
+			SDL(gamearray, "", NO_SCORE, gamewin);
 			j++;
 			count++;
 		}while(count!= 5);
