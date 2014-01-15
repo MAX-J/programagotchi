@@ -4,7 +4,6 @@
 // Attempt to hide the renderer etc. from user.
 void Neill_SDL_Init(SDL_Simplewin *sw, char *WindowTitle)
 {
-   
 
    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
       fprintf(stderr, "\nUnable to initialize SDL:  %s\n", SDL_GetError());
@@ -164,7 +163,7 @@ void Neill_SDL_DrawText(SDL_Simplewin *sw, const char* text, int ox, int oy)
       if(chr != 0){
          for(y = 0; y < FNT_FONTHEIGHT; y++){
             for(x = 0; x < FNT_FONTWIDTH; x++){
-               if(fnt[text[i] * FNT_HEIGHT + y] >> (7 - x) & 1){
+               if(fnt[text[i] * FNT_FONTHEIGHT + y] >> (7 - x) & 1){
                         SDL_RenderDrawPoint(sw->renderer, ((col - 1) * FNT_WIDTH) + x + ox, (y + row * FNT_HEIGHT) + oy);
                }
             }
