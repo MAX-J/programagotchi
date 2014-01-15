@@ -21,6 +21,8 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
   Direction dir = right; 
   FILE *ftemp;
   
+  printf("\nRUNCOMMAND: Input Fcn as follows: %s",commandstr);
+  
   //define all 'objects' that may be added grid
   const char *objstrings[5] = {"gotchi","ball",NULL,NULL,NULL};
   const char objcodes[5] = {GOTCHI,BALL,'\0','\0','\0'};
@@ -214,6 +216,9 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
     //if none matching, then this must be a bad command
     strcpy(filestr,commandstr);
     strcat(strtok(filestr," \t\n\0"),".gfn");
+    
+    printf("\nATTEMPTING TO OPEN FILE: %s",filestr);
+    
     if ((ftemp = fopen(filestr,"r")) == NULL) {      
       printf("\nERROR: Command not recognised\n");
       return BAD_COMMAND;    
@@ -229,7 +234,6 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
        * passed all the way back up to the original caller to 
        * 'runcommand' (probably one of the game modules) */
       if (ret < NO_ACTION) {
-	printf("\nERROR in runcommand: Problem parsing file %s\n",filestr);
 	return ret;
       }
     }

@@ -54,6 +54,8 @@ int parsefcn(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *filestr, c
   globals->commandstr = commandstr;
   globals -> varlist = NULL;
   
+  printf("\nPARSING TOP...\n");
+  
   //parse top line
   line = TOP(globals,commandstr);
   if (line < NO_ACTION) { //error parsing 'TOP'
@@ -66,6 +68,8 @@ int parsefcn(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *filestr, c
   if (line > NO_ACTION) {
     return NO_ACTION;
   }
+  
+  fclose(globals -> fin);
   return line;
   
 }
@@ -94,7 +98,7 @@ int TOP(globstruct *globals, char commandstr[]) {
     }
   } while (strstr(i,"function") != i);
   i += 8;
-
+  
   //parse function top-line//
   strcpy(cstr,commandstr);
   strcat(cstr,"\n"); //important i think...
@@ -132,6 +136,9 @@ int TOP(globstruct *globals, char commandstr[]) {
 
 
 int BLOCK(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int line, int indents, int barexec) {
+  
+  printf("\nParsing 'BLOCK' line: %s",str);
+  
   //
   char *i = str;
   int n, ret = NO_ACTION; 
@@ -180,7 +187,7 @@ int BLOCK(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int l
   //also make an allowance for comment lines and blank lines
   else {
     if (barexec == 0 && strstr(i,"//") != i && *i != '\n' && *i != '\0') {
-      ret = runcommand(globals->sw,displaygrid,globals->commandstr);
+      ret = runcommand(globals->sw,displaygrid,str);
       if (ret < NO_ACTION) { //bad command identified by 'runcommand'
 	return ret; 
       }
