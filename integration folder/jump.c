@@ -1,14 +1,16 @@
 #include "./programagotchi.h"
 
-int gameturn(char gamearray[HEIGHT][WIDTH], int score, SDL_Simplewin gamewin);
-int gamestate(char gamearray[HEIGHT][WIDTH],int rowshift,int colshift,SDL_Simplewin gamewin);
-int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
+int gameturn(char gamearray[HEIGHT][WIDTH], int score, int rowshift,int colshift,SDL_Simplewin gamewin);
+int gamestate(char gamearray[HEIGHT][WIDTH],int score,int rowshift,int colshift,SDL_Simplewin gamewin);
+int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	
 	int score = 0;
 	int state = 0;
+	int rowshift = 0;
+	int colshift = 0;
 	char str[STRLEN];
 	
-	SDL(gamearray, "Welcome to Jump", gamewin);
+	SDL(gamearray, "Welcome to Jump",  NO_SCORE,gamewin);
 	  
 	do{
 		do{
@@ -25,30 +27,30 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
 		}while(state != BAD_COMMAND);
 		
 		if(state == QUIT_COMMAND){
-			SDL(gamearray, "Exiting Game", gamewin);
+			SDL(gamearray, "Exiting Game", NO_SCORE, gamewin);
 			return LOSE;
 		}
 		
 		else if(state == ON_EXIT){
-			SDL(gamearray, "Level Completed. Congralutations", gamewin);
+			SDL(gamearray, "Level Completed. Congralutations", NO_SCORE, gamewin);
 			return WIN;
 		}
 		
 		else if(state == ON_HAZARD){
-			SDL(gamearray, "game over", gamewin);
+			SDL(gamearray, "game over",  NO_SCORE,gamewin);
 			return LOSE;
 		}
-		SDL(gamearray, "Type in next move", gamewin);
+		SDL(gamearray, "Type in next move", NO_SCORE, gamewin);
 		
 		if(score != 100 ) {
-			score = gameturn(gamearray,score,gamewin);	
+			score = gameturn(gamearray,score,rowshift,colshift,gamewin);	
  		}
 		
-		if(score = 100 ) {
-                        SDL(gamearray, "You win", gamewin);
+		if(score == 100 ) {
+                        SDL(gamearray, "You win", NO_SCORE, gamewin);
                         return WIN;
                 }
-		SDL(gamearray, "", gamewin);
+		SDL(gamearray, "",  NO_SCORE,gamewin);
 		
 		Neill_SDL_Events(&gamewin);
 		
@@ -57,19 +59,19 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
 	return LOSE;
 }	
 
-int gameturn(char gamearray[HEIGHT][WIDTH], int score, SDL_Simplewin gamewin) {
+int gameturn(char gamearray[HEIGHT][WIDTH], int score, int rowshift,int colshift,SDL_Simplewin gamewin) {
  	int j = 0;
         int k = 0;
         char command;
       
-        SDL(gamearray,"Please input your option,'g' for take a turn,'e' for exit game", gamewin);
+        SDL(gamearray,"G for take a turn E for exit game",  NO_SCORE,gamewin);
         scanf("%c",&command);
-        if(command == 'e' || command == 'E') {
-                    break;
+        if(command == 'E') {
+                    EXIT;
         }
-        else if(command == 'g' || command == 'G') {
-        	SDL(gamearray, "Type in next move", gamewin);
-		k = gamestate(gamearray,rowshift,colshift,gamewin);
+        else if(command == 'G') {
+        	SDL(gamearray, "Type in next move",NO_SCORE,gamewin);
+		k = gamestate(gamearray,score,rowshift,colshift,gamewin);
 		if(k == 0) {
                 	for( j = 0;j < HEIGHT;j++) {
                         	SDL(gamearray,"%2d:%s\n",j,gamewin);
@@ -78,20 +80,17 @@ int gameturn(char gamearray[HEIGHT][WIDTH], int score, SDL_Simplewin gamewin) {
                 }
 		else if( k == -1) {
                         getchar();
-			break;
+			EXIT;
 		}
 		getchar();
-        }
-        else {
-                continue;
-        }  
-	SDL(gamearray, "Game over!", gamewin);
+        } 
+	SDL(gamearray, "Game over!",  NO_SCORE,gamewin);
         SDL(gamearray, "Your score is: ",score,gamewin);
         return score;
 }
 
 
-int gamestate(char gamearray[HEIGHT][WIDTH],int rowshift,int colshift,SDL_Simplewin gamewin) {
+int gamestate(char gamearray[HEIGHT][WIDTH],int score,int rowshift,int colshift,SDL_Simplewin gamewin) {
 
         char laststatus;
 	int row = 0;
@@ -107,18 +106,18 @@ int gamestate(char gamearray[HEIGHT][WIDTH],int rowshift,int colshift,SDL_Simple
                         score += 10;
                         gamearray[newrow][newcol] = 'G';
                         gamearray[row][col] = laststatus;
-                        SDL(gamearray,"You get a candy",gamewin);
+                        SDL(gamearray,"You get a candy", NO_SCORE,gamewin);
                 }
-                else if(screen[newrow][newcol] == '1' ||
-                        screen[newrow][newcol] == '#')
+                else if(gamearray[newrow][newcol] == '1' ||
+                        gamearray[newrow][newcol] == '#')
                 {
-                        SDL(gamearray,"Ouch!you meet a barrier!",gamewin);
-                        SDL("Please input a valid value!",gamewin);
+                        SDL(gamearray,"Ouch!you meet a barrier!", NO_SCORE,gamewin);
+                        SDL(gamearray,"Please input a valid value!", NO_SCORE,gamewin);
                         return 1;
                 }
 		else if(gamearray[newrow][newcol] == 'X')
 		{
-			SDL(gamearray,"oh my god!you jump to a hole!",gamewin);
+			SDL(gamearray,"oh my god!you jump to a hole!", NO_SCORE,gamewin);
 			return -1;
 		}
                 else if(gamearray[newrow][newcol] == '.')
@@ -138,7 +137,7 @@ int gamestate(char gamearray[HEIGHT][WIDTH],int rowshift,int colshift,SDL_Simple
         }
         else
         {
-                SDL(gamearray,"Oops!you are trying to jump out of the wall!",gamewin);
+                SDL(gamearray,"Oops!you are trying to jump out of the wall!", NO_SCORE,gamewin);
         }
         return 0;
 }
