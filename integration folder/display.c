@@ -55,10 +55,10 @@ int SDL(char board[][WIDTH], char string[MAX], int score, SDL_Simplewin sw){
         break;
 
         case 'G':
-        /*Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
+        Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
         rectangle.x = (w*SQH);
         rectangle.y = (h*SQH+OFF);
-        SDL_RenderFillRect(sw.renderer, &rectangle);*/
+        SDL_RenderFillRect(sw.renderer, &rectangle);
         break;
 
         case 'S':
@@ -134,5 +134,8 @@ int SDL(char board[][WIDTH], char string[MAX], int score, SDL_Simplewin sw){
     // Updates window - no graphics appear on some devices until this is finished
     SDL_RenderPresent(sw.renderer);
     SDL_UpdateWindowSurface(sw.win);
+
+    Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
+    SDL_RenderClear(sw.renderer);
     return 0;
 }
