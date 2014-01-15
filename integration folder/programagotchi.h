@@ -46,3 +46,5 @@ int SDL (char board[][WIDTH], char string[MAX], int score, SDL_Simplewin sw);
 //interpreter
 int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *inputstr);
 int parsefcn(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *filestr, char *commandstr);
+// Game functions
+int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw);
