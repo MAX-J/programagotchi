@@ -18,7 +18,7 @@ int SDL(char board[][WIDTH], char string[MAX], int score, SDL_Simplewin sw){
     Neill_SDL_DrawText(&sw, string, stringx, stringy);
 
     if(score != NO_SCORE){
-    sprintf(scorestring, "Score: %d", score)
+    sprintf(scorestring, "Score: %d", score);
     Neill_SDL_DrawText(&sw, scorestring, scorex, stringy);
     }
 
