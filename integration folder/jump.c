@@ -92,7 +92,7 @@ int gameturn(char gamearray[HEIGHT][WIDTH], int score, int rowshift,int colshift
 
 int gamestate(char gamearray[HEIGHT][WIDTH],int score,int rowshift,int colshift,SDL_Simplewin gamewin) {
 
-        char laststatus;
+        char laststatus = '.';
 	int row = 0;
 	int col = 0;
         int newrow = row + rowshift;
