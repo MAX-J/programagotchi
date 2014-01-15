@@ -55,11 +55,11 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
 int gameturn(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin) {
  	int j = 0;
         int k = 0;
-        int startflag = 0;
+        //int startflag = 0;
 
         char command;
        
-	for(j =0;j < HEIGHT;j++)
+	/*for(j =0;j < HEIGHT;j++)
         {
                 for(k = 0;k< WIDTH;k++)
                 {
@@ -77,7 +77,7 @@ int gameturn(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin) {
                                 break;
                         }
                 }
-        }
+        }*/
         for( j = 0;j < HEIGHT;j++)
         {
                         printf("%2d:%s\n",j+1,screen[j]);
