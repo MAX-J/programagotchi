@@ -1,0 +1,11 @@
+//test comments
+function jump height dir
+move up height
+move up and dir height
+move right
+move down and dir height
+end function
+
+
+
+
