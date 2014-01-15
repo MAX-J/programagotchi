@@ -1,7 +1,7 @@
 #include "./programagotchi.h"
 
-int gameturn(char gamearray[HEIGHT][WIDTH], int score, SDL_Simplewin gamewin)
-
+int gameturn(char gamearray[HEIGHT][WIDTH], int score, SDL_Simplewin gamewin);
+int gamestate(char gamearray[HEIGHT][WIDTH],int rowshift,int colshift,SDL_Simplewin gamewin);
 int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
 	
 	int score = 0;
@@ -35,7 +35,7 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
 		}
 		
 		else if(state == ON_HAZARD){
-			SDL(gamearray, "Oh my god!you jump to a hole", gamewin);
+			SDL(gamearray, "game over", gamewin);
 			return LOSE;
 		}
 		SDL(gamearray, "Type in next move", gamewin);
@@ -69,7 +69,7 @@ int gameturn(char gamearray[HEIGHT][WIDTH], int score, SDL_Simplewin gamewin) {
         }
         else if(command == 'g' || command == 'G') {
         	SDL(gamearray, "Type in next move", gamewin);
-		k = gameturn(gamearray,score,gamewin);
+		k = gamestate(gamearray,rowshift,colshift,gamewin);
 		if(k == 0) {
                 	for( j = 0;j < HEIGHT;j++) {
                         	SDL(gamearray,"%2d:%s\n",j,gamewin);
@@ -90,56 +90,55 @@ int gameturn(char gamearray[HEIGHT][WIDTH], int score, SDL_Simplewin gamewin) {
         return score;
 }
 
-/*int gameturn(int height,int step)
-{
 
-        
-        int newrow = currentrow + height;
-        int newcol = currentcol +  step;
+int gamestate(char gamearray[HEIGHT][WIDTH],int rowshift,int colshift,SDL_Simplewin gamewin) {
+
+        char laststatus;
+	int row = 0;
+	int col = 0;
+        int newrow = row + rowshift;
+        int newcol = col + colshift;
         
         if( newrow < HEIGHT &&  newcol < WIDTH 
         && newrow >= 1 &&  newcol >= 1)
         {
-                if(screen[newrow][newcol] == 'c' ||
-                        screen[newrow][newcol] == 'C')
+                if(gamearray[newrow][newcol] == 'C')
                 {
                         score += 10;
-                        screen[newrow][newcol] = 'G';
-                        screen[currentrow][currentcol] = laststatus;
-                        printf("You get a candy!\n");
+                        gamearray[newrow][newcol] = 'G';
+                        gamearray[row][col] = laststatus;
+                        SDL(gamearray,"You get a candy",gamewin);
                 }
                 else if(screen[newrow][newcol] == '1' ||
                         screen[newrow][newcol] == '#')
                 {
-                        printf("Ouch!you meet a barrier!\n");
-                        printf("Please input a valid value!\n");
+                        SDL(gamearray,"Ouch!you meet a barrier!",gamewin);
+                        SDL("Please input a valid value!",gamewin);
                         return 1;
                 }
-		else if(screen[newrow][newcol] == 'x' ||
-			screen[newrow][newcol] == 'X')
+		else if(gamearray[newrow][newcol] == 'X')
 		{
-			printf("oh my god!you jump to a hole!\n");
+			SDL(gamearray,"oh my god!you jump to a hole!",gamewin);
 			return -1;
 		}
-                else if(screen[newrow][newcol] == '.')
+                else if(gamearray[newrow][newcol] == '.')
                 {
-                        screen[currentrow][currentcol] = laststatus;
+                        gamearray[row][col] = laststatus;
                         laststatus = '.';
-                        screen[newrow][newcol] = 'G';
+                        gamearray[newrow][newcol] = 'G';
                 }
                 else
                 {
-                        screen[currentrow][currentcol] = laststatus;
-                        laststatus = screen[newrow][newcol];
-                        screen[newrow][newcol] = 'G';
+                        gamearray[row][col] = laststatus;
+                        laststatus = gamearray[newrow][newcol];
+                        gamearray[newrow][newcol] = 'G';
                 }
-                currentrow = newrow;
-                currentcol = newcol;
+                row = newrow;
+                col = newcol;
         }
         else
         {
-                printf("Oops!you are trying to jump out of the wall!\n");
-                printf("Please input a valid value!\n");
+                SDL(gamearray,"Oops!you are trying to jump out of the wall!",gamewin);
         }
         return 0;
-}*/
+}
