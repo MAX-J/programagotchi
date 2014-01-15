@@ -247,7 +247,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(loop == 1) {
 	      Incubator(d);
 	      read2array(file, gamearray);
-	      //playJump(gamearray, gamewin);
+	      playJump(gamearray, gamewin);
 	    }
 	    loop--;
 	    if(a == GOBACK) {
