@@ -22,8 +22,18 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 			}
 			else{
 				state = runcommand(gamewin,gamearray,str);
-				state = 0;
+				ptintf("%d",state);
+				
+				if(state == ATE_CANDY){
+				SDL(gamearray,"You got candy",score+=10,gamewin);
+				state = NO_ACTION;
 			}
+
+			if(state == ON_EXIT){
+			SDL(gamearray, "Level Completed. Congralutations", NO_SCORE, gamewin);
+			return WIN;
+			}
+
 		}while(state != BAD_COMMAND);
 		
 		if(state == QUIT_COMMAND){
