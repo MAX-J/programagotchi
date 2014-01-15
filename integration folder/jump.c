@@ -1,6 +1,6 @@
 #include "./programagotchi.h"
 
-int gameturn(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin); 
+int gameturn(char gamearray[HEIGHT][WIDTH], int score, SDL_Simplewin gamewin)
 
 int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
 	
@@ -38,15 +38,16 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
 			SDL(gamearray, "Oh my god!you jump to a hole", gamewin);
 			return LOSE;
 		}
-
-		//else if(state == ATE_CANDY){
-			//SDL(gamearray, "You get a candy",gamewin);
- 			//return 
-
 		SDL(gamearray, "Type in next move", gamewin);
-		//getchar();
-		//score = gameturn(gamearray, score);
 		
+		if(score != 100 ) {
+			score = gameturn(gamearray,score,gamewin);	
+ 		}
+		
+		if(score = 100 ) {
+                        SDL(gamearray, "You win", gamewin);
+                        return WIN;
+                }
 		SDL(gamearray, "", gamewin);
 		
 		Neill_SDL_Events(&gamewin);
@@ -56,77 +57,37 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
 	return LOSE;
 }	
 
-int gameturn(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin) {
+int gameturn(char gamearray[HEIGHT][WIDTH], int score, SDL_Simplewin gamewin) {
  	int j = 0;
         int k = 0;
-        int startflag = 0;
-
         char command;
-       
-	/*for(j =0;j < HEIGHT;j++)
-        {
-                for(k = 0;k< WIDTH;k++)
-                {
-                        if( gamearray[j][k] == '.')
-                        {
-                                laststatus = '.';
-                               gamearray[j][k] = 'G';
-                                startflag = 1;
-                                currentrow = j;
-                                currentcol = k;
-                                break;
-                        }
-                        if( startflag)
-                        {
-                                break;
-                        }
-                }
-        }*/
-        for( j = 0;j < HEIGHT;j++)
-        {
-                        printf("%2d:%s\n",j+1,gamearray[j]);
+      
+        SDL(gamearray,"Please input your option,'g' for take a turn,'e' for exit game", gamewin);
+        scanf("%c",&command);
+        if(command == 'e' || command == 'E') {
+                    break;
         }
-        while(score != 100 )
-        {
-                
-                printf("Please input your option,'g' for take a turn,'e' for exit game\n");
-                scanf("%c",&command);
-                if(command == 'e' || command == 'E')
-                {
-                        break;
-                }
-                else if(command == 'g' || command == 'G')
-                {
-                        printf("Please input jump height and step\n");
-                        printf("Positive number for downword/forwoad,Negtive number for upword/backward\n");
-                        printf("Height = ");
-                        scanf("%d",&height);
-                        printf("Step = ");
-                        scanf("%d",&time);
-			k = gameturn(height,time);
-			if(k == 0)
-                        {
-                                for( j = 0;j < HEIGHT;j++)
-                                {
-                                        printf("%2d:%s\n",j,gamearray[j]);
-                                }
-                                printf("Your score is %d\n",score);
+        else if(command == 'g' || command == 'G') {
+        	SDL(gamearray, "Type in next move", gamewin);
+		k = gameturn(gamearray,score,gamewin);
+		if(k == 0) {
+                	for( j = 0;j < HEIGHT;j++) {
+                        	SDL(gamearray,"%2d:%s\n",j,gamewin);
                         }
-			else if( k == -1) {
-                        	getchar();
-				break;
-			}
-			getchar();
+                        SDL(gamearray,"Your score is: ",score,gamewin);
                 }
-                else
-                {
-                        continue;
-                }
-                
+		else if( k == -1) {
+                        getchar();
+			break;
+		}
+		getchar();
         }
-        printf("Game over!\n");
-        printf("Your score is %d!\n",score);
-        return 1;
+        else {
+                continue;
+        }  
+	SDL(gamearray, "Game over!", gamewin);
+        SDL(gamearray, "Your score is: ",score,gamewin);
+        return score;
 }
 
 /*int gameturn(int height,int step)
