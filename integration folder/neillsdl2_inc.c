@@ -164,7 +164,7 @@ void Neill_SDL_DrawText(SDL_Simplewin *sw, const char* text, int ox, int oy)
          for(y = 0; y < FNT_FONTHEIGHT; y++){
             for(x = 0; x < FNT_FONTWIDTH; x++){
                if(fnt[text[i] * FNT_FONTHEIGHT + y] >> (7 - x) & 1){
-                        SDL_RenderDrawPoint(sw->renderer, ((col - 1) * FNT_WIDTH) + x + ox, (y + row * FNT_HEIGHT) + oy);
+                        SDL_RenderDrawPoint(sw->renderer, ((col - 1) * FNT_FONTWIDTH) + x + ox, (y + row * FNT_FONTHEIGHT) + oy);
                }
             }
          }
