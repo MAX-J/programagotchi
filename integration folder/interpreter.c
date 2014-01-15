@@ -4,21 +4,11 @@
 //start With only 'MOVE' and maybe 'ADD' (object) - get working then add other 'function' stuff
 
 #include "programagotchi.h"
+#include "interpreter.h"
 
-#define WHITE 255,255,255
-#define BLACK 0,0,0
-#define BLUE 0,0,255
-#define MIN(a,b) ((a) < (b) ? (a) : (b)) /* standard min fcn (net/lecture notes) */
 #define DELAY 50
 #define NULL_CHAR 'N'
 
-enum direction {left,right,above,below};
-typedef enum direction Direction;
-
-
-void moveobject(char displaygrid[HEIGHT][WIDTH], char selectedobj, int rowshift, int colshift);
-void addobject(char displaygrid[HEIGHT][WIDTH], char selectedobj, Direction dir);
-int objectongrid(char displaygrid[HEIGHT][WIDTH], char selectedobj);
 void RemoveSpaces(char *inputstr, char *newstr);
 
 
@@ -33,7 +23,7 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
   
   //define all 'objects' that may be added grid
   const char *objstrings[5] = {"gotchi","ball",NULL,NULL,NULL};
-  const char objcodes[5] = {'G','B','\0','\0','\0'};
+  const char objcodes[5] = {GOTCHI,BALL,'\0','\0','\0'};
   
   //remove spaces and newlines from input string
   RemoveSpaces(commandstr,formattedstr);
@@ -44,7 +34,7 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
     i = i + 4;
     //if the command goes straight to a 'direction' (no object identifier), then assume GOTCHI is being moved
     if (strstr(i,"up") == i || strstr(i,"down") == i || strstr(i,"left") == i || strstr(i,"right") == i) {
-      selectedobj = 'G';
+      selectedobj = GOTCHI;
     }
     //otherwise there should be a valid 'object identifier' next
     else {
@@ -135,8 +125,11 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
     }
     // apply the move - loop depending on the 'distance' for GOTCHI to travel
     for (j = 1; j <= distance; j++) {
-      moveobject(displaygrid,selectedobj,rowshift,colshift);
-      SDL(displaygrid,"",sw);
+      ret = moveobject(displaygrid,selectedobj,rowshift,colshift);
+      if (ret < NO_ACTION) { //status back from attempted move
+	return ret;
+      }
+      SDL(displaygrid,"",NO_SCORE,sw);
       SDL_Delay(DELAY);
     }
   }
@@ -194,11 +187,27 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
       dir = right;
     }
     //add the object to grid and refresh display
-    addobject(displaygrid,selectedobj,dir);       
-    SDL(displaygrid,"",sw);
+    ret = addobject(displaygrid,selectedobj,dir);       
+    if (ret < NO_ACTION) {
+      return ret; //status back from attempted add
+    }
+    SDL(displaygrid,"",NO_SCORE,sw);
   }
    
-  //------NO 'BASE' COMMAND RECOGNISED---------//
+  //--------PARSE OTHER COMMANDS----------// 
+  //---eat candy (adjacent to GOTCHI---//
+  else if (strstr(i,"eat") == i) {
+    ret = eatcandy(displaygrid);
+    if (ret < NO_ACTION) {
+      return ret; //status back from attempted eat
+    }    
+  }
+  //----quit the current game----//
+  else if (strstr(i,"quit") == i) {
+    return QUIT_COMMAND;
+  }
+   
+  //------NO 'BASE COMMAND' RECOGNISED---------//
   //revert to custom function files
   else {
     //check for '.gfn' (gotchi function) file in current folder matching the command
@@ -213,96 +222,19 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
     //note: use unformatted command str (without spaces removed)
     else {
       fclose(ftemp);
-      
-      printf("\nparsing function: %s\n",filestr);
-      
       ret = parsefcn(sw,displaygrid,filestr,commandstr);
       //--------------HANDLE THE 'STATUS CHAIN'-----------------//
-      /* anything apart from SUCCESS means that the current 'move'
+      /* any status codes below 'NO_ACTION' means that the current 'move'
        * should come to an end, and the status message should be 
        * passed all the way back up to the original caller to 
        * 'runcommand' (probably one of the game modules) */
-      if (ret == BAD_COMMAND) {
-	printf("\nERROR in runcommand: Problem parsing file WHATEVER\n");
-	return BAD_COMMAND;
+      if (ret < NO_ACTION) {
+	printf("\nERROR in runcommand: Problem parsing file %s\n",filestr);
+	return ret;
       }
     }
   }
   return NO_ACTION;
-}
-
-
-
-// move object on the display grid //
-void moveobject(char displaygrid[HEIGHT][WIDTH], char selectedobj, int rowshift, int colshift) {
-  int row, col, newrow, newcol;
-  for (row = 0; row < HEIGHT; row++) {
-    for (col = 0; col < WIDTH; col++) {
-      //find the CURRENT location of the 'selected object'
-      if (displaygrid[row][col] == selectedobj) {
-	  newrow = row + rowshift; newcol = col + colshift;
-	  // no action if move would go 'off edge' or overlap with an existing object 
-	  if (newrow < 0 || newrow >= HEIGHT || newcol < 0 || newcol >= WIDTH || displaygrid[newrow][newcol] != '.') {
-	    return; 
-	  }
-	  // move the selected obj and set previous location to blank
-	  displaygrid[newrow][newcol] = selectedobj;
-	  displaygrid[row][col] = '.';
-	  return;
-      }
-    }
-  }
-}
-
-
-
-// add object to the display grid (next to the GOTCHI) //
-void addobject(char displaygrid[HEIGHT][WIDTH], char selectedobj, Direction dir) {
-  int row, col, newrow = 0, newcol = 0;
-  //find the current location of the GOTCHI
-  for (row = 0; row < HEIGHT; row++) {
-    for (col = 0; col < WIDTH; col++) {
-      if (displaygrid[row][col] == 'G') {
-	//set location (adjacent to GOTCHI) depending on dir
-	switch (dir) {
-	  case left:
-	    newrow = row; newcol = col - 1;
-	    break;
-	  case right: 
-	    newrow = row; newcol = col + 1;
-	    break;
-	  case above:
-	    newrow = row - 1; newcol = col;
-	    break;
-	  case below:
-	    newrow = row + 1; newcol = col;
-	    break; 
-	}
-	//error if new object location overlaps or goes off edge
-	if (newrow < 0 || newrow >= HEIGHT || newcol < 0 || newcol >= WIDTH || displaygrid[newrow][newcol] != '.') {
-	  printf("\nnot enough room to add object!\n");
-	  return; 
-	}
-	//add the object
-	displaygrid[newrow][newcol] = selectedobj;
-      }
-    }
-  }
-}
-
-
-
-//check if a particular object character is already on the display grid //
-int objectongrid(char displaygrid[HEIGHT][WIDTH], char selectedobj) {
-  int row, col;
-  for (row = 0; row < HEIGHT; row++) {
-    for (col = 0; col < WIDTH; col++) {  
-      if (displaygrid[row][col] == selectedobj) {
-	return 1; //on grid!
-      }
-    }
-  }
-  return 0; //not on grid!
 }
 
 
