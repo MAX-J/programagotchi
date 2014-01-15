@@ -54,13 +54,6 @@ int SDL(char board[][WIDTH], char string[MAX], int score, SDL_Simplewin sw){
         SDL_RenderDrawRect(sw.renderer, &rectangle);
         break;
 
-        case 'G':
-        Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
-        rectangle.x = (w*SQH);
-        rectangle.y = (h*SQH+OFF);
-        SDL_RenderFillRect(sw.renderer, &rectangle);
-        break;
-
         case 'S':
         Neill_SDL_SetDrawColour(&sw, 245, 2, 56);
         rectangle.x = (w*SQH);
