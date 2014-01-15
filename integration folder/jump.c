@@ -1,45 +1,65 @@
-#include "programagotchi.h"
+int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
+	
+	int score = 0;
+	int state = 0;
+	char str[STRLEN];
+	
+	SDL(gamearray, "Welcome to Jump", gamewin);
+	  
+	do{
+		do{
+			printf("Enter Command:");
+			fgets(str,STRLEN,stdin);
+	
+			if(str[0] == '\n') {
+				state = BAD_COMMAND;
+			}
+			else{
+				state = runcommand(gamewin,gamearray,str);
+				state = 0;
+			}
+		}while(state != BAD_COMMAND);
+		
+		if(state == QUIT_COMMAND){
+			SDL(gamearray, "Exiting Game", gamewin);
+			return LOSE;
+		}
+		
+		else if(state == ON_EXIT){
+			SDL(gamearray, "Level Completed. Congralutations", gamewin);
+			return WIN;
+		}
+		
+		else if(state == ON_HAZARD){
+			SDL(gamearray, "Oh my god!you jump to a hole", gamewin);
+			return LOSE;
+		}
 
-int jump(char gamearray[HEIGHT][WIDTH]);
-char screen[HEIGHT][WIDTH];
-int currentrow = 0;
-int currentcol = 0;
-int score = 0;
-char laststatus;
+		//else if(state == ATE_CANDY){
+			//SDL(gamearray, "You get a candy",gamewin);
+ 			//return 
 
-int gameturn(int height,int step);
-int checkboard();
-int readfile(FILE *fp);
+		SDL(gamearray, "Type in next move", gamewin);
+		//getchar();
+		//score = gameturn(gamearray, score);
+		
+		SDL(gamearray, "", gamewin);
+		
+		Neill_SDL_Events(&gamewin);
+		
+	}while(state == NO_ACTION || !gamewin.finished);
+	
+	return LOSE;
+}	
 
-int jump(char gamearray[HEIGHT][WIDTH])
-{
-        FILE *file = fopen("jump.txt", "r");
-        //int i = 0;
-        int j = 0;
+int gameturn(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin) {
+ 	int j = 0;
         int k = 0;
-        int startflag = 0;
-        
-        int height = 0;
-        int time = 0;
+        //int startflag = 0;
 
         char command;
-        /*if( argc  != 2)
-        {
-                printf("Invalid argument!\n");
-                printf("Usage:game boardfile\n");
-                return 0;
-		}*/
-	if( readfile(file))
-	{
-		return 1;
-	}       
-	/*if(checkboard()  == -1)
-	{
-		return 1;
-	}*/
-        printf("LETS JUMP\n");
        
-	for(j =0;j < HEIGHT;j++)
+	/*for(j =0;j < HEIGHT;j++)
         {
                 for(k = 0;k< WIDTH;k++)
                 {
@@ -57,7 +77,7 @@ int jump(char gamearray[HEIGHT][WIDTH])
                                 break;
                         }
                 }
-        }
+        }*/
         for( j = 0;j < HEIGHT;j++)
         {
                         printf("%2d:%s\n",j+1,screen[j]);
@@ -105,44 +125,7 @@ int jump(char gamearray[HEIGHT][WIDTH])
         return 1;
 }
 
-
-int readfile(FILE *fp)
-{
-  //FILE* fp;
-  //fp = fopen(filename,"r");
-	int j = 0;
-	for( j = 0;j< HEIGHT;j++)
-	{
-		memset(screen[j],'\0',sizeof(screen[j]));
-	}
-	j = 0;
-	if( fp != NULL)
-	{
-		while( fp != NULL)
-		{
-			if(j < HEIGHT)
-			{
-				fscanf(fp,"%s",screen[j]);	
-				printf("%s\n",screen[j]);
-				j++;	
-			}
-			else
-			{
-				break;
-			}
-		}	
-	}
-	else
-	{
-		printf("read file error \n");
-		return 1;
-	}
-	fclose(fp);
-	return 0;
-}
-
-/* Changes game from current state to next state*/
-int gameturn(int height,int step)
+/*int gameturn(int height,int step)
 {
 
         
@@ -194,52 +177,4 @@ int gameturn(int height,int step)
                 printf("Please input a valid value!\n");
         }
         return 0;
-}
-
-/* Test: Checks boundary, */
-int checkboard()
-{
-	int i = 0;
-	int j = 0;
-	int s_countter = 0;
-	for( i = 0;i < HEIGHT;i++)
-	{
-		if(screen[i][0] != '#' ||
-			screen[i][WIDTH-2] != '#')
-			{
-				printf("not valid wall!\n");
-				return -1;
-			}
-	}
-	for(i = 0;i < WIDTH-1;i++)
-	{
-		if(screen[0][i] != '#' ||
-			screen[HEIGHT-1][i] != '#')
-			{
-				printf("not valid wall!\n");
-				return -1;
-			}
-	}
-	
-	/* Counts amount of candy in window */
-	for( i = 0;i<HEIGHT;i++)
-	{
-		for(j = 0;j<WIDTH;j++)
-		{
-			if(screen[i][j] == 'c'||
-				screen[i][j] == 'C')
-				{
-					s_countter++;
-				}
-		}
-	}
-	/* For valid game state need ten pieces of candy or more */
-	if(s_countter < 10)
-	{
-		printf("not enough 'c'\n");
-		return -1;
-	}
-	return 1;
-}
-
-
+}*/
