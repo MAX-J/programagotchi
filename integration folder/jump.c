@@ -1,3 +1,7 @@
+#include "./programagotchi.h"
+
+int gameturn(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin); 
+
 int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
 	
 	int score = 0;
@@ -55,7 +59,7 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw){
 int gameturn(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin) {
  	int j = 0;
         int k = 0;
-        //int startflag = 0;
+        int startflag = 0;
 
         char command;
        
@@ -63,10 +67,10 @@ int gameturn(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin) {
         {
                 for(k = 0;k< WIDTH;k++)
                 {
-                        if( screen[j][k] == '.')
+                        if( gamearray[j][k] == '.')
                         {
                                 laststatus = '.';
-                                screen[j][k] = 'G';
+                               gamearray[j][k] = 'G';
                                 startflag = 1;
                                 currentrow = j;
                                 currentcol = k;
@@ -80,7 +84,7 @@ int gameturn(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin) {
         }*/
         for( j = 0;j < HEIGHT;j++)
         {
-                        printf("%2d:%s\n",j+1,screen[j]);
+                        printf("%2d:%s\n",j+1,gamearray[j]);
         }
         while(score != 100 )
         {
@@ -104,7 +108,7 @@ int gameturn(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin) {
                         {
                                 for( j = 0;j < HEIGHT;j++)
                                 {
-                                        printf("%2d:%s\n",j,screen[j]);
+                                        printf("%2d:%s\n",j,gamearray[j]);
                                 }
                                 printf("Your score is %d\n",score);
                         }
