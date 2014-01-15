@@ -13,61 +13,61 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	SDL(gamearray, "Welcome to Jump",  NO_SCORE,gamewin);
 	  
 	do{
-		do{
-			printf("Enter Command:");
-			fgets(str,STRLEN,stdin);
-	
-			if(str[0] == '\n') {
-				state = BAD_COMMAND;
-			}
-			else{
-				state = runcommand(gamewin,gamearray,str);
-				printf("%d",state);
-				
-				if(state == ATE_CANDY){
-				SDL(gamearray,"You got candy",score+=10,gamewin);
-				state = NO_ACTION;
-			}
-
-			if(state == ON_EXIT){
-			SDL(gamearray, "Level Completed. Congralutations", NO_SCORE, gamewin);
-			return WIN;
-			}
-
-		}while(state != BAD_COMMAND);
+	  do{
+	    printf("Enter Command:");
+	    fgets(str,STRLEN,stdin);
+	    
+	    if(str[0] == '\n') {
+	      state = BAD_COMMAND;
+	    }
+	    else{
+	      state = runcommand(gamewin,gamearray,str);
+	      printf("%d",state);
+	      
+	      if(state == ATE_CANDY){
+		SDL(gamearray,"You got candy",score+=10,gamewin);
+		state = NO_ACTION;
+	      }
+	      
+	      if(state == ON_EXIT){
+		SDL(gamearray, "Level Completed. Congralutations", NO_SCORE, gamewin);
+		return WIN;
+	      }
+	    }  
+	  }while(state != BAD_COMMAND);
 		
-		if(state == QUIT_COMMAND){
-			SDL(gamearray, "Exiting Game", NO_SCORE, gamewin);
-			return LOSE;
-		}
+	    if(state == QUIT_COMMAND){
+	      SDL(gamearray, "Exiting Game", NO_SCORE, gamewin);
+	      return LOSE;
+	    }
+	    
+	    else if(state == ON_EXIT){
+	      SDL(gamearray, "Level Completed. Congralutations", NO_SCORE, gamewin);
+	      return WIN;
+	    }
 		
-		else if(state == ON_EXIT){
-			SDL(gamearray, "Level Completed. Congralutations", NO_SCORE, gamewin);
-			return WIN;
-		}
+	    else if(state == ON_HAZARD){
+	      SDL(gamearray, "game over",  NO_SCORE,gamewin);
+	      return LOSE;
+	    }
+	    SDL(gamearray, "Type in next move", NO_SCORE, gamewin);
+	    
+	    if(score != 100 ) {
+	      score = gameturn(gamearray,score,rowshift,colshift,gamewin);	
+	    }
 		
-		else if(state == ON_HAZARD){
-			SDL(gamearray, "game over",  NO_SCORE,gamewin);
-			return LOSE;
-		}
-		SDL(gamearray, "Type in next move", NO_SCORE, gamewin);
-		
-		if(score != 100 ) {
-			score = gameturn(gamearray,score,rowshift,colshift,gamewin);	
- 		}
-		
-		if(score == 100 ) {
-                        SDL(gamearray, "You win", NO_SCORE, gamewin);
-                        return WIN;
-                }
-		SDL(gamearray, "",  NO_SCORE,gamewin);
-		
-		Neill_SDL_Events(&gamewin);
-		
-	}while(state == NO_ACTION || !gamewin.finished);
+	    if(score == 100 ) {
+	      SDL(gamearray, "You win", NO_SCORE, gamewin);
+	      return WIN;
+	    }
+	    SDL(gamearray, "",  NO_SCORE,gamewin);
+	    
+	    Neill_SDL_Events(&gamewin);
+	    
+	  }while(state == NO_ACTION || !gamewin.finished);
 	
 	return LOSE;
-}	
+	}	
 
 int gameturn(char gamearray[HEIGHT][WIDTH], int score, int rowshift,int colshift,SDL_Simplewin gamewin) {
  	int j = 0;
@@ -77,22 +77,22 @@ int gameturn(char gamearray[HEIGHT][WIDTH], int score, int rowshift,int colshift
         SDL(gamearray,"G for take a turn E for exit game",  NO_SCORE,gamewin);
         scanf("%c",&command);
         if(command == 'E') {
-                    EXIT;
+	  EXIT;
         }
         else if(command == 'G') {
-        	SDL(gamearray, "Type in next move",NO_SCORE,gamewin);
-		k = gamestate(gamearray,score,rowshift,colshift,gamewin);
-		if(k == 0) {
-                	for( j = 0;j < HEIGHT;j++) {
-                        	SDL(gamearray,"%2d:%s\n",j,gamewin);
-                        }
-                        SDL(gamearray,"Your score is: ",score,gamewin);
-                }
-		else if( k == -1) {
-                        getchar();
-			EXIT;
-		}
-		getchar();
+	  SDL(gamearray, "Type in next move",NO_SCORE,gamewin);
+	  k = gamestate(gamearray,score,rowshift,colshift,gamewin);
+	  if(k == 0) {
+	    for( j = 0;j < HEIGHT;j++) {
+	      SDL(gamearray,"%2d:%s\n",j,gamewin);
+	    }
+	    SDL(gamearray,"Your score is: ",score,gamewin);
+	  }
+	  else if( k == -1) {
+	    getchar();
+	    EXIT;
+	  }
+	  getchar();
         } 
 	SDL(gamearray, "Game over!",  NO_SCORE,gamewin);
         SDL(gamearray, "Your score is: ",score,gamewin);
