@@ -7,11 +7,15 @@ int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter, S
 
 int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	
-	int counter = 0;
+	int counter = 0, firstmove = 1;
 	int state = 0;
 	char str[STRLEN];
 	
-	SDL(gamearray, "Welcome to Sewer City", NO_SCORE,gamewin);
+	SDL(gamearray, "Welcome to Sewer City", NO_SCORE, gamewin);
+
+	SDL_Delay(1000);
+
+	SDL(gamearray, "Try moving your Gotchi by using the 'move' command", NO_SCORE, gamewin);
 	  
 	do{
 		do{
@@ -27,7 +31,11 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 				state = 0; /* Will be removed in future */
 			}
 		}while(state == BAD_COMMAND);
-		
+		if(firstmove){
+			SDL(gamearray, "You did it. Congratulations",NO_SCORE, gamewin);
+			firstmove = 0;		
+		}		
+
 		if(state == QUIT_COMMAND){
 			SDL(gamearray, "Exiting Game",NO_SCORE, gamewin);
 			return LOSE;
@@ -43,8 +51,6 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 			return LOSE;
 		}
 		
-		SDL(gamearray, "Type in next move", NO_SCORE, gamewin);
-		
 		if(counter == 0 || counter == 1){
 			counter = moveBaddies(gamearray, counter, gamewin);
 		}
@@ -54,7 +60,7 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 			return LOSE;
 		}
 		
-		SDL(gamearray, "", NO_SCORE, gamewin);
+		SDL(gamearray, "Type in next move", 0, gamewin);
 		
 		Neill_SDL_Events(&gamewin);
 	
@@ -69,7 +75,7 @@ int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter, SDL_Simplewin gamewi
 	
 	for(j = 0; j < HEIGHT; j++){
 		for(i = 0; i < WIDTH; i++){
-			if(gamearray[i][j] == 'S'){
+			if(gamearray[i][j] == HAZARD){
 				j = moveHorizontally(gamearray, i , j, counter, gamewin);
 				i++;
 			}
@@ -85,27 +91,34 @@ int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter, SDL_Simplewin gamewi
 
 int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter, SDL_Simplewin gamewin){
 	int count = 0;
-		if((gamearray[i][j - 1] == 'G' || gamearray[i][j - 1] == '.') && counter == 0){
+		if((gamearray[i][j - 1] == GOTCHI || gamearray[i][j - 1] == FREE_SPACE) && counter == 0){
 			do{
-				if(gamearray[i][j - 1] == 'G'){
+				if(gamearray[i][j - 1] == GOTCHI){
 					return -5; 
+				}
+				if(gamearray[i][j - 1] != FREE_SPACE){
+					return j;
 				}	
-				gamearray[i][j] = '.';
-				gamearray[i][j-1] = 'S';
-				SDL(gamearray, "", NO_SCORE,gamewin);
+				gamearray[i][j] = FREE_SPACE;
+				gamearray[i][j-1] = HAZARD;
+				/*SDL(gamearray, "", NO_SCORE,gamewin);*/
 				j--;
 				count++;
 			}while(count != 5);
 		}
 		
-	else if((gamearray[i][j + 1] == 'G' || gamearray[i][j + 1] == '.') && counter == 1){
+	else if((gamearray[i][j + 1] == GOTCHI || gamearray[i][j + 1] == FREE_SPACE) && counter == 1){
 		do{
-			if(gamearray[i][j + 1] == 'G'){
+			if(gamearray[i][j + 1] == GOTCHI){
 				return -5; 
 			}
-			gamearray[i][j] = '.';
-			gamearray[i][j+1] = 'S';	
-			SDL(gamearray, "", NO_SCORE, gamewin);
+			if(gamearray[i][j + 1] != FREE_SPACE){
+				return j;
+			}
+
+			gamearray[i][j] = FREE_SPACE;
+			gamearray[i][j+1] = HAZARD;	
+			/*SDL(gamearray, "", NO_SCORE, gamewin);*/
 			j++;
 			count++;
 		}while(count!= 5);
