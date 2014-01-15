@@ -74,7 +74,7 @@ int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter, SDL_Simplewin gamewi
 				i++;
 			}
 			if( j < 0){
-				return ON_HAZARD
+				return ON_HAZARD;
 			}
 		}
 	}
