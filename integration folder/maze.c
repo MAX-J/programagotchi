@@ -7,7 +7,7 @@ int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter, S
 
 int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	
-	int counter = 0, firstmove = 1;
+	int counter = 0, firstmove = 1, score = 0;
 	int state = 0;
 	char str[STRLEN];
 	
@@ -26,12 +26,27 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 			if(str[0] == '\n'){
 				state = BAD_COMMAND;
 			}
+
 			else{
 				state = runcommand(gamewin, gamearray, str);
+				printf("%d", state);
+			
+				if(state == ATE_CANDY){
+				SDL(gamearray, "You got candy",score++, gamewin);			
+				state = NO_ACTION;
 			}
+
+			if(state == ON_EXIT){
+				SDL(gamearray, "Level Completed. Congratulations",score, gamewin);
+				return WIN;
+			}
+
+
+			}
+
 		}while(state == BAD_COMMAND);
 		if(firstmove){
-			SDL(gamearray, "You did it. Congratulations",NO_SCORE, gamewin);
+			SDL(gamearray, "You did it. Congratulations",score, gamewin);
 			firstmove = 0;		
 		}		
 
@@ -41,7 +56,7 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 		}
 		
 		else if(state == ON_EXIT){
-			SDL(gamearray, "Level Completed. Congralutations",NO_SCORE, gamewin);
+			SDL(gamearray, "Level Completed. Congratulations",score, gamewin);
 			return WIN;
 		}
 		
@@ -59,7 +74,7 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 			return LOSE;
 		}
 		
-		SDL(gamearray, "Type in next move", 0, gamewin);
+		SDL(gamearray, "Type in next move", score, gamewin);
 		
 		Neill_SDL_Events(&gamewin);
 	
