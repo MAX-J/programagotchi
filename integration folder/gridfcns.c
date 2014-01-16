@@ -186,11 +186,61 @@ int objectongrid(char displaygrid[HEIGHT][WIDTH], char selectedobj) {
 }
 
 
+//---check if a specified object is adjacent to an obstacle (such as a wall or barrier)---//
 int obstacle_adjacent(char displaygrid[HEIGHT][WIDTH],Direction dir,char selectedobj) {
-  
-  //UPDATE: FILL CONTENT
+  //find the 'selected obj'
+  int row, col;
+  for (row = 0; row < HEIGHT; row++) {
+    for (col = 0; col < WIDTH; col++) {  
+      if (displaygrid[row][col] == selectedobj) {  
+	//
+	switch (dir) {
+	  //
+	  case left:
+	    if (col == 0) {
+	      return PASS;
+	    }
+	    else if (displaygrid[row][col-1] == BORDER || displaygrid[row][col-1] == BARRIER) {
+	      return PASS;
+	    }
+	    else return FAIL;
+	    break;
+	    
+	  case right: 
+	    if (col == WIDTH - 1) {
+	      return PASS;
+	    }
+	    else if (displaygrid[row][col+1] == BORDER || displaygrid[row][col+1] == BARRIER) {
+	      return PASS;
+	    }
+	    else return FAIL;
+	    break;
+	  
+	  case above:
+	    if (row == 0) {
+	      return PASS;
+	    }
+	    else if (displaygrid[row-1][col] == BORDER || displaygrid[row-1][col] == BARRIER) {
+	      return PASS;
+	    }
+	    else return FAIL;
+	    break;  
+	  
+	  case below: 
+	    if (row == HEIGHT - 1) {
+	      return PASS;
+	    }
+	    else if (displaygrid[row+1][col] == BORDER || displaygrid[row+1][col] == BARRIER) {
+	      return PASS;
+	    }
+	    else return FAIL;
+	    break; 
+	}
+      }
+    }
+  }
+  //shouldn't reach this far
   return FAIL;
-
 }
   
   

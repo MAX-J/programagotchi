@@ -115,6 +115,9 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
       }
     }
     //if end of str STILL not reached, expect number at end representing 'distance'
+    
+    printf("\ncurrent str at i: %s",i); 
+    
     if (*i != '\0') {
       //digit next - means direction distance specified here
       if (isdigit(*i)) {
@@ -126,15 +129,24 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
 	return BAD_COMMAND;
       }
     }
-    // apply the move - loop depending on the 'distance' for GOTCHI to travel
-    for (j = 1; j <= distance; j++) {
-      ret = moveobject(displaygrid,selectedobj,rowshift,colshift);
-      if (ret < NO_ACTION) { //status back from attempted move
-	return ret;
+    
+    //------APPLY THE MOVE-------//
+    //no distance specified - 
+    //if (
+    
+    // distance specified- loop depending on the 'distance' for GOTCHI to travel
+    //else {
+      for (j = 1; j <= distance; j++) {
+	ret = moveobject(displaygrid,selectedobj,rowshift,colshift);
+	if (ret < NO_ACTION) { //status back from attempted move
+	  return ret;
+	}
+	SDL(displaygrid,"",NO_SCORE,sw);
+	SDL_Delay(DELAY);
       }
-      SDL(displaygrid,"",NO_SCORE,sw);
-      SDL_Delay(DELAY);
-    }
+    //}
+    
+    
   }
   
   //--------PARSE 'ADD' COMMANDS----------//
@@ -248,7 +260,7 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
 
 
 
-//remove spaces from a string
+//remove spaces (and tabs) from a string
 //UPDATE: Also removes newline characters
 void RemoveSpaces(char *inputstr, char *newstr)
 {
@@ -257,7 +269,7 @@ void RemoveSpaces(char *inputstr, char *newstr)
   char *i = inputstr;
   char *j = newstr;
   while(*i != '\0') {
-    if (*i != ' ' && *i != '\n') 
+    if (*i != ' ' && *i != '\t' && *i != '\n') 
     {
       *j = *i;
       j++;
