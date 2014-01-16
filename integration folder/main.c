@@ -257,10 +257,6 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	      level[LVL] += result;
 	    }
 	    loop--;
-	    if(a == GOBACK) {
-	      Incubator(d);
-	      loop--;
-	    }
 	  }
 	  if(game == MAZE) {
 	    if(a == 0) {
@@ -294,16 +290,12 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	      Incubator(d);
 	      read2array(file, gamearray);
 	      result = playMaze(gamearray, gamewin);
-	      SDL_DestroyWindow(gamewin.win);
 	      atexit(SDL_Quit);
+	      SDL_DestroyWindow(gamewin.win);
 	      level[MAZE] += result;
 	      level[LVL] += result;
 	    }
 	    loop--;
-	    if(a == GOBACK) {
-	      Incubator(d);
-	      loop--;
-	    }
 	  }
 	  if(game == BBALL) {
 	    if(a == 0) {
@@ -338,12 +330,12 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	      read2array(file, gamearray);
 	      playMaze(gamearray, gamewin);
 	    }
-	    loop--;
-	    if(a == GOBACK) {
-	      Incubator(d);
-	      loop--;
-	    }
+	    loop--;/
 	  }
+	} 
+	if(a == GOBACK) {
+	  Incubator(d);
+	  loop = 0;
 	}
       }
     }
