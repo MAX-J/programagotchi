@@ -29,13 +29,12 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	        	}
 	       		else{
 	      			state = runcommand(gamewin,gamearray,str);
-	      			printf("%d",state);
 	      			if(state == ATE_CANDY){
 					SDL(gamearray,"You got candy",score+=10,gamewin);
 					state = NO_ACTION;
 	      			}
 	      			if(score == 50){
-					SDL(gamearray, "Level Completed. Congralutations", NO_SCORE, gamewin);
+					SDL(gamearray, "Level Completed. Congratulations", NO_SCORE, gamewin);
 					SDL_Delay(1000);
 					return WIN;
 	      			}
@@ -44,6 +43,11 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 					SDL_Delay(1000);
 					return LOSE;
 				}
+				else if(state == QUIT_COMMAND){
+					SDL(gamearray, "Exiting Game", NO_SCORE, gamewin);
+					SDL_Delay(1000);
+	        			return LOSE;
+	} 
 	    		}  
 	}while(state != BAD_COMMAND);
 	if(state == QUIT_COMMAND){
