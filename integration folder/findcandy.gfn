@@ -1,4 +1,4 @@
-function solve
+function findcandy
 while not_on_candy:
 	move right
 	move down 1

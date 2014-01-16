@@ -6,7 +6,7 @@
 #include "programagotchi.h"
 #include "interpreter.h"
 
-#define DELAY 50
+#define DELAY 20
 #define NULL_CHAR 'N'
 
 void RemoveSpaces(char *inputstr, char *newstr);
@@ -17,12 +17,13 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
 
   char selectedobj = NULL_CHAR;
   char formattedstr[STRLEN], filestr[STRLEN], *i;
-  int n = 0, rowshift = 0, colshift = 0, distance = 1, numchars, j, ret;
+  int n = 0, rowshift = 0, colshift = 0, distance = -1, numchars, j, ret;
   Direction dir = right; 
+  Direction checkdir;
   FILE *ftemp;
   
   //debug
-  printf("\nRUNCOMMAND: Input Fcn as follows: %s",commandstr);
+  //printf("\nRUNCOMMAND: Input Fcn as follows: %s",commandstr);
   
   //define all 'objects' that may be added grid
   const char *objstrings[5] = {"gotchi","ball",NULL,NULL,NULL};
@@ -64,18 +65,22 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
     //handle the 'initial direction' part of the string//
     if (strstr(i,"up") == i) {
       rowshift = -1;
+      checkdir = above;
       i = i + 2;
     } 
     else if (strstr(i,"down") == i) {
       rowshift = +1;
+      checkdir = below;
       i = i + 4;
     }
     else if (strstr(i,"left") == i) {
       colshift = -1;
+      checkdir = left;
       i = i + 4;
     }
     else if (strstr(i,"right") == i) {
       colshift = +1;
+      checkdir = right;
       i = i + 5;
     }
     else {
@@ -114,10 +119,7 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
 	return BAD_COMMAND;
       }
     }
-    //if end of str STILL not reached, expect number at end representing 'distance'
-    
-    printf("\ncurrent str at i:%s",i); 
-    
+    //if end of str STILL not reached, expect number at end representing 'distance'    
     if (*i != '\0') {
       //digit next - means direction distance specified here
       if (isdigit(*i)) {
@@ -131,11 +133,20 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
     }
     
     //------APPLY THE MOVE-------//
-    //no distance specified - 
-    //if (
-    
+    //no distance specified - move until stopped
+    if (distance == -1) {
+      //
+      while (obstacle_adjacent(displaygrid,checkdir,GOTCHI) == 0) {;
+	ret = moveobject(displaygrid,selectedobj,rowshift,colshift);
+	if (ret < NO_ACTION) { //status back from attempted move
+	  return ret;
+	}
+	SDL(displaygrid,"",NO_SCORE,sw);
+	SDL_Delay(DELAY);
+      }
+    }
     // distance specified- loop depending on the 'distance' for GOTCHI to travel
-    //else {
+    else {
       for (j = 1; j <= distance; j++) {
 	ret = moveobject(displaygrid,selectedobj,rowshift,colshift);
 	if (ret < NO_ACTION) { //status back from attempted move
@@ -144,9 +155,7 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
 	SDL(displaygrid,"",NO_SCORE,sw);
 	SDL_Delay(DELAY);
       }
-    //}
-    
-    
+    }
   }
   
   //--------PARSE 'ADD' COMMANDS----------//
@@ -225,16 +234,13 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
   //------NO 'BASE COMMAND' RECOGNISED---------//
   //revert to custom function files
   else {
-    
-    printf("\nTEST");
-    printf("\ncommandstr: %s",commandstr);
-    
+
     //check for '.gfn' (gotchi function) file in current folder matching the command
     //if none matching, then this must be a bad command
     strcpy(filestr,commandstr);
     strcat(strtok(filestr," \t\n\0"),".gfn");
 
-    printf("\nAttempting to open file: %s",filestr);
+    //printf("\nAttempting to open file: %s",filestr);
     
     if ((ftemp = fopen(filestr,"r")) == NULL) {      
       printf("\nERROR: Command not recognised\n");

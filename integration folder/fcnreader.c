@@ -47,9 +47,7 @@ int parsefcn(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *filestr, c
   if ((fin = fopen(filestr,"r")) == NULL) {
     return BAD_COMMAND;
   }  
-  
-  printf("\n0");
-  
+
   //initialise 'global information' (for this file)
   globstruct *globals = malloc(sizeof(globstruct));
   globals -> fin = fin;
@@ -63,11 +61,11 @@ int parsefcn(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *filestr, c
     return line; 
   }
 
-  printf("\n5");
-
   //parse body
   //either returns a line number of a useful status code <= 0 
+  printf("\n");
   line = BLOCK(globals,displaygrid,getnext(globals,str),line+1,0,0);
+  printf("\n");
   fclose(globals -> fin);
   if (line > NO_ACTION) {
     return NO_ACTION;
@@ -83,9 +81,7 @@ int TOP(globstruct *globals, char commandstr[]) {
   char str[STRLEN], cstr[STRLEN], fline[STRLEN];
   char *i, *a, *b;
   int line = 0;
-  
-  printf("\n1");
-  
+
   //find function top-line
   do { 
     //
@@ -102,9 +98,7 @@ int TOP(globstruct *globals, char commandstr[]) {
     }
   } while (strstr(i,"function") != i);
   i += 8;
-  
-  printf("\n2");
-  
+
   //parse function top-line//
   strcpy(cstr,commandstr);
   strcat(cstr,"\n"); //important i think...
@@ -125,9 +119,7 @@ int TOP(globstruct *globals, char commandstr[]) {
     a += strlen(a) + 1; b += strlen(b) + 1;
     a = strtok(a," \t\n"); b = strtok(b," \t\n");
   }
-  
-  printf("\n3");
-  
+
   //check for any 'mismatches'
   if (a != NULL) {
     printf("\nERROR: Too many inputs!\n");
@@ -137,9 +129,7 @@ int TOP(globstruct *globals, char commandstr[]) {
     printf("\nERROR: Not enough inputs!\n");
     return BAD_COMMAND;
   }  
-  
-  printf("\n4");
-  
+
   //return the line number of fcn top-line
   return line;
 }
@@ -153,7 +143,7 @@ int BLOCK(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int l
   
   //base case 1: end of file
   if (str == NULL) {
-    printf("\nFile Complete\n");
+    //printf("\nFile Complete\n");
     //UPDATE: Set 'Warning' if robot not turned off? (will need a variable)
     return GENERAL_STOP; //not an error
   }
@@ -166,7 +156,7 @@ int BLOCK(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int l
     i++;
   }
 
-  printf("\nParsing line %d: %s",line,str);
+  printf("Parsing line %d: %s",line,str);
   
   //do loops//
   if (strstr(i,"do") == i) {
