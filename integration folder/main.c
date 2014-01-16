@@ -330,7 +330,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	      read2array(file, gamearray);
 	      playMaze(gamearray, gamewin);
 	    }
-	    loop--;/
+	    loop--;
 	  }
 	} 
 	if(a == GOBACK) {
