@@ -14,6 +14,7 @@ int SDL(char board[][WIDTH], char string[MAX], int score, SDL_Simplewin sw){
   int scorex = OFF/2;
   int stringy = OFF/2;
  
+  if(strcmp(string, "") != 0) {
     Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
     Neill_SDL_DrawText(&sw, string, stringx, stringy);
 
@@ -21,6 +22,16 @@ int SDL(char board[][WIDTH], char string[MAX], int score, SDL_Simplewin sw){
     sprintf(scorestring, "Score: %d", score);
     Neill_SDL_DrawText(&sw, scorestring, scorex, stringy);
     }
+    SDL_Delay(1000);
+
+    Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
+    Neill_SDL_DrawText(&sw, string, stringx, stringy);
+
+    if(score != NO_SCORE){
+    sprintf(scorestring, "Score: %d", score);
+    Neill_SDL_DrawText(&sw, scorestring, scorex, stringy);
+    }
+  }
 
     for (int w = 0; w <WIDTH; w++){
       for (int h = 0; h <HEIGHT; h++){
@@ -128,7 +139,7 @@ int SDL(char board[][WIDTH], char string[MAX], int score, SDL_Simplewin sw){
     SDL_RenderPresent(sw.renderer);
     SDL_UpdateWindowSurface(sw.win);
 
-    Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
-    SDL_RenderClear(sw.renderer);
+    //Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
+    //SDL_RenderClear(sw.renderer);
     return 0;
 }
