@@ -44,6 +44,11 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 					SDL_Delay(1000);
 					return LOSE;
 				}
+				else if(state == QUIT_COMMAND){
+					SDL(gamearray, "Exiting Game", NO_SCORE, gamewin);
+					SDL_Delay(1000);
+	        			return LOSE;
+	} 
 	    		}  
 	}while(state != BAD_COMMAND);
 	if(state == QUIT_COMMAND){
