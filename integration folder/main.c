@@ -266,7 +266,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 0) {
 	      if(a < level[MAZE]) {
 		file = fopen("level1.txt", "r");
-		Neill_SDL_Init(&gamewin, "Jump Game Level 1");
+		Neill_SDL_Init(&gamewin, "Maze Game Level 1");
 	      }
 	      else {
 		loop++;
@@ -275,7 +275,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 1) {
 	      if(a < level[MAZE]) {
 		file = fopen("level2.txt", "r");
-		Neill_SDL_Init(&gamewin, "Jump Game Level 2");
+		Neill_SDL_Init(&gamewin, "Maze Game Level 2");
 	      }
 	      else {
 		loop++;
@@ -284,7 +284,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 2) {
 	      if(a < level[MAZE]) {
 		file = fopen("level3.txt", "r");
-		Neill_SDL_Init(&gamewin, "Jump Game Level 3");
+		Neill_SDL_Init(&gamewin, "Maze Game Level 3");
 	      }
 	      else {
 		loop++;
@@ -309,7 +309,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 0) {
 	      if(a < level[BBALL]) {
 		file = fopen("level1.txt", "r");
-		Neill_SDL_Init(&gamewin, "Jump Game Level 1");
+		Neill_SDL_Init(&gamewin, "Basketball Game Level 1");
 	      }
 	      else {
 		loop++;
@@ -318,7 +318,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 1) {
 	      if(a < level[BBALL]) {
 		file = fopen("level2.txt", "r");
-		Neill_SDL_Init(&gamewin, "Jump Game Level 2");
+		Neill_SDL_Init(&gamewin, "Basketball Game Level 2");
 	      }
 	      else {
 		loop++;
@@ -327,7 +327,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 2) {
 	      if(a < level[BBALL]) {
 		file = fopen("level3.txt", "r");
-		Neill_SDL_Init(&gamewin, "Jump Game Level 3");
+		Neill_SDL_Init(&gamewin, "Basketball Game Level 3");
 	      }
 	      else {
 		loop++;
