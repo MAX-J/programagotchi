@@ -41,7 +41,15 @@ int main()
   lvlfile = fopen("level.txt", "w");
   fprintf(lvlfile, "%d %d %d", level[JUMP], level[MAZE], level[BBALL]);
   fclose(lvlfile);
-  d = start(W, H, "./newinc.bmp", "./gotchipod.bmp");
+  if(level[LVL] == 1) {
+    d = start(W, H, "./newinc.bmp", "./gotchipod1.bmp");
+  }
+  else if(level[LVL] == 2) {
+    d = start(W, H, "./newinc.bmp", "./gotchipod2.bmp");
+  }
+  else {
+    d = start(W, H, "./newinc.bmp", "./gotchipod3.bmp");
+  }
   while(1) { 
     GotchiMovement(d, level);  
     if(count % 15 == 0) {
@@ -115,7 +123,15 @@ void YourLevel(int level)
   const char *moretext = "Play to level me up!";
   Mini_SDL_Init(&sw, text);
   surf = SDL_GetWindowSurface(sw.win);
-  hello = SDL_LoadBMP("./gotchi.bmp");
+  if(level == 1) {
+    hello = SDL_LoadBMP("./gotchi1.bmp");
+  }
+  else if(level == 2) {
+    hello = SDL_LoadBMP("./gotchi2.bmp");
+  }
+  else {
+    hello = SDL_LoadBMP("./gotchi3.bmp");
+  }
   SDL_BlitSurface(hello, NULL, surf, NULL);
   Neill_SDL_SetDrawColour(&sw, 0, 255, 255);
   Neill_SDL_DrawText(&sw, text, 30, 166);
@@ -200,7 +216,7 @@ int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gam
 	  loop = 0;
 	}
 	if(a == GOBACK) {
-	  Incubator(d);
+	  Incubator(d, level[LVL]);
 	  loop = 0;
 	}
       }
@@ -248,13 +264,14 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	      }
 	    }
 	    if(loop == 1) {
-	      Incubator(d);
+	      Incubator(d, level[LVL]);
 	      read2array(file, gamearray);
 	      result = playJump(gamearray, gamewin);
 	      SDL_DestroyWindow(gamewin.win);
 	      atexit(SDL_Quit);
 	      level[JUMP] += result;
 	      level[LVL] += result;
+	      Incubator(d, level[LVL]);
 	    }
 	    loop--;
 	  }
@@ -287,13 +304,14 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	      }
 	    }
 	    if(loop == 1) {
-	      Incubator(d);
+	      Incubator(d, level[LVL]);
 	      read2array(file, gamearray);
 	      result = playMaze(gamearray, gamewin);
 	      atexit(SDL_Quit);
 	      SDL_DestroyWindow(gamewin.win);
 	      level[MAZE] += result;
 	      level[LVL] += result;
+	      Incubator(d, level[LVL]);
 	    }
 	    loop--;
 	  }
@@ -326,7 +344,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	      }
 	    }
 	    if(loop == 1) {
-	      Incubator(d);
+	      Incubator(d, level[LVL]);
 	      read2array(file, gamearray);
 	      playMaze(gamearray, gamewin);
 	    }
@@ -334,7 +352,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	  }
 	} 
 	if(a == GOBACK) {
-	  Incubator(d);
+	  Incubator(d, level[LVL]);
 	  loop = 0;
 	}
       }

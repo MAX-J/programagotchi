@@ -12,7 +12,7 @@ void paint(Display *d, int x, int y);
 
 void MAXJ_SDL_DrawText(Display *d, const char* text, int x, int y);
 
-void Incubator(Display *d);
+void Incubator(Display *d, int level);
 
 void Menu(Display *d);
 

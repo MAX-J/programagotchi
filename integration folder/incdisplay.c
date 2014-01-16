@@ -59,9 +59,17 @@ if (event->type == SDL_QUIT) { SDL_Quit(); exit(0); }
 SDL_Delay(200);
 }
 
-void Incubator(Display *d)
+void Incubator(Display *d, int level)
 {
-  d->fg = SDL_LoadBMP("./gotchipod.bmp");
+  if(level == 1) {
+    d->fg = SDL_LoadBMP("./gotchipod1.bmp");
+  }
+  if(level == 2) {
+    d->fg = SDL_LoadBMP("./gotchipod2.bmp");
+  }
+  if(level > 2) {
+    d->fg = SDL_LoadBMP("./gotchipod3.bmp");
+  }
   paint(d, 150, 200);
 }
 
