@@ -116,7 +116,7 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
     }
     //if end of str STILL not reached, expect number at end representing 'distance'
     
-    printf("\ncurrent str at i: %s",i); 
+    printf("\ncurrent str at i:%s",i); 
     
     if (*i != '\0') {
       //digit next - means direction distance specified here
