@@ -1,13 +1,18 @@
 /*#include "display.h"*/
 #include "./programagotchi.h"
 
-int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter, SDL_Simplewin gamewin);
+#define GOLEFT 0
+#define GORIGHT 1
+#define CHANGEDIRECTION (direction+ 1)%2
+#define COMPLETED 0
 
-int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter, SDL_Simplewin gamewin);
+int moveBaddies(char gamearray[HEIGHT][WIDTH], int direction, SDL_Simplewin gamewin);
+
+int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int direction, SDL_Simplewin gamewin);
 
 int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	
-	int counter = 0, firstmove = 1, score = 0;
+	int direction = GOLEFT, firstmove = 1, score = 0;
 	int state = 0;
 	char str[STRLEN];
 	
@@ -38,39 +43,48 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 
 			if(state == ON_EXIT){
 				SDL(gamearray, "Level Completed. Congratulations",score, gamewin);
+				SDL_Delay(1000);
 				return WIN;
 			}
 
-
+			else if(state == ON_HAZARD){
+				SDL(gamearray, "You died",  score,gamewin);
+				SDL_Delay(1000);
+				return LOSE;
+			}
 			}
 
 		}while(state == BAD_COMMAND);
 		if(firstmove){
 			SDL(gamearray, "You did it. Congratulations",score, gamewin);
-			firstmove = 0;		
+			firstmove = COMPLETED;		
 		}		
 
 		if(state == QUIT_COMMAND){
 			SDL(gamearray, "Exiting Game",NO_SCORE, gamewin);
+			SDL_Delay(1000);
 			return LOSE;
 		}
 		
 		else if(state == ON_EXIT){
 			SDL(gamearray, "Level Completed. Congratulations",score, gamewin);
+			SDL_Delay(1000);
 			return WIN;
 		}
 		
 		else if(state == ON_HAZARD){
 			SDL(gamearray, "You died",NO_SCORE, gamewin);
+			SDL_Delay(1000);
 			return LOSE;
 		}
 		
-		if(counter == 0 || counter == 1){
-			counter = moveBaddies(gamearray, counter, gamewin);
+		if(direction == 0 || direction == 1){
+			direction = moveBaddies(gamearray, direction, gamewin);
 		}
 		
-		if(counter == ON_HAZARD){
+		if(direction == ON_HAZARD){
 			SDL(gamearray, "You died", NO_SCORE, gamewin);
+			SDL_Delay(1000);
 			return LOSE;
 		}
 		
@@ -84,13 +98,13 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	
 }
 
-int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter, SDL_Simplewin gamewin){
+int moveBaddies(char gamearray[HEIGHT][WIDTH], int direction, SDL_Simplewin gamewin){
 	int i,j;
 	
 	for(j = 0; j < HEIGHT; j++){
 		for(i = 0; i < WIDTH; i++){
 			if(gamearray[i][j] == HAZARD){
-				j = moveHorizontally(gamearray, i , j, counter, gamewin);
+				j = moveHorizontally(gamearray, i , j, direction, gamewin);
 				i++;
 			}
 			if( j < 0){
@@ -98,14 +112,14 @@ int moveBaddies(char gamearray[HEIGHT][WIDTH], int counter, SDL_Simplewin gamewi
 			}
 		}
 	}
-	counter = (counter+ 1)%2;
+	direction = CHANGEDIRECTION;
 	
-	return counter;
+	return direction;
 }
 
-int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter, SDL_Simplewin gamewin){
+int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int direction, SDL_Simplewin gamewin){
 	int count = 0;
-		if((gamearray[i][j - 1] == GOTCHI || gamearray[i][j - 1] == FREE_SPACE) && counter == 0){
+		if((gamearray[i][j - 1] == GOTCHI || gamearray[i][j - 1] == FREE_SPACE) && direction == GOLEFT){
 			do{
 				if(gamearray[i][j - 1] == GOTCHI){
 					return -5; 
@@ -121,7 +135,7 @@ int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter, S
 			}while(count != 5);
 		}
 		
-	else if((gamearray[i][j + 1] == GOTCHI || gamearray[i][j + 1] == FREE_SPACE) && counter == 1){
+	else if((gamearray[i][j + 1] == GOTCHI || gamearray[i][j + 1] == FREE_SPACE) && direction == GORIGHT){
 		do{
 			if(gamearray[i][j + 1] == GOTCHI){
 				return -5; 
@@ -140,11 +154,4 @@ int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int counter, S
 
 	return j;
 }
-
-/*void Incubator(Display *d)
-{
-  d->fg = SDL_LoadBMP("./exit.bmp");
-  paint(d, 150, 200);
-}*/
-
 				
