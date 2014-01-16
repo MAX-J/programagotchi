@@ -47,4 +47,4 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *inputstr
 // Game functions
 int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw);
 int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin);
-
+//int Basketball(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw);
