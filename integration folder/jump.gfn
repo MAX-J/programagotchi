@@ -1,5 +1,6 @@
-//test comments
 function jump dir height
-do 5:
-  move up 1
-move dir 4
+move up height
+move dir and up 3
+move dir 2 
+move dir and down 3
+move down height

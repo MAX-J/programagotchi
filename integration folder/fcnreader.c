@@ -31,7 +31,7 @@ int DO(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int line
 int WHILE(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int line, int indents, int barexec);
 int IF(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int line, int indents, int barexec);
 int TEST(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int line);
-char *getnext(globstruct *globals);
+char *getnext(globstruct *globals, char *str);
 void addvar(globstruct *globals, char *name, char *val);
 char *replacevars(varstruct *varlist, char *str);
 char *skipspace(char *str);
@@ -41,11 +41,14 @@ int parsefcn(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *filestr, c
 
   FILE *fin;
   int line;
+  char str[STRLEN];
 
   //open the file (should have already been validated)
   if ((fin = fopen(filestr,"r")) == NULL) {
     return BAD_COMMAND;
   }  
+  
+  printf("\n0");
   
   //initialise 'global information' (for this file)
   globstruct *globals = malloc(sizeof(globstruct));
@@ -53,23 +56,22 @@ int parsefcn(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *filestr, c
   globals -> sw = sw;
   globals->commandstr = commandstr;
   globals -> varlist = NULL;
-  
-  printf("\nPARSING TOP...\n");
-  
+
   //parse top line
   line = TOP(globals,commandstr);
   if (line < NO_ACTION) { //error parsing 'TOP'
     return line; 
   }
-  
+
+  printf("\n5");
+
   //parse body
   //either returns a line number of a useful status code <= 0 
-  line = BLOCK(globals,displaygrid,getnext(globals),line,0,0);
+  line = BLOCK(globals,displaygrid,getnext(globals,str),line+1,0,0);
+  fclose(globals -> fin);
   if (line > NO_ACTION) {
     return NO_ACTION;
   }
-  
-  fclose(globals -> fin);
   return line;
   
 }
@@ -81,6 +83,8 @@ int TOP(globstruct *globals, char commandstr[]) {
   char str[STRLEN], cstr[STRLEN], fline[STRLEN];
   char *i, *a, *b;
   int line = 0;
+  
+  printf("\n1");
   
   //find function top-line
   do { 
@@ -98,6 +102,8 @@ int TOP(globstruct *globals, char commandstr[]) {
     }
   } while (strstr(i,"function") != i);
   i += 8;
+  
+  printf("\n2");
   
   //parse function top-line//
   strcpy(cstr,commandstr);
@@ -119,6 +125,9 @@ int TOP(globstruct *globals, char commandstr[]) {
     a += strlen(a) + 1; b += strlen(b) + 1;
     a = strtok(a," \t\n"); b = strtok(b," \t\n");
   }
+  
+  printf("\n3");
+  
   //check for any 'mismatches'
   if (a != NULL) {
     printf("\nERROR: Too many inputs!\n");
@@ -129,6 +138,8 @@ int TOP(globstruct *globals, char commandstr[]) {
     return BAD_COMMAND;
   }  
   
+  printf("\n4");
+  
   //return the line number of fcn top-line
   return line;
 }
@@ -136,27 +147,27 @@ int TOP(globstruct *globals, char commandstr[]) {
 
 
 int BLOCK(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int line, int indents, int barexec) {
-  
-  printf("\nParsing 'BLOCK' line: %s",str);
-  
-  //
+
   char *i = str;
   int n, ret = NO_ACTION; 
+  
+  //base case 1: end of file
+  if (str == NULL) {
+    printf("\nFile Complete\n");
+    //UPDATE: Set 'Warning' if robot not turned off? (will need a variable)
+    return GENERAL_STOP; //not an error
+  }
   //traverse indents at start
   for (n = 0; n < indents; n++) {
-    //base case 1: decreased indentation
+    //base case 2: decreased indentation
     if (*i != '\t') {
       return line; 
     }
     i++;
   }
-  //base case 2: end of file
-  if (str == NULL) {
-    printf("\nEND OF FILE REACHED\n");
-    //UPDATE: Set 'Warning' if robot not turned off? (will need a variable)
-    return GENERAL_STOP; //not an error
-  }
-  printf("parsing line %d. BAREXEC = %d. str: %s",line,barexec,str);
+
+  printf("\nParsing line %d: %s",line,str);
+  
   //do loops//
   if (strstr(i,"do") == i) {
     if ((line = DO(globals,displaygrid,str,line,indents,barexec)) < NO_ACTION) {
@@ -187,14 +198,14 @@ int BLOCK(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int l
   //also make an allowance for comment lines and blank lines
   else {
     if (barexec == 0 && strstr(i,"//") != i && *i != '\n' && *i != '\0') {
-      ret = runcommand(globals->sw,displaygrid,str);
+      ret = runcommand(globals->sw,displaygrid,i);
       if (ret < NO_ACTION) { //bad command identified by 'runcommand'
 	return ret; 
       }
     }
     //next line in block
     //UPDATE: ONLY IGNORE RETURN (ERRORS) IF NO FURTHER STATEMENTS CAN BE REACHED
-    line = BLOCK(globals,displaygrid,getnext(globals),line+1,indents,barexec);
+    line = BLOCK(globals,displaygrid,getnext(globals,str),line+1,indents,barexec);
   }
   //-------------------------------------------------//
   
@@ -220,7 +231,7 @@ int DO(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int line
     return BAD_COMMAND; 
   }
   //run the 'inner block' for the first time, pass any errors/stops back up
-  if ((endline = BLOCK(globals,displaygrid,getnext(globals),line+1,indents+1,barexec)) < NO_ACTION) {
+  if ((endline = BLOCK(globals,displaygrid,getnext(globals,str),line+1,indents+1,barexec)) < NO_ACTION) {
     return endline;
   }
   //loop further inner blocks, 'rewind' file before each iteration
@@ -229,7 +240,7 @@ int DO(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int line
     for (b = 0; b < line; b++) {
       fgets(str,STRLEN,globals->fin); 
     }
-    if ((endline = BLOCK(globals,displaygrid,getnext(globals),line+1,indents+1,barexec)) < NO_ACTION) {
+    if ((endline = BLOCK(globals,displaygrid,getnext(globals,str),line+1,indents+1,barexec)) < NO_ACTION) {
       return endline;
     }
   }
@@ -254,10 +265,10 @@ int WHILE(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int l
       return BAD_COMMAND; //bad syntax in test
       break;
     case FAIL:
-      endline = BLOCK(globals,displaygrid,getnext(globals),line+1,indents+1,barexec+1);
+      endline = BLOCK(globals,displaygrid,getnext(globals,str),line+1,indents+1,barexec+1);
       break;
     case PASS:
-      endline = BLOCK(globals,displaygrid,getnext(globals),line+1,indents+1,barexec);
+      endline = BLOCK(globals,displaygrid,getnext(globals,str),line+1,indents+1,barexec);
       break;
   }
   if (endline < NO_ACTION) { //error or stop in block
@@ -270,7 +281,7 @@ int WHILE(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int l
     for (n = 0; n < line; n++) {
       fgets(str,STRLEN,globals->fin);
     }
-    if ((endline = BLOCK(globals,displaygrid,getnext(globals),line+1,indents+1,barexec)) < NO_ACTION) {
+    if ((endline = BLOCK(globals,displaygrid,getnext(globals,str),line+1,indents+1,barexec)) < NO_ACTION) {
       return endline;
     }
   }
@@ -293,10 +304,10 @@ int IF(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int line
       return BAD_COMMAND; //bad syntax in test
       break;
     case FAIL:
-      line = BLOCK(globals,displaygrid,getnext(globals),line+1,indents+1,barexec+1);
+      line = BLOCK(globals,displaygrid,getnext(globals,str),line+1,indents+1,barexec+1);
       break;
     case PASS:
-      line = BLOCK(globals,displaygrid,getnext(globals),line+1,indents+1,barexec);
+      line = BLOCK(globals,displaygrid,getnext(globals,str),line+1,indents+1,barexec);
       break;
   }
   if (line < NO_ACTION) { //error in block
@@ -314,7 +325,6 @@ int IF(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int line
   }
   //
   if (strstr(i,"else") == i) {
-    printf("parsing line %d. BAREXEC = %d. str: %s",line,barexec,str);
     //validate ':' following else
     i += 4;
     i = skipspace(i);
@@ -325,10 +335,10 @@ int IF(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int line
     //run inner block: toggle execution as necessary
     //same test result as 'if' above - but OPPOSITE 'barexec' response
     if (result == 0) {
-      line = BLOCK(globals,displaygrid,getnext(globals),line+1,indents+1,barexec);
+      line = BLOCK(globals,displaygrid,getnext(globals,str),line+1,indents+1,barexec);
     } 
     else {
-      line = BLOCK(globals,displaygrid,getnext(globals),line+1,indents+1,barexec+1);
+      line = BLOCK(globals,displaygrid,getnext(globals,str),line+1,indents+1,barexec+1);
     }
     if (line < NO_ACTION) { //error in block
       return line;
@@ -398,19 +408,14 @@ int TEST(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int li
     i += strlen("hazard_below");
   }
   //--------------CANDY-------------//
-  else if (strstr(i,"next_to_candy") == i) {
-    //this one checks left AND right by default (no 'dir')
-    result = candy_adjacent(displaygrid,GOTCHI); 
-    i += strlen("next_to_candy");
-  }
-  else if (strstr(i,"not_next_to_candy") == i) {
-    result = (candy_adjacent(displaygrid,GOTCHI) == 0);
-    i += strlen("not_next_to_candy");
+  else if (strstr(i,"not_on_candy") == i) {
+    result = PASS; //WILL DO FOR NOW!!
+    i += strlen("not_on_candy");
   }  
   //-----------EXIT---------//
   //doesn't really make sense to have an 'on exit' test
   else if (strstr(i,"not_on_exit") == i) {
-    result = FAIL; //think about it!
+    result = PASS; //WILL DO FOR NOW!!
     i += strlen("not_on_exit");
   }  
   //anything else is invalid
@@ -430,12 +435,22 @@ int TEST(globstruct *globals, char displaygrid[HEIGHT][WIDTH], char *str, int li
 
 
 
-
-//--get next line in file with variable replacements--//
-char *getnext(globstruct *globals) {
-  char str[STRLEN];
-  fgets(str,STRLEN,globals->fin);
-  return replacevars(globals->varlist,str);
+//--get next line in file, with variable replacements--//
+char *getnext(globstruct *globals, char *str) {
+  //printf("\nGETTING NEXT\n"); //debug
+  char newstr[STRLEN];
+  char *i;
+  i = fgets(newstr,STRLEN,globals->fin);
+  //printf("\ni from fgets: %s\n",i); //debug
+  //catch end of file
+  if (i == NULL) {
+    return NULL;
+  }
+  //replace variables in line before returning
+  i = replacevars(globals->varlist,i);
+  //copy to your main string and pass back out
+  strcpy(str,i);
+  return str;
 }
 
 
@@ -484,6 +499,10 @@ char *replacevars(varstruct *varlist, char *str) {
   varstruct *v = varlist;
   char *newstr = NULL, *a, *b, *i;
   int n, replacevar;
+  //no variables in the list
+  if (varlist == NULL) {
+    return str;
+  }
   //run through each variable in the list
   while (v != NULL) {
     //new memory needed for each variable 'sweep'

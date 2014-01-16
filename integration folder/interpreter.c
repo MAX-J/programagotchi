@@ -21,6 +21,7 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
   Direction dir = right; 
   FILE *ftemp;
   
+  //debug
   printf("\nRUNCOMMAND: Input Fcn as follows: %s",commandstr);
   
   //define all 'objects' that may be added grid
@@ -32,7 +33,7 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
   i = formattedstr;
   
   //--------PARSE 'MOVE' COMMANDS----------//
-  if (strstr(i,"move") == i || strstr(i,"swim") == i) { //UPDATE: NOT GOOD!! SWIM NEEDS TO BE RESTRICTED TO SHARK GAME ONLY!!
+  if (strstr(i,"move") == i || strstr(i,"swim") == i) { 
     i = i + 4;
     //if the command goes straight to a 'direction' (no object identifier), then assume GOTCHI is being moved
     if (strstr(i,"up") == i || strstr(i,"down") == i || strstr(i,"left") == i || strstr(i,"right") == i) {
@@ -212,12 +213,16 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
   //------NO 'BASE COMMAND' RECOGNISED---------//
   //revert to custom function files
   else {
+    
+    printf("\nTEST");
+    printf("\ncommandstr: %s",commandstr);
+    
     //check for '.gfn' (gotchi function) file in current folder matching the command
     //if none matching, then this must be a bad command
     strcpy(filestr,commandstr);
     strcat(strtok(filestr," \t\n\0"),".gfn");
-    
-    printf("\nATTEMPTING TO OPEN FILE: %s",filestr);
+
+    printf("\nAttempting to open file: %s",filestr);
     
     if ((ftemp = fopen(filestr,"r")) == NULL) {      
       printf("\nERROR: Command not recognised\n");

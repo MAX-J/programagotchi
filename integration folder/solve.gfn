@@ -1,0 +1,6 @@
+function solve
+while not_on_candy:
+	do 5:
+		move up
+	move right
+eat
