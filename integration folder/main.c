@@ -308,7 +308,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	  if(game == BBALL) {
 	    if(a == 0) {
 	      if(a < level[BBALL]) {
-		file = fopen("level1.txt", "r");
+		file = fopen("Basketball1.txt", "r");
 		Neill_SDL_Init(&gamewin, "Basketball Game Level 1");
 	      }
 	      else {
@@ -317,7 +317,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    }
 	    if(a == 1) {
 	      if(a < level[BBALL]) {
-		file = fopen("level2.txt", "r");
+		file = fopen("Basketball2.txt", "r");
 		Neill_SDL_Init(&gamewin, "Basketball Game Level 2");
 	      }
 	      else {
@@ -326,7 +326,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    }
 	    if(a == 2) {
 	      if(a < level[BBALL]) {
-		file = fopen("level3.txt", "r");
+		file = fopen("Basketball2.txt", "r");
 		Neill_SDL_Init(&gamewin, "Basketball Game Level 3");
 	      }
 	      else {
