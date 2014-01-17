@@ -4,6 +4,7 @@
 #define JUMP 0
 #define MAZE 1
 #define BBALL 2
+#define LVLARR 4
 #define GOBACK 3
 
 #define J1 0
@@ -20,13 +21,13 @@
 #define W 360
 #define H 480
 
-int SDL_Events_Games(Display *d, int level[4], int score[SCORES]);
+int SDL_Events_Games(Display *d, int level[LVLARR], int score[SCORES]);
 
 void SDL_Events_ting(Display *d);
 
 void UpdateWindow(SDL_Simplewin sw);
 
-void GotchiMovement(Display *d, int level[4], int score[SCORES]);
+void GotchiMovement(Display *d, int level[LVLARR], int score[SCORES]);
 
 void YourLevel(int level);
 
@@ -36,13 +37,15 @@ int IncubatorButtonClicked(int x, int y);
 
 int XYInMenu(int x, int y);
 
-int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int level[4], int score[SCORES]);
+int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int level[LVLARR], int score[SCORES]);
 
-int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int game, int level[4], int score[SCORES]);
+int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int game, int level[LVLARR], int score[SCORES]);
 
-void UpdateLevelFile(int level[4]);
+void UpdateLevelFile(int level[LVLARR]);
 
 void UpdateHiScores(int score[SCORES]);
+
+int filechecker(FILE * file);
 
 // Move the Gotchi in the incubator.
 int main()
@@ -54,10 +57,12 @@ int main()
   int score[SCORES] = {0};
   FILE *lvlfile, *scoresfile;
   lvlfile = fopen("level.txt", "r");
+  filechecker(lvlfile);
   fscanf(lvlfile, "%d %d %d", &level[JUMP], &level[MAZE], &level[BBALL]);
   fclose(lvlfile);
   level[LVL] = level[JUMP] +  level[MAZE] + level[BBALL] - 2;
   scoresfile = fopen("hiscores.txt", "r");
+  filechecker(scoresfile);
   fscanf(scoresfile, "%d %d %d %d %d %d %d %d %d", &score[J1], &score[J2], &score[J3], &score[M1], &score[M2], &score[M3], &score[B1], &score[B2], &score[B3]);
   fclose(scoresfile);
   UpdateLevelFile(level);
@@ -81,7 +86,7 @@ int main()
 }
 
 // Gobble all events & ignore most
-int SDL_Events_Games(Display *d, int level[4], int score[SCORES])
+int SDL_Events_Games(Display *d, int level[LVLARR], int score[SCORES])
 {
   char gamearray[HEIGHT][WIDTH];
   SDL_Simplewin gamewin;
@@ -117,7 +122,7 @@ void UpdateWindow(SDL_Simplewin sw)
   SDL_Delay(1000);
 }
 
-void GotchiMovement(Display *d, int level[4], int score[SCORES])
+void GotchiMovement(Display *d, int level[LVLARR], int score[SCORES])
 {
   int x, y;
   x = 150;
@@ -205,7 +210,7 @@ int XYInMenu(int x, int y)
   return 4;
 }
 
-int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int level[4], int score[SCORES])
+int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int level[LVLARR], int score[SCORES])
 {
   int a, loop = 1, result = 0;
   SDL_Event MenuEvent;
@@ -241,7 +246,7 @@ int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gam
   return 0;
 }
 
-int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int game, int level[4], int score[SCORES])
+int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int game, int level[LVLARR], int score[SCORES])
 {
   int a, loop = 1, result = 0;
   SDL_Event SubMenuEvent;
@@ -255,6 +260,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 0) {
 	      if(a < level[JUMP]) {
 		file = fopen("jump1.txt", "r");
+		filechecker(file);
 		Neill_SDL_Init(&gamewin, "Jump Game Level 1");
 	      }
 	      else {
@@ -264,6 +270,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 1) {
 	      if(a < level[JUMP]) {
 		file = fopen("jump2.txt", "r");
+		filechecker(file);
 		Neill_SDL_Init(&gamewin, "Jump Game Level 2");
 	      }
 	      else {
@@ -273,6 +280,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 2) {
 	      if(a < level[JUMP]) {
 		file = fopen("jump3.txt", "r");
+		filechecker(file);
 		Neill_SDL_Init(&gamewin, "Jump Game Level 3");
 	      }
 	      else {
@@ -302,6 +310,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 0) {
 	      if(a < level[MAZE]) {
 		file = fopen("level1.txt", "r");
+		filechecker(file);
 		Neill_SDL_Init(&gamewin, "Maze Game Level 1");
 		system("xdg-open findcandy.gfn");
 	      }
@@ -312,6 +321,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 1) {
 	      if(a < level[MAZE]) {
 		file = fopen("level2.txt", "r");
+		filechecker(file);
 		Neill_SDL_Init(&gamewin, "Maze Game Level 2");
 		system("xdg-open solve.gfn");
 	      }
@@ -322,6 +332,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 2) {
 	      if(a < level[MAZE]) {
 		file = fopen("level3.txt", "r");
+		filechecker(file);
 		Neill_SDL_Init(&gamewin, "Maze Game Level 3");
 		system("xdg-open findcandy.gfn");
 	      }
@@ -353,6 +364,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 0) {
 	      if(a < level[BBALL]) {
 		file = fopen("Basketball1.txt", "r");
+		filechecker(file);
 		Neill_SDL_Init(&gamewin, "Basketball Game Level 1");
 	      }
 	      else {
@@ -362,6 +374,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 1) {
 	      if(a < level[BBALL]) {
 		file = fopen("Basketball2.txt", "r");
+		filechecker(file);
 		Neill_SDL_Init(&gamewin, "Basketball Game Level 2");
 	      }
 	      else {
@@ -371,6 +384,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(a == 2) {
 	      if(a < level[BBALL]) {
 		file = fopen("Basketball2.txt", "r");
+		filechecker(file);
 		Neill_SDL_Init(&gamewin, "Basketball Game Level 3");
 	      }
 	      else {
@@ -395,7 +409,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
   return 0;
 }
 
-void UpdateLevelFile(int level[4])
+void UpdateLevelFile(int level[LVLARR])
 {
   FILE *lvlfile;
   lvlfile = fopen("level.txt", "w");
@@ -409,4 +423,14 @@ void UpdateHiScores(int score[SCORES])
   scoresfile = fopen("hiscores.txt", "w");
   fprintf(scoresfile, "%d %d %d %d %d %d %d %d %d", score[J1], score[J2], score[J3], score[M1], score[M2], score[M3], score[B1], score[B2], score[B3]);
   fclose(scoresfile);
+}
+
+// Checks the file exists.
+int filechecker(FILE * file)
+{
+    if (!file) {
+	fprintf(stderr, "Can't read the file.\n");
+	exit(1);
+    }
+    return 0;
 }
