@@ -5,16 +5,28 @@
 #define MAZE 1
 #define BBALL 2
 #define GOBACK 3
+
+#define J1 0
+#define J2 1
+#define J3 2
+#define M1 3
+#define M2 4
+#define M3 5
+#define B1 6
+#define B2 7
+#define B3 8
+#define SCORES  9
+
 #define W 360
 #define H 480
 
-int SDL_Events_Games(Display *d, int level[4]);
+int SDL_Events_Games(Display *d, int level[4], int score[SCORES]);
 
 void SDL_Events_ting(Display *d);
 
 void UpdateWindow(SDL_Simplewin sw);
 
-void GotchiMovement(Display *d, int level[4]);
+void GotchiMovement(Display *d, int level[4], int score[SCORES]);
 
 void YourLevel(int level);
 
@@ -24,13 +36,13 @@ int IncubatorButtonClicked(int x, int y);
 
 int XYInMenu(int x, int y);
 
-int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int level[4]);
+int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int level[4], int score[SCORES]);
 
-int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int game, int level[4]);
+int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int game, int level[4], int score[SCORES]);
 
 void UpdateLevelFile(int level[4]);
 
-void UpdateInc(Display *d, int level);
+void UpdateHiScores(int score[SCORES]);
 
 // Move the Gotchi in the incubator.
 int main()
@@ -39,11 +51,15 @@ int main()
   char *incname = malloc(20*sizeof(char));
   int count = 0; 
   int level[4] = {0};
-  FILE *lvlfile;
+  int score[SCORES] = {0};
+  FILE *lvlfile, *scoresfile;
   lvlfile = fopen("level.txt", "r");
   fscanf(lvlfile, "%d %d %d", &level[JUMP], &level[MAZE], &level[BBALL]);
   fclose(lvlfile);
   level[LVL] = level[JUMP] +  level[MAZE] + level[BBALL] - 2;
+  scoresfile = fopen("hiscores.txt", "r");
+  fscanf(scoresfile, "%d %d %d %d %d %d %d %d %d", &score[J1], &score[J2], &score[J3], &score[M1], &score[M2], &score[M3], &score[B1], &score[B2], &score[B3]);
+  fclose(scoresfile);
   UpdateLevelFile(level);
   sprintf(incname, "./newinc%d.bmp", level[LVL]);
   if(level[LVL] == 1) {
@@ -56,17 +72,16 @@ int main()
     d = start(W, H, incname, "./gotchipod3.bmp");
   }
   while(1) { 
-    GotchiMovement(d, level);  
-    SDL_Events_Games(d, level);
+    GotchiMovement(d, level, score);  
+    SDL_Events_Games(d, level, score);
     count++;
-    UpdateLevelFile(level);
-    
+    UpdateLevelFile(level);  
   }
   return 0;
 }
 
 // Gobble all events & ignore most
-int SDL_Events_Games(Display *d, int level[4])
+int SDL_Events_Games(Display *d, int level[4], int score[SCORES])
 {
   char gamearray[HEIGHT][WIDTH];
   SDL_Simplewin gamewin;
@@ -76,14 +91,14 @@ int SDL_Events_Games(Display *d, int level[4])
      case SDL_MOUSEBUTTONDOWN:
        if(IncubatorButtonClicked(event.button.x, event.button.y) == 1)  {
 	 Menu(d);
-	 SDL_Menu_Events(d, gamearray, gamewin, level);
+	 SDL_Menu_Events(d, gamearray, gamewin, level, score);
        }
        return 0;
      case SDL_KEYDOWN:
        switch(event.key.keysym.sym){
        case SDLK_m:
 	 Menu(d);
-	 SDL_Menu_Events(d, gamearray, gamewin, level);
+	 SDL_Menu_Events(d, gamearray, gamewin, level, score);
        return 0;
      default:
        exit(1);
@@ -102,13 +117,13 @@ void UpdateWindow(SDL_Simplewin sw)
   SDL_Delay(1000);
 }
 
-void GotchiMovement(Display *d, int level[4])
+void GotchiMovement(Display *d, int level[4], int score[SCORES])
 {
   int x, y;
   x = 150;
   y = 200;
   paint(d, x, y);
-  SDL_Events_Games(d, level);
+  SDL_Events_Games(d, level, score);
   x = x + 10;
   y = y + 10;
   paint(d, x, y);
@@ -190,7 +205,7 @@ int XYInMenu(int x, int y)
   return 4;
 }
 
-int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int level[4])
+int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int level[4], int score[SCORES])
 {
   int a, loop = 1, result = 0;
   SDL_Event MenuEvent;
@@ -201,17 +216,17 @@ int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gam
 	if((a = XYInMenu(MenuEvent.button.x, MenuEvent.button.y)) < 3) {
 	  if(a == JUMP) {
 	    SubMenu(d, level[JUMP]);
-	    result =SDL_SubMenu_Events(d, gamearray, gamewin, a, level);
+	    result =SDL_SubMenu_Events(d, gamearray, gamewin, a, level, score);
 	    return result;
 	  }
 	  if(a == MAZE) {
 	    SubMenu(d, level[MAZE]);
-	    result = SDL_SubMenu_Events(d, gamearray, gamewin, a, level);
+	    result = SDL_SubMenu_Events(d, gamearray, gamewin, a, level, score);
 	    return result;
 	  }
 	  if(a == BBALL) {
 	    SubMenu(d, level[BBALL]);
-	    result = SDL_SubMenu_Events(d, gamearray, gamewin, a, level);
+	    result = SDL_SubMenu_Events(d, gamearray, gamewin, a, level, score);
 	    return result;
 	  }
 	  loop = 0;
@@ -226,7 +241,7 @@ int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gam
   return 0;
 }
 
-int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int game, int level[4])
+int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int game, int level[4], int score[SCORES])
 {
   int a, loop = 1, result = 0;
   SDL_Event SubMenuEvent;
@@ -271,8 +286,13 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	      result = playJump(gamearray, gamewin);
 	      SDL_DestroyWindow(gamewin.win);
 	      atexit(SDL_Quit);
-	      level[JUMP] += result;
-	      level[LVL] += result;
+	      if(result > 0) {
+		level[JUMP]++;
+		level[LVL]++;
+		if(result > score[JUMP*LVL+a]) {
+		  UpdateHiScores(score);
+		}
+	      }
 	      Incubator(d, level[LVL]);
 	    }
 	    loop--;
@@ -316,8 +336,13 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	      result = playMaze(gamearray, gamewin);
 	      atexit(SDL_Quit);
 	      SDL_DestroyWindow(gamewin.win);
-	      level[MAZE] += result;
-	      level[LVL] += result;
+	      if(result > 0) {
+		level[MAZE]++;
+		level[LVL]++;
+		if(result > score[MAZE*LVL+a]) {
+		  UpdateHiScores(score);
+		}
+	      }
 	      Incubator(d, level[LVL]);
 	    }
 	    loop--;
@@ -376,4 +401,10 @@ void UpdateLevelFile(int level[4])
   fclose(lvlfile);
 }
 
-
+void UpdateHiScores(int score[SCORES])
+{
+  FILE *scoresfile;
+  scoresfile = fopen("hiscores.txt", "w");
+  fprintf(scoresfile, "%d %d %d %d %d %d %d %d %d", score[J1], score[J2], score[J3], score[M1], score[M2], score[M3], score[B1], score[B2], score[B3]);
+  fclose(scoresfile);
+}
