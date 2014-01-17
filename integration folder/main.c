@@ -44,7 +44,6 @@ int main()
   fscanf(lvlfile, "%d %d %d", &level[JUMP], &level[MAZE], &level[BBALL]);
   fclose(lvlfile);
   level[LVL] = level[JUMP] +  level[MAZE] + level[BBALL] - 2;
-  d = start(W, H, "./newinc.bmp", "./gotchipod1.bmp");
   UpdateLevelFile(level);
   sprintf(incname, "./newinc%d.bmp", level[LVL]);
   if(level[LVL] == 1) {
