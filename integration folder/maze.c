@@ -6,7 +6,7 @@
 #define CHANGEDIRECTION (direction+ 1)%2
 #define COMPLETED 0
 #define DEATH SDL(gamearray, "You died",  NO_SCORE, 300, gamewin)
-#define WINNER SDL(gamearray, "Level Completed. Congratulations",score, 1000, gamewin)
+#define WINNER SDL(gamearray, "Level Completed.\nCongratulations",score, 1000, gamewin)
 #define ERROR(PHRASE) {fprintf(stderr,"Fatal Error %s occured in %s, line %d\n", PHRASE, __FILE__, __LINE__); exit(2); }
 
 int moveBaddies(char gamearray[HEIGHT][WIDTH], int direction, SDL_Simplewin gamewin);
@@ -196,16 +196,16 @@ void displayDeathscreen(char gamearray[HEIGHT][WIDTH],  SDL_Simplewin gamewin)
 void displayWinscreen(char gamearray[HEIGHT][WIDTH],  SDL_Simplewin gamewin){
 
 	SDL_Rect stringback;
-	char string[50] = "YOU ARE A CHAMPION!!!";
+	char string[200] = "           CONGRATULATIONS!!!\n                 YOU WON!\n You have tamed your Gotchi to the next level";
     int m, n;
-	int stringx = (WWIDTH/2)-strlen(string);
+	int stringx = (WWIDTH/2)-1.5*strlen(string);
 	int stringy = WHEIGHT/2;
 	
 	stringback.w = WWIDTH;
   	stringback.h = 80;
     for (m = 0; m < HEIGHT; m++) {
 		for (n = 0; n < WIDTH; n++) {
-	    	gamearray[m][n] = CANDY;
+	    	gamearray[m][n] = EXIT_POINT;
 		}
 			
     }
