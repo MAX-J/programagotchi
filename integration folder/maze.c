@@ -16,11 +16,9 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	int state = 0;
 	char str[STRLEN];
 	
-	SDL(gamearray, "Welcome to Sewer City", NO_SCORE, gamewin);
-
-	SDL_Delay(1000);
-
-	SDL(gamearray, "Try moving your Gotchi by using the 'move' command", NO_SCORE, gamewin);
+	SDL(gamearray, "Welcome to Maze City.\nTry moving your Gotchi by using the 'move' command.\n Feeling more adventurous, try editing the findCandy.gfn", NO_SCORE, 5000, gamewin);
+	
+	//SDL(gamearray, "Try moving your Gotchi by using the 'move' command", NO_SCORE, gamewin);
 	  
 	do{
 		do{
@@ -36,44 +34,39 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 				state = runcommand(gamewin, gamearray, str);
 			
 				if(state == ATE_CANDY){
-				SDL(gamearray, "You got candy",score++, gamewin);			
+				SDL(gamearray, "You got candy",score++, 1000, gamewin);			
 				state = NO_ACTION;
 			}
 
 			if(state == ON_EXIT){
-				SDL(gamearray, "Level Completed. Congratulations",score, gamewin);
-				SDL_Delay(1000);
+				SDL(gamearray, "Level Completed. Congratulations",score, 1000, gamewin);
 				return WIN;
 			}
 
 			else if(state == ON_HAZARD){
-				SDL(gamearray, "You died",  score,gamewin);
-				SDL_Delay(1000);
+				SDL(gamearray, "You died",  score, 1000, gamewin);
 				return LOSE;
 			}
 			}
 
 		}while(state == BAD_COMMAND);
 		if(firstmove){
-			SDL(gamearray, "You did it. Congratulations",score, gamewin);
+			SDL(gamearray, "You did it. Congratulations",score, 2000, gamewin);
 			firstmove = COMPLETED;		
 		}		
 
 		if(state == QUIT_COMMAND){
-			SDL(gamearray, "Exiting Game",NO_SCORE, gamewin);
-			SDL_Delay(1000);
+			SDL(gamearray, "Exiting Game",NO_SCORE, 1000, gamewin);
 			return LOSE;
 		}
 		
 		else if(state == ON_EXIT){
-			SDL(gamearray, "Level Completed. Congratulations",score, gamewin);
-			SDL_Delay(1000);
+			SDL(gamearray, "Level Completed. Congratulations",score,1000, gamewin);
 			return WIN;
 		}
 		
 		else if(state == ON_HAZARD){
-			SDL(gamearray, "You died",NO_SCORE, gamewin);
-			SDL_Delay(1000);
+			SDL(gamearray, "You died",NO_SCORE, 1000,gamewin);
 			return LOSE;
 		}
 		
@@ -82,12 +75,11 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 		}
 		
 		if(direction == ON_HAZARD){
-			SDL(gamearray, "You died", NO_SCORE, gamewin);
-			SDL_Delay(1000);
+			SDL(gamearray, "You died", NO_SCORE, 1000, gamewin);
 			return LOSE;
 		}
 		
-		SDL(gamearray, "Type in next move", score, gamewin);
+		SDL(gamearray, "Type in next move", score, 1000,gamewin);
 		
 		Neill_SDL_Events(&gamewin);
 	
@@ -128,7 +120,7 @@ int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int direction,
 				}	
 				gamearray[i][j] = FREE_SPACE;
 				gamearray[i][j-1] = HAZARD;
-				/*SDL(gamearray, "", NO_SCORE,gamewin);*/
+				SDL(gamearray, "", NO_SCORE, 0,gamewin);
 				j--;
 				count++;
 			}while(count != 5);
@@ -145,7 +137,7 @@ int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int direction,
 
 			gamearray[i][j] = FREE_SPACE;
 			gamearray[i][j+1] = HAZARD;	
-			/*SDL(gamearray, "", NO_SCORE, gamewin);*/
+			SDL(gamearray, "", NO_SCORE, 0, gamewin);
 			j++;
 			count++;
 		}while(count!= 5);
