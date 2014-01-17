@@ -109,7 +109,7 @@ int SDL(char board[][WIDTH], char string[MAX], int score, int delay, SDL_Simplew
         break;
 
         case 'C':
-        Neill_SDL_SetDrawColour(&sw, 134, 112, 255);
+        Neill_SDL_SetDrawColour(&sw, 255, 255, 0);
         rectangle.x = (w*SQH);
         rectangle.y = (h*SQH+OFF);
         SDL_RenderFillRect(sw.renderer, &rectangle);
