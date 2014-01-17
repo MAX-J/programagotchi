@@ -1,37 +1,44 @@
 #include "programagotchi.h"
 
-int SDL(char board[][WIDTH], char string[MAX], int score, SDL_Simplewin sw){
+int SDL(char board[][WIDTH], char string[MAX], int score, int delay, SDL_Simplewin sw){
 
   int SQH = (WWIDTH/WIDTH);
   int RDS = 6;
   int OFF = 80;
   SDL_Rect rectangle;
+  SDL_Rect scoreback;
+  SDL_Rect stringback;
   SDL_Rect circle;
   rectangle.w = SQH;
   rectangle.h = SQH;
+  scoreback.w = WWIDTH/3;
+  scoreback.h = OFF;
+  stringback.w = WWIDTH/3;
+  stringback.h = OFF;
   int stringx = (WWIDTH/2)-strlen(string);
   char scorestring[MAX];
   int scorex = OFF/2;
   int stringy = OFF/2;
+
  
-  if(strcmp(string, "") != 0) {
+    if(strcmp(string, "") != 0){
+        Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
+        stringback.x = WWIDTH/3;
+        stringback.y = 0;
+        SDL_RenderDrawRect(sw.renderer, &stringback);
     Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
     Neill_SDL_DrawText(&sw, string, stringx, stringy);
+    }
 
     if(score != NO_SCORE){
+        Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
+        scoreback.x = 0;
+        scoreback.y = 0;
+        SDL_RenderDrawRect(sw.renderer, &scoreback);
+    Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
     sprintf(scorestring, "Score: %d", score);
     Neill_SDL_DrawText(&sw, scorestring, scorex, stringy);
     }
-    SDL_Delay(1000);
-
-    Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
-    Neill_SDL_DrawText(&sw, string, stringx, stringy);
-
-    if(score != NO_SCORE){
-    sprintf(scorestring, "Score: %d", score);
-    Neill_SDL_DrawText(&sw, scorestring, scorex, stringy);
-    }
-  }
 
     for (int w = 0; w <WIDTH; w++){
       for (int h = 0; h <HEIGHT; h++){
@@ -134,6 +141,19 @@ int SDL(char board[][WIDTH], char string[MAX], int score, SDL_Simplewin sw){
 	}
       }
     }
+
+    SDL_Delay(delay);
+
+    // if(strcmp(string, "") != 0){
+    // Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
+    // Neill_SDL_DrawText(&sw, string, stringx, stringy);
+    // }
+
+    // if(score != NO_SCORE){
+    // Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
+    // sprintf(scorestring, "Score: %d", score);
+    // Neill_SDL_DrawText(&sw, scorestring, scorex, stringy);
+    // }
 	
     // Updates window - no graphics appear on some devices until this is finished
     SDL_RenderPresent(sw.renderer);

@@ -6,8 +6,8 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	int state = 0;
 	char str[STRLEN];
       
-	SDL(gamearray, "Welcome to the jump game,collect all of candies to win!\n\nYou need to write a 'move' or 'jump' function.\n\n"
-	"Try editing 'jump.gsn' in the text editor.\n\nType 'help' to get more information.\n\n",NO_SCORE,5000,gamewin);
+	SDL(gamearray, "Welcome to the jump game,collect all of candies to win!\n\nYou need to write a 'jump' function.\n\n"
+	"Try editing 'jump.gfn' in the text editor.\n\nType 'help' to get more information.\n\n",NO_SCORE,5000,gamewin);
 	SDL(gamearray, "Type the first move,try to get candies",NO_SCORE,1000,gamewin); 	
 	do{
 		
