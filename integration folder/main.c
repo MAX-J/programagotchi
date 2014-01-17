@@ -36,7 +36,7 @@ void UpdateInc(Display *d, int level);
 int main()
 {
   Display *d; 
-  char *incname = malloc(13*sizeof(char));
+  char *incname = malloc(20*sizeof(char));
   int count = 0; 
   int level[4] = {0};
   FILE *lvlfile;
