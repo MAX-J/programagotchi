@@ -47,7 +47,7 @@ void Mini_SDL_Init(SDL_Simplewin *sw, char *WindowTitle)
 
    sw->finished = 0;
    
-   sw->win= SDL_CreateWindow("Challenge Arena", 400, 50, MINIWIDTH, MINIHEIGHT, SDL_WINDOW_BORDERLESS);
+   sw->win= SDL_CreateWindow("Challenge Arena", 400, 50, MINIWIDTH, MINIHEIGHT, SDL_WINDOW_SHOWN);
    if(sw->win == NULL){
       fprintf(stderr, "\nUnable to initialize SDL Window:  %s\n", SDL_GetError());
       SDL_Quit();
