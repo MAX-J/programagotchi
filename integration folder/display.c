@@ -1,37 +1,37 @@
 #include "programagotchi.h"
 
-int SDL(char board[][WIDTH], char string[MAX], int score, SDL_Simplewin sw){
+int SDL(char board[][WIDTH], char string[MAX], int score, int delay, SDL_Simplewin sw){
 
   int SQH = (WWIDTH/WIDTH);
   int RDS = 6;
   int OFF = 80;
   SDL_Rect rectangle;
+  SDL_Rect header;
   SDL_Rect circle;
   rectangle.w = SQH;
   rectangle.h = SQH;
+  rectangle.w = WWIDTH;
+  rectangle.h = OFF;
   int stringx = (WWIDTH/2)-strlen(string);
   char scorestring[MAX];
   int scorex = OFF/2;
   int stringy = OFF/2;
+
+        Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
+        header.x = 0;
+        header.y = 0;
+        SDL_RenderDrawRect(sw.renderer, &header);
  
-  if(strcmp(string, "") != 0) {
+    if(strcmp(string, "") != 0){
     Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
     Neill_SDL_DrawText(&sw, string, stringx, stringy);
+    }
 
     if(score != NO_SCORE){
+    Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
     sprintf(scorestring, "Score: %d", score);
     Neill_SDL_DrawText(&sw, scorestring, scorex, stringy);
     }
-    SDL_Delay(1000);
-
-    Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
-    Neill_SDL_DrawText(&sw, string, stringx, stringy);
-
-    if(score != NO_SCORE){
-    sprintf(scorestring, "Score: %d", score);
-    Neill_SDL_DrawText(&sw, scorestring, scorex, stringy);
-    }
-  }
 
     for (int w = 0; w <WIDTH; w++){
       for (int h = 0; h <HEIGHT; h++){
@@ -134,6 +134,19 @@ int SDL(char board[][WIDTH], char string[MAX], int score, SDL_Simplewin sw){
 	}
       }
     }
+
+    SDL_Delay(delay);
+
+    // if(strcmp(string, "") != 0){
+    // Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
+    // Neill_SDL_DrawText(&sw, string, stringx, stringy);
+    // }
+
+    // if(score != NO_SCORE){
+    // Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
+    // sprintf(scorestring, "Score: %d", score);
+    // Neill_SDL_DrawText(&sw, scorestring, scorex, stringy);
+    // }
 	
     // Updates window - no graphics appear on some devices until this is finished
     SDL_RenderPresent(sw.renderer);
