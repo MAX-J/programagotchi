@@ -6,9 +6,9 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	int state = 0;
 	char str[STRLEN];
       
-	SDL(gamearray, "Welcome to the jump game,collect all of candies to win!\n\nYou need to write a 'jump' function.\n\n"
-	"Try editing 'jump.gfn' in the text editor.\n\nType 'help' to get more information.\n\n",NO_SCORE,5000,gamewin);
-	SDL(gamearray, "Type the first move,try to get candies",NO_SCORE,1000,gamewin); 	
+	SDL(gamearray, "Welcome to the jump game,collect all of candies to win!\nYou need to write a 'jump' function.\n"
+	"Try editing 'jump.gfn' in the text editor.\nType 'help' to get more information.\n\n",NO_SCORE,5000,gamewin);
+	SDL(gamearray, "Type the first move,try to get candies",NO_SCORE,0,gamewin); 	
 	do{
 		
 	  	do{
@@ -38,7 +38,7 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	        			return LOSE;
 				} 
 	    		} 
-		SDL(gamearray, "Type in next move,try to get candies",NO_SCORE,1000,gamewin); 
+		SDL(gamearray, "Type in next move,try to get candies",NO_SCORE,10,gamewin); 
 	}while(state != BAD_COMMAND);
 
 	if(state == QUIT_COMMAND){
@@ -57,7 +57,6 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	}
 	  
 	SDL(gamearray, "Type in next move,try to get candies",NO_SCORE,1000,gamewin);
-	Neill_SDL_Events(&gamewin);
 	    
 	}while(state == NO_ACTION || !gamewin.finished);
 	

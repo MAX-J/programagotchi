@@ -15,10 +15,10 @@ int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int direction,
 void displayDeathscreen(char gamearray[HEIGHT][WIDTH],  SDL_Simplewin gamewin);
 
 int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
-	
 	int direction = GOLEFT, firstmove = 1, score = 0;
 	int state = 0;
 	char str[STRLEN];
+	
 	
 	SDL(gamearray, "      Welcome to Maze City.\nTry moving your Gotchi by using the 'move' command.\n Feeling more adventurous, try editing the findCandy.gfn", NO_SCORE, 3000, gamewin);
 	
@@ -79,18 +79,15 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 		
 		if(direction == 0 || direction == 1){
 			direction = moveBaddies(gamearray, direction, gamewin);
-			printf("\n");
 		}
 		
-		if(direction == ON_HAZARD){
+		/*if(direction == ON_HAZARD){
 			DEATH;
 			displayDeathscreen(gamearray, gamewin);
 			return LOSE;
-		}		
+		}*/		
 		
 		SDL(gamearray, "Type in next move", score, 1000,gamewin);
-		
-		Neill_SDL_Events(&gamewin);
 	
 	}while(state == NO_ACTION || !gamewin.finished);
 	
@@ -157,15 +154,35 @@ int moveHorizontally(char gamearray[HEIGHT][WIDTH], int i, int j, int direction,
 
 void displayDeathscreen(char gamearray[HEIGHT][WIDTH],  SDL_Simplewin gamewin)
 {
+	SDL_Rect stringback;
+	char string[100] = "GAME OVER";
     int m, n;
+	int stringx = (WWIDTH/2)-strlen(string);
+	int stringy = WHEIGHT/2;//80/2;
+	
+	stringback.w = WWIDTH;
+  	stringback.h = 80;
     for (m = 0; m < HEIGHT; m++) {
 		for (n = 0; n < WIDTH; n++) {
 	    	gamearray[m][n] = HAZARD;
-			
 		}
 		SDL(gamearray, "You died",  NO_SCORE, 0, gamewin);	
     }
-	SDL_Delay(500);
+	
+	SDL(gamearray, "        ",  NO_SCORE, 0, gamewin);
+
+	SDL_Delay(1000);	
+
+    stringback.x = WWIDTH/3;
+    stringback.y = WHEIGHT/2;
+    SDL_RenderFillRect(gamewin.renderer, &stringback);
+    Neill_SDL_SetDrawColour(&gamewin, 255, 255, 255);
+    Neill_SDL_DrawText(&gamewin, string, stringx, stringy);
+
+	SDL_Delay(1000);
+	
+	SDL_RenderPresent(gamewin.renderer);
+    SDL_UpdateWindowSurface(gamewin.win);
 }
 
 				
