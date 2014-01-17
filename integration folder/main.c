@@ -29,7 +29,7 @@ void UpdateWindow(SDL_Simplewin sw);
 
 void GotchiMovement(Display *d, int level[LVLARR], int score[SCORES]);
 
-void YourLevel(int level);
+void YourScores(int score[SCORES]);
 
 void read2array(FILE * file, char gamearray[HEIGHT][WIDTH]);
 
@@ -98,6 +98,9 @@ int SDL_Events_Games(Display *d, int level[LVLARR], int score[SCORES])
 	 Menu(d);
 	 SDL_Menu_Events(d, gamearray, gamewin, level, score);
        }
+       if(IncubatorButtonClicked(event.button.x, event.button.y) == 2)  {
+	 YourScores(score);
+       }
        return 0;
      case SDL_KEYDOWN:
        switch(event.key.keysym.sym){
@@ -134,37 +137,35 @@ void GotchiMovement(Display *d, int level[LVLARR], int score[SCORES])
   paint(d, x, y);
 }
 
-void YourLevel(int level)
+void YourScores(int score[SCORES])
 {
   SDL_Simplewin sw;
-  SDL_Surface *hello = NULL;
-  SDL_Surface *surf = NULL;
-  char text[30]; 
-  sprintf(text, "I am level %d!", level);
-  const char *moretext = "Play to level me up!";
+  char line1[50], line2[50], line3[50], line4[50]; 
+  char line5[50], line6[50], line7[50], line8[50], line9[50]; 
+  char *text = "Your High Scores!";
+  sprintf(line1, "Jump Game Level 1: %d", score[J1]);
+  sprintf(line2, "Jump Game Level 2: %d", score[J2]);
+  sprintf(line3, "Jump Game Level 3: %d", score[J3]);
+  sprintf(line4, "Maze Game Level 1: %d", score[M1]);
+  sprintf(line5, "Maze Game Level 2: %d", score[M2]);
+  sprintf(line6, "Maze Game Level 3: %d", score[M3]);
+  sprintf(line7, "Basketball Game Level 1: %d", score[B1]);
+  sprintf(line8, "Basketball Game Level 2: %d", score[B2]);
+  sprintf(line9, "Basketball Game Level 3: %d", score[B3]); 
   Mini_SDL_Init(&sw, text);
-  surf = SDL_GetWindowSurface(sw.win);
-  if(level == 1) {
-    hello = SDL_LoadBMP("./gotchi1.bmp");
-  }
-  else if(level == 2) {
-    hello = SDL_LoadBMP("./gotchi2.bmp");
-  }
-  else {
-    hello = SDL_LoadBMP("./gotchi3.bmp");
-  }
-  SDL_BlitSurface(hello, NULL, surf, NULL);
   Neill_SDL_SetDrawColour(&sw, 0, 255, 255);
-  Neill_SDL_DrawText(&sw, text, 30, 166);
-  UpdateWindow(sw);
-  Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
-  SDL_RenderClear(sw.renderer);
-  SDL_RenderPresent(sw.renderer);
-  SDL_BlitSurface(hello, NULL, surf, NULL);
-  Neill_SDL_SetDrawColour(&sw, 0, 255, 255);
-  Neill_SDL_DrawText(&sw, moretext, 5, 171);
-  UpdateWindow(sw);
-  SDL_Delay(1000);
+  Neill_SDL_DrawText(&sw, line1, 40, 15);
+  Neill_SDL_DrawText(&sw, line2, 40, 35);
+  Neill_SDL_DrawText(&sw, line3, 40, 55);
+  Neill_SDL_SetDrawColour(&sw, 255, 0, 255);
+  Neill_SDL_DrawText(&sw, line4, 40, 75);
+  Neill_SDL_DrawText(&sw, line5, 40, 95);
+  Neill_SDL_DrawText(&sw, line6, 40, 115);
+  Neill_SDL_SetDrawColour(&sw, 0, 255, 0);
+  Neill_SDL_DrawText(&sw, line7, 20, 135);
+  Neill_SDL_DrawText(&sw, line8, 20, 155);
+  Neill_SDL_DrawText(&sw, line9, 20, 175);
+  SDL_Delay(5000);
   atexit(SDL_Quit);
   SDL_DestroyWindow(sw.win);
 }
@@ -189,7 +190,9 @@ int IncubatorButtonClicked(int x, int y)
   if((x >= 270) && (y >= 380)) {
     exit(1);
   }
-  
+  if((x <= 120) && (y <= 80)) {
+    return 2;
+  }
   return 0;
 }
 
