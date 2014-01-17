@@ -34,7 +34,6 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 
 			else{
 				state = runcommand(gamewin, gamearray, str);
-				printf("%d", state);
 			
 				if(state == ATE_CANDY){
 				SDL(gamearray, "You got candy",score++, gamewin);			
