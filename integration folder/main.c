@@ -44,7 +44,6 @@ int main()
   fscanf(lvlfile, "%d %d %d", &level[JUMP], &level[MAZE], &level[BBALL]);
   fclose(lvlfile);
   level[LVL] = level[JUMP] +  level[MAZE] + level[BBALL] - 2;
-  d = start(W, H, "./newinc.bmp", "./gotchipod1.bmp");
   UpdateLevelFile(level);
   sprintf(incname, "./newinc%d.bmp", level[LVL]);
   if(level[LVL] == 1) {
@@ -283,6 +282,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	      if(a < level[MAZE]) {
 		file = fopen("level1.txt", "r");
 		Neill_SDL_Init(&gamewin, "Maze Game Level 1");
+		system("xdg-open findcandy.gfn");
 	      }
 	      else {
 		loop++;
@@ -292,6 +292,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	      if(a < level[MAZE]) {
 		file = fopen("level2.txt", "r");
 		Neill_SDL_Init(&gamewin, "Maze Game Level 2");
+		system("xdg-open solve.gfn");
 	      }
 	      else {
 		loop++;
@@ -301,6 +302,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	      if(a < level[MAZE]) {
 		file = fopen("level3.txt", "r");
 		Neill_SDL_Init(&gamewin, "Maze Game Level 3");
+		system("xdg-open findcandy.gfn");
 	      }
 	      else {
 		loop++;
@@ -308,8 +310,8 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    }
 	    if(loop == 1) {
 	      Incubator(d, level[LVL]);
-	      system("xdg-open findcandy.gfn");
-	      system("xdg-open data_structs.pdf");
+	      
+	      //system("xdg-open data_structs.pdf");
 	      read2array(file, gamearray);
 	      result = playMaze(gamearray, gamewin);
 	      atexit(SDL_Quit);
