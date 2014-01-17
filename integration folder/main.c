@@ -5,6 +5,8 @@
 #define MAZE 1
 #define BBALL 2
 #define GOBACK 3
+#define W 360
+#define H 480
 
 int SDL_Events_Games(Display *d, int level[4]);
 
@@ -26,11 +28,15 @@ int SDL_Menu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gam
 
 int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin, int game, int level[4]);
 
+void UpdateLevelFile(int level[4]);
+
+void UpdateInc(Display *d, int level);
+
 // Move the Gotchi in the incubator.
 int main()
 {
-  int W = 360, H = 480;
   Display *d; 
+  char *incname = malloc(13*sizeof(char));
   int count = 0; 
   int level[4] = {0};
   FILE *lvlfile;
@@ -38,28 +44,24 @@ int main()
   fscanf(lvlfile, "%d %d %d", &level[JUMP], &level[MAZE], &level[BBALL]);
   fclose(lvlfile);
   level[LVL] = level[JUMP] +  level[MAZE] + level[BBALL] - 2;
-  lvlfile = fopen("level.txt", "w");
-  fprintf(lvlfile, "%d %d %d", level[JUMP], level[MAZE], level[BBALL]);
-  fclose(lvlfile);
+  d = start(W, H, "./newinc.bmp", "./gotchipod1.bmp");
+  UpdateLevelFile(level);
+  sprintf(incname, "./newinc%d.bmp", level[LVL]);
   if(level[LVL] == 1) {
-    d = start(W, H, "./newinc.bmp", "./gotchipod1.bmp");
+    d = start(W, H, "./newinc1.bmp", "./gotchipod1.bmp");
   }
   else if(level[LVL] == 2) {
-    d = start(W, H, "./newinc.bmp", "./gotchipod2.bmp");
+    d = start(W, H, "./newinc2.bmp", "./gotchipod2.bmp");
   }
   else {
-    d = start(W, H, "./newinc.bmp", "./gotchipod3.bmp");
+    d = start(W, H, incname, "./gotchipod3.bmp");
   }
   while(1) { 
     GotchiMovement(d, level);  
-    if(count % 15 == 0) {
-      YourLevel(level[LVL]);
-     }
     SDL_Events_Games(d, level);
     count++;
-    lvlfile = fopen("level.txt", "w");
-    fprintf(lvlfile, "%d %d %d", level[JUMP], level[MAZE], level[BBALL]);
-    fclose(lvlfile);
+    UpdateLevelFile(level);
+    
   }
   return 0;
 }
@@ -265,6 +267,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    }
 	    if(loop == 1) {
 	      Incubator(d, level[LVL]);
+	      system("xdg-open jump.gfn");
 	      read2array(file, gamearray);
 	      result = playJump(gamearray, gamewin);
 	      SDL_DestroyWindow(gamewin.win);
@@ -305,6 +308,8 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    }
 	    if(loop == 1) {
 	      Incubator(d, level[LVL]);
+	      system("xdg-open findcandy.gfn");
+	      system("xdg-open data_structs.pdf");
 	      read2array(file, gamearray);
 	      result = playMaze(gamearray, gamewin);
 	      atexit(SDL_Quit);
@@ -360,3 +365,13 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
   }
   return 0;
 }
+
+void UpdateLevelFile(int level[4])
+{
+  FILE *lvlfile;
+  lvlfile = fopen("level.txt", "w");
+  fprintf(lvlfile, "%d %d %d", level[JUMP], level[MAZE], level[BBALL]);
+  fclose(lvlfile);
+}
+
+

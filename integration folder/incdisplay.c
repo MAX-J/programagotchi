@@ -61,6 +61,9 @@ SDL_Delay(200);
 
 void Incubator(Display *d, int level)
 {
+  char *incname = malloc(13*sizeof(char));
+  sprintf(incname, "./newinc%d.bmp", level);
+  
   if(level == 1) {
     d->fg = SDL_LoadBMP("./gotchipod1.bmp");
   }
@@ -70,6 +73,7 @@ void Incubator(Display *d, int level)
   if(level > 2) {
     d->fg = SDL_LoadBMP("./gotchipod3.bmp");
   }
+  d->bg = SDL_LoadBMP(incname);
   paint(d, 150, 200);
 }
 
