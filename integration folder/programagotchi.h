@@ -48,3 +48,5 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *inputstr
 int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw);
 int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin);
 int playBasketball(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw);
+//Throw function in basketball
+int Basketball(char gamearray[HEIGHT][WIDTH], double speed, double angle, SDL_Simplewin sw);
