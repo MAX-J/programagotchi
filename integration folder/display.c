@@ -60,10 +60,10 @@ int SDL(char board[][WIDTH], char string[MAX], int score, int delay, SDL_Simplew
         */
 
         case '1':
-        Neill_SDL_SetDrawColour(&sw, 134, 24, 123);
+        Neill_SDL_SetDrawColour(&sw, 125, 158, 192);
         rectangle.x = (w*SQH);
         rectangle.y = (h*SQH+OFF);
-        SDL_RenderDrawRect(sw.renderer, &rectangle);
+        SDL_RenderFillRect(sw.renderer, &rectangle);
         break;
 
         case '#':
@@ -81,7 +81,7 @@ int SDL(char board[][WIDTH], char string[MAX], int score, int delay, SDL_Simplew
         break;
 
         case 'B':
-        Neill_SDL_SetDrawColour(&sw, 121, 134, 9);
+        Neill_SDL_SetDrawColour(&sw, 238, 154, 0);
         circle.x = (w*SQH);
         circle.y = (h*SQH+OFF);
         Neill_SDL_RenderFillCircle(sw.renderer, circle.x, circle.y, RDS);
