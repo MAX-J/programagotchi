@@ -4,8 +4,8 @@
 #define WWIDTH 1100
 #define WHEIGHT 780
 
-#define MINIWIDTH  171
-#define MINIHEIGHT 180
+#define MINIWIDTH  250
+#define MINIHEIGHT 200
 
 #define SDL_8BITCOLOUR 256
 
