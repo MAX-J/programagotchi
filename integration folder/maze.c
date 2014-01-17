@@ -38,7 +38,8 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 				state = runcommand(gamewin, gamearray, str);
 				
 				if(state == ATE_CANDY){
-					SDL(gamearray, "You got candy",score++, 1000, gamewin);			
+					score+=10;
+					SDL(gamearray, "You got candy",score, 1000, gamewin);			
 					state = NO_ACTION;
 				}
 
@@ -106,7 +107,7 @@ int moveBaddies(char gamearray[HEIGHT][WIDTH], int direction, SDL_Simplewin game
 				j = moveHorizontally(gamearray, i , j, direction, gamewin);
 				i++;
 			}
-			if(j < 0){
+			if(j == ON_HAZARD){
 				return ON_HAZARD;
 			}
 		}
