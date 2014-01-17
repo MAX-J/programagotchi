@@ -260,5 +260,21 @@ int candy_adjacent(char displaygrid[HEIGHT][WIDTH],char selectedobj) {
 }
   
 
-  
+//----APPLY GRAVITY TO CURRENT BOARD----//
+//run through, find GOTCHI and any objects, pull down to platforms or the floor
+
+
+//needs to go through the 'move' function 
+
+
+
+
+
+
+
+
+
+
+
+
 

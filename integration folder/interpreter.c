@@ -18,6 +18,7 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
   char selectedobj = NULL_CHAR;
   char formattedstr[STRLEN], filestr[STRLEN], *i;
   int n = 0, rowshift = 0, colshift = 0, distance = -1, numchars, j, ret;
+  double arg1, arg2;
   Direction dir = right; 
   Direction checkdir;
   FILE *ftemp;
@@ -141,7 +142,7 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
 	if (ret < NO_ACTION) { //status back from attempted move
 	  return ret;
 	}
-	SDL(displaygrid,"",NO_SCORE,sw);
+	SDL(displaygrid,"",NO_SCORE,0,sw);
 	SDL_Delay(DELAY);
       }
     }
@@ -152,7 +153,7 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
 	if (ret < NO_ACTION) { //status back from attempted move
 	  return ret;
 	}
-	SDL(displaygrid,"",NO_SCORE,sw);
+	SDL(displaygrid,"",NO_SCORE,0,sw);
 	SDL_Delay(DELAY);
       }
     }
@@ -215,10 +216,38 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
     if (ret < NO_ACTION) {
       return ret; //status back from attempted add
     }
-    SDL(displaygrid,"",NO_SCORE,sw);
+    SDL(displaygrid,"",NO_SCORE,0,sw);
   }
    
   //--------PARSE OTHER COMMANDS----------// 
+  //---throw ball using built-in 'throw' fcn----//
+  else if (strstr(i,"throw") == i) {
+    //use the original string with spaces in
+    i = commandstr;
+    i+= 5; //move past 'throw'
+    //get first argument
+    arg1 = strtod(i,&i);
+    if (arg1 == 0) {
+      printf("ERROR: Expecting two non-zero as inputs to 'throw'");
+      return BAD_COMMAND;
+    }
+    //get second argument
+    arg2 = strtod(i,&i);
+    if (arg1 == 0) {
+      printf("ERROR: Expecting two non-zero numbers as inputs to 'throw'");
+      return BAD_COMMAND;
+    }
+    //execute the throw
+    ret = Basketball(displaygrid,arg1,arg2,sw);  
+    //win or lose back from throw (hits basket or not)
+    if (ret == WIN) {
+      return HIT_BASKET;
+    }
+    else {
+      return NO_ACTION;
+    }
+  }
+  
   //---eat candy (adjacent to GOTCHI---//
   else if (strstr(i,"eat") == i) {
     ret = eatcandy(displaygrid);
@@ -230,6 +259,10 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
   else if (strstr(i,"quit") == i) {
     return QUIT_COMMAND;
   }
+  
+  
+  
+  
    
   //------NO 'BASE COMMAND' RECOGNISED---------//
   //revert to custom function files
