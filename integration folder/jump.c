@@ -1,4 +1,5 @@
 #include "./programagotchi.h"
+#include "./maze.h"
 
 int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	
@@ -20,7 +21,6 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	        	}
 	       		else{
 	      			state = runcommand(gamewin,gamearray,str);
-	      			printf("%d",state);
 	      			if(state == ATE_CANDY){
 					SDL(gamearray,"You got candy,you need 5 candies to win",score+=10,1000,gamewin);
 					state = NO_ACTION;
@@ -31,6 +31,7 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	      			}
 				else if(state == ON_HAZARD){
 					SDL(gamearray, "You died",  score,1000,gamewin);
+					displayDeathscreen(gamearray, gamewin);
 					return LOSE;
 				}
 				else if(state == QUIT_COMMAND){
@@ -48,6 +49,7 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	
 	else if(state == ON_HAZARD){
 		SDL(gamearray, "You died",  score,1000,gamewin);
+		displayDeathscreen(gamearray, gamewin);
 		return LOSE;
 	}
 	
