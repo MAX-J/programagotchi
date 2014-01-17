@@ -61,7 +61,7 @@ SDL_Delay(200);
 
 void Incubator(Display *d, int level)
 {
-  char *incname = malloc(13*sizeof(char));
+  char *incname = malloc(20*sizeof(char));
   sprintf(incname, "./newinc%d.bmp", level);
   
   if(level == 1) {
