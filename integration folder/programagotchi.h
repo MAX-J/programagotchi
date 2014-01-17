@@ -41,7 +41,7 @@
 #define LOSE 0
 
 //display
-int SDL (char board[][WIDTH], char string[MAX], int score, SDL_Simplewin sw);
+int SDL (char board[][WIDTH], char string[MAX], int score, int delay, SDL_Simplewin sw);
 //interpreter
 int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *inputstr);
 // Game functions
