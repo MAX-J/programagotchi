@@ -5,19 +5,10 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	int score = 0;
 	int state = 0;
 	char str[STRLEN];
-	char command;
       
-	SDL(gamearray, "Let's Jump",  NO_SCORE,gamewin);
-	SDL_Delay(1000);
-        SDL(gamearray,"G for play the game, E for exit game",  NO_SCORE,gamewin);
-        	scanf("%c",&command);
-        	if(command == 'E'){
-	  		EXIT;
-       		 }
-        	else if(command == 'G'){
-	  		SDL(gamearray, "Type in next move, try to get candies ",NO_SCORE,gamewin);
-		}
-	
+	SDL(gamearray, "Welcome to the jump game,collect all of candies to win!\n\nYou need to write a 'move' or 'jump' function.\n\n"
+	"Try editing 'jump.gsn' in the text editor.\n\nType 'help' to get more information.\n\n",NO_SCORE,5000,gamewin);
+	SDL(gamearray, "Type the first move,try to get candies",NO_SCORE,1000,gamewin); 	
 	do{
 		
 	  	do{
@@ -31,47 +22,41 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	      			state = runcommand(gamewin,gamearray,str);
 	      			printf("%d",state);
 	      			if(state == ATE_CANDY){
-					SDL(gamearray,"You got candy,you need 5 candies to win",score+=10,gamewin);
+					SDL(gamearray,"You got candy,you need 5 candies to win",score+=10,1000,gamewin);
 					state = NO_ACTION;
 	      			}
-	      			if(score == 50){
-					SDL(gamearray, "Level Completed. Congralutations", NO_SCORE, gamewin);
-					SDL_Delay(1000);
+	      			if(score == 100){
+					SDL(gamearray, "Level Completed. Congralutations", NO_SCORE,1000,gamewin);
 					return WIN;
 	      			}
 				else if(state == ON_HAZARD){
-					SDL(gamearray, "You died",  score,gamewin);
-					SDL_Delay(1000);
+					SDL(gamearray, "You died",  score,1000,gamewin);
 					return LOSE;
 				}
 				else if(state == QUIT_COMMAND){
-					SDL(gamearray, "Exiting Game", NO_SCORE, gamewin);
-					SDL_Delay(1000);
+					SDL(gamearray, "Exiting Game", NO_SCORE,1000,gamewin);
 	        			return LOSE;
 				} 
-			
-	    		}  
+	    		} 
+		SDL(gamearray, "Type in next move,try to get candies",NO_SCORE,1000,gamewin); 
 	}while(state != BAD_COMMAND);
 
 	if(state == QUIT_COMMAND){
-		SDL(gamearray, "Exiting Game", NO_SCORE, gamewin);
-		SDL_Delay(1000);
+		SDL(gamearray, "Exiting Game", NO_SCORE,1000, gamewin);
 	        return LOSE;
 	} 	
 	
 	else if(state == ON_HAZARD){
-		SDL(gamearray, "You died",  score,gamewin);
-		SDL_Delay(1000);
+		SDL(gamearray, "You died",  score,1000,gamewin);
 		return LOSE;
 	}
 	
-	else if(score == 50){
-	        SDL(gamearray, "Level Completed. Congralutations", NO_SCORE, gamewin);
-		SDL_Delay(1000);
+	else if(score == 100){
+	        SDL(gamearray, "Level Completed. Congralutations", NO_SCORE,1000,gamewin);
 	        return WIN;
 	}
 	  
-	SDL(gamearray, "Type in next move,try to get candies",NO_SCORE,gamewin);
+	SDL(gamearray, "Type in next move,try to get candies",NO_SCORE,1000,gamewin);
 	Neill_SDL_Events(&gamewin);
 	    
 	}while(state == NO_ACTION || !gamewin.finished);
