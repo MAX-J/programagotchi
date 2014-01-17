@@ -13,7 +13,7 @@ int SDL(char board[][WIDTH], char string[MAX], int score, int delay, SDL_Simplew
   rectangle.h = SQH;
   scoreback.w = WWIDTH/3;
   scoreback.h = OFF;
-  stringback.w = WWIDTH/3;
+  stringback.w = WWIDTH;
   stringback.h = OFF;
   int stringx = (WWIDTH/2)-strlen(string);
   char scorestring[MAX];
@@ -25,7 +25,7 @@ int SDL(char board[][WIDTH], char string[MAX], int score, int delay, SDL_Simplew
         Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
         stringback.x = WWIDTH/3;
         stringback.y = 0;
-        SDL_RenderDrawRect(sw.renderer, &stringback);
+        SDL_RenderFillRect(sw.renderer, &stringback);
     Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
     Neill_SDL_DrawText(&sw, string, stringx, stringy);
     }
@@ -34,12 +34,13 @@ int SDL(char board[][WIDTH], char string[MAX], int score, int delay, SDL_Simplew
         Neill_SDL_SetDrawColour(&sw, 0, 0, 0);
         scoreback.x = 0;
         scoreback.y = 0;
-        SDL_RenderDrawRect(sw.renderer, &scoreback);
+        SDL_RenderFillRect(sw.renderer, &scoreback);
     Neill_SDL_SetDrawColour(&sw, 255, 255, 255);
     sprintf(scorestring, "Score: %d", score);
     Neill_SDL_DrawText(&sw, scorestring, scorex, stringy);
     }
 
+    
     for (int w = 0; w <WIDTH; w++){
       for (int h = 0; h <HEIGHT; h++){
     
