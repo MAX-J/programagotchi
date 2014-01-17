@@ -290,6 +290,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 		level[JUMP]++;
 		level[LVL]++;
 		if(result > score[JUMP*LVL+a]) {
+		  score[JUMP*LVL+a] = result;
 		  UpdateHiScores(score);
 		}
 	      }
@@ -340,6 +341,7 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 		level[MAZE]++;
 		level[LVL]++;
 		if(result > score[MAZE*LVL+a]) {
+		  score[MAZE*LVL+a] = result;
 		  UpdateHiScores(score);
 		}
 	      }
