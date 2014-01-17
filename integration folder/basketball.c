@@ -159,11 +159,12 @@ int playBasketball(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw)
     int NumberOfTries = 0;		      	//Number of attempted throws
     int Level = 0;			      	//Game level
     int i = 0, j = 0;			      	//Counters
+    int Delay = 0;				//SDL render delay
     
     strcpy(GameMessage, "Play Basketball!");
     
     //First screen output
-    SDL(gamearray, GameMessage, NoScore, sw);
+    SDL(gamearray, GameMessage, NoScore, Delay,sw);
     
     //Print these to terminal
     printf("\n\nUse the Throw function to throw the basketball\n\n"); 
@@ -318,7 +319,7 @@ int playBasketball(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw)
 	}
       
       //reprint the board
-      //SDL(gamearray, "Try again - Turn number", NoScore, sw);
+      //SDL(gamearray, "Try again - Turn number", NoScore, Delay, sw);
       
       
       end if
@@ -330,11 +331,11 @@ int playBasketball(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw)
     //More code here to set the number of points given the number of tries
     
     //reprint the board with number of points
-    //SDL(gamearray, "Winner", Score, sw);
+    //SDL(gamearray, "Winner", Score, Delay, sw);
     /*
     //Flag win or lose - need support for multiple attempts!
     //Print these to renderer
-    //SDL(gamearray, Empty, Winner, sw);
+    //SDL(gamearray, Empty, Winner, Delay, sw);
     if(Winner == 1)
     {
       //Print to renderer
@@ -367,6 +368,7 @@ int Basketball(char gamearray[HEIGHT][WIDTH], double speed, double angle, SDL_Si
     char Empty[MAX];				//Empty string to pass to SDL renderer
     char GameMessage[MAX];			//String for renderer
     int NoScore = 0;				//Zero score to pass to render while ball is in motion
+    int Delay = 0;
     
     strcpy(Empty, "");
     strcpy(GameMessage, "Play Basketball!");
@@ -406,7 +408,7 @@ int Basketball(char gamearray[HEIGHT][WIDTH], double speed, double angle, SDL_Si
       Winner = TranslatePosition(Ball, gamearray, Level, &MaxIter);
       
       //Render gamearray
-      SDL(gamearray, Empty, NoScore, sw);		
+      SDL(gamearray, Empty, NoScore, Delay, sw);		
  
       //Print					Don't need board print
       for(i = 0; i < HEIGHT; i++)
