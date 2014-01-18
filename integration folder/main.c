@@ -397,7 +397,17 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(loop == 1) {
 	      Incubator(d, level[LVL]);
 	      read2array(file, gamearray);
-	      playMaze(gamearray, gamewin);
+	      result = playBasketball(gamearray, gamewin);
+	      atexit(SDL_Quit);
+	      SDL_DestroyWindow(gamewin.win);
+	      if(result > 0) {
+		level[BBALL]++;
+		level[LVL]++;
+		if(result > score[BBALL*LVL+a]) {
+		  score[BBALL*LVL+a] = result;
+		  UpdateHiScores(score);
+		}
+	      }
 	    }
 	    loop--;
 	  }
