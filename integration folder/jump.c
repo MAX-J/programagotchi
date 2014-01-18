@@ -28,7 +28,7 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	      			if(score == 100){
 					SDL(gamearray, "Level Completed. Congralutations", NO_SCORE,1000,gamewin);
 					displayWinscreen(gamearray,gamewin);
-					return WIN;
+					return score;
 	      			}
 				else if(state == ON_HAZARD){
 					SDL(gamearray, "You died",  score,1000,gamewin);
