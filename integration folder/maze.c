@@ -49,8 +49,12 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 				if(state == ON_EXIT){
 					WINNER;
 					displayWinscreen(gamearray,gamewin);
-					
-					return WIN;
+					if(score == 0) {
+						return WIN;
+					}
+					else {
+						return score;
+					}
 				}
 
 				else if(state == ON_HAZARD){
