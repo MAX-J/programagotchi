@@ -298,8 +298,10 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	      SDL_DestroyWindow(gamewin.win);
 	      atexit(SDL_Quit);
 	      if(result > 0) {
-		level[JUMP]++;
-		level[LVL]++;
+		  	if(level[JUMP] == a + 1) { 
+			  level[JUMP]++;
+			  level[LVL]++;
+			}
 		if(result > score[JUMP*LVL+a]) {
 		  score[JUMP*LVL+a] = result;
 		  UpdateHiScores(score);
@@ -345,16 +347,16 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    }
 	    if(loop == 1) {
 	      Incubator(d, level[LVL]);
-	      
-	      //system("xdg-open data_structs.pdf");
 	      read2array(file, gamearray);
 	      result = playMaze(gamearray, gamewin);
 	      atexit(SDL_Quit);
 	      SDL_DestroyWindow(gamewin.win);
 	      if(result > 0) {
-		level[MAZE]++;
-		level[LVL]++;
-		if(result > score[MAZE*LVL+a]) {
+		  	if(level[MAZE] == a + 1) { 
+			  level[MAZE]++;
+			  level[LVL]++;
+			}
+		if(result > score[MAZE*LVL+a]) {	
 		  score[MAZE*LVL+a] = result;
 		  UpdateHiScores(score);
 		}
@@ -397,7 +399,19 @@ int SDL_SubMenu_Events(Display *d, char gamearray[HEIGHT][WIDTH], SDL_Simplewin 
 	    if(loop == 1) {
 	      Incubator(d, level[LVL]);
 	      read2array(file, gamearray);
-	      playMaze(gamearray, gamewin);
+	      result = playBasketball(gamearray, gamewin);
+	      atexit(SDL_Quit);
+	      SDL_DestroyWindow(gamewin.win);
+	      if(result > 0) {
+			if(level[JUMP] == a + 1) { 
+			  level[BBALL]++;
+			  level[LVL]++;
+			}
+		if(result > score[BBALL*LVL+a]) {
+		  score[BBALL*LVL+a] = result;
+		  UpdateHiScores(score);
+		}
+	      }
 	    }
 	    loop--;
 	  }
