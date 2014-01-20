@@ -50,3 +50,5 @@ int playJump(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin);
 int playBasketball(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw);
 //Throw function in basketball
 int Basketball(char gamearray[HEIGHT][WIDTH], double speed, double angle, SDL_Simplewin sw);
+//apply basic gravity (pull objects down)
+int apply_gravity(char displaygrid[HEIGHT][WIDTH], SDL_Simplewin sw);

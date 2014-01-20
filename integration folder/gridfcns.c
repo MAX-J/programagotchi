@@ -1,4 +1,4 @@
-
+   
 #include "programagotchi.h"
 #include "interpreter.h"
 
@@ -134,40 +134,6 @@ int addobject(char displaygrid[HEIGHT][WIDTH], char selectedobj, Direction dir) 
 
 
 
-//--'eat' candy adjacent to the gotchi--//
-//candy must be directly adjacent on left or right of current GOTCHI position
-int eatcandy(char displaygrid[HEIGHT][WIDTH]) {
-  int row, col;
-  //find the current location of the GOTCHI
-  for (row = 0; row < HEIGHT; row++) {
-    for (col = 0; col < WIDTH; col++) {
-      if (displaygrid[row][col] == 'G') { 
-	//check left of GOTCHI for candy
-	if (col > 0) {
-	  if (displaygrid[row][col-1] == CANDY) {
-	    displaygrid[row][col-1] = FREE_SPACE;
-	    return ATE_CANDY;
-	  }
-	}
-	//check right of GOTCHI for candy
-	if (col < WIDTH-1) {
-	  if (displaygrid[row][col+1] == CANDY) {
-	    displaygrid[row][col+1] = FREE_SPACE;
-	    return ATE_CANDY;
-	  }
-	}
-	//no candy if fcn reaches here
-	printf("\nNo candy to eat!\n");
-	return GENERAL_STOP;
-      }
-    }
-  }
-  //shouldn't reach here
-  return NO_ACTION;  
-}
-
-
-
 //-------'TEST' FUNCTIONS------//
 //UPDATE: NEED FILLING IN!!!!
 
@@ -258,23 +224,35 @@ int candy_adjacent(char displaygrid[HEIGHT][WIDTH],char selectedobj) {
   return FAIL;  
   
 }
-  
-
-//----APPLY GRAVITY TO CURRENT BOARD----//
-//run through, find GOTCHI and any objects, pull down to platforms or the floor
-
-
-//needs to go through the 'move' function 
 
 
 
-
-
-
-
-
-
-
-
-
+//----APPLY GRAVITY TO CURRENT GAME BOARD----//
+int apply_gravity(char displaygrid[HEIGHT][WIDTH], SDL_Simplewin sw) {
+/*basically moves objects such as GOTCHI and BALL down until they reach a platform
+ *(or trigger a 'collision rule' in moveobject, in which case the fcn will return status
+ *code back to the the game, and the game will need to re-run apply_gravity until all objects
+ *have reached the 'bottom')*/
+int row, col, ret;
+char obj;
+  for (row = 0; row < HEIGHT; row++) {
+    for (col = 0; col < WIDTH; col++) {  
+      obj = displaygrid[row][col];
+      if (obj == GOTCHI || obj == BALL) {
+	//apply downward moves and catch return codes from 'collision rules'
+	while (obstacle_adjacent(displaygrid,below,obj) == 0) {
+	  ret = moveobject(displaygrid,obj,+1,0);
+	  if (ret < NO_ACTION) {
+	    return ret; //
+	  }
+	  //refresh display
+	  SDL(displaygrid,"",NO_SCORE,0,sw);
+	  SDL_Delay(DELAY);
+	}
+      }
+    }
+  }
+  //all objects made it to the 'bottom'
+  return NO_ACTION;
+}
 

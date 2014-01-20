@@ -4,4 +4,4 @@ while not_on_candy:
 	move down 1
 	move left
 	move down 1
-quit
+quit   

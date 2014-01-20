@@ -6,9 +6,6 @@
 #include "programagotchi.h"
 #include "interpreter.h"
 
-#define DELAY 20
-#define NULL_CHAR 'N'
-
 void RemoveSpaces(char *inputstr, char *newstr);
 
 
@@ -228,7 +225,7 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
     //get first argument
     arg1 = strtod(i,&i);
     if (arg1 == 0) {
-      printf("ERROR: Expecting two non-zero as inputs to 'throw'");
+      printf("ERROR: Expecting two non-zero numbers as inputs to 'throw'");
       return BAD_COMMAND;
     }
     //get second argument
@@ -247,23 +244,11 @@ int runcommand(SDL_Simplewin sw, char displaygrid[HEIGHT][WIDTH], char *commands
       return NO_ACTION;
     }
   }
-  
-  //---eat candy (adjacent to GOTCHI---//
-  else if (strstr(i,"eat") == i) {
-    ret = eatcandy(displaygrid);
-    if (ret < NO_ACTION) {
-      return ret; //status back from attempted eat
-    }    
-  }
   //----quit the current game----//
   else if (strstr(i,"quit") == i) {
     return QUIT_COMMAND;
   }
   
-  
-  
-  
-   
   //------NO 'BASE COMMAND' RECOGNISED---------//
   //revert to custom function files
   else {

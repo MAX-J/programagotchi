@@ -1,6 +1,15 @@
 
-//UPDATE: DECLARATION ABOUT USING C ASSIGNMENT PARSER HERE!!!
-//WARN OTHERS READING THIS NOT TO USE ANY CODE ELSEWHERE!!!!!!!!!
+//-------------------IMPORTANT--------PLEASE READ--------------//
+//The code in this file is based on the recursive descent parser 
+//I designed for my C Programming assignment (COMSM1201).
+//
+//Therefore, if you are not Jonathan Torry, please do not use ANY part of this code under
+//your own name for any submissions, or you will be plagiarising my C assignment. 
+//This includes other members of my software engineering group, or anybody else reading the code. 
+//
+//Thanks!
+//-------------------------------------------------------------------------------//
+
 
 //UPDATE: ADD WARNINGS THROUGHOUT TO AVOID USING CODE ELSEWHERE!!!
 
