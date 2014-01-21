@@ -23,7 +23,7 @@ int playMaze(char gamearray[HEIGHT][WIDTH], SDL_Simplewin gamewin){
 	char str[STRLEN];
 	
 	
-	SDL(gamearray, "      Welcome to Maze City.\nTry moving your Gotchi by using the 'move' command.\n Feeling more adventurous, try editing the findCandy.gfn", NO_SCORE, 3000, gamewin);
+	SDL(gamearray, "                  Welcome to Maze City\n    Try moving your Gotchi by using the 'move' command.\n Feeling more adventurous, try editing the Gotchi function", NO_SCORE, 3000, gamewin);
 	
 	//SDL(gamearray, "Try moving your Gotchi by using the 'move' command", NO_SCORE, gamewin);
 	  
