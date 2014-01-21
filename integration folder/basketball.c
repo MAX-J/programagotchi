@@ -40,13 +40,18 @@
     #define STRSIZE 50			//Max length of user input string containing throw angle and speed
     #define FLOOR1 68			//Level 1 row below basket
     #define FLOOR2 18			//Level 2 row below basket
-    #define XWINPOS1 84			//Level one winning positions
+    #define XFLOOREDGE2 66		//Position of the edge of the floor in level 2
+    #define YFLOOREDGE2 19		//Position of the edge of the floor in level 2
+    #define XWINPOS1 84			//Level 1 winning positions
     #define YWINPOS1 63			
-    #define XWINPOS2 78			//Level two winning positions
-    #define YWINPOS2 13			
+    #define XWINPOS2 78			//Level 2 winning positions
+    #define YWINPOS2 13
+    #define MAXTURNS 10			//Number of throws allowed
+    #define WINPERIOD 500		//Run for about 2.5sec after a winning shot
+    #define ENDGAMEPAUSE 2000		//in ms
     
 //Structures
-  //The moving object
+    //Moving object
     struct obj
     {
       double vx, vy;		      	//x and y velocities
@@ -72,99 +77,26 @@
   //Ball functions
   Obj *InitialiseBall(Obj *Ball);
 
-//Remove for integration
-/*
-int main(void)
-{
-  char gamearray[HEIGHT][WIDTH];           	      	//Game board
-  int i = 0, j = 0;			      		//Counter
-  
-  //Initialise board with spaces
-  for(i = 0; i < HEIGHT; i++)
-  {
-      for(j = 0; j < WIDTH; j++)
-      {
-	gamearray[i][j] = FREE_SPACE;
-      }
-  }
-  
-  //Add edges
-  for(i = 0; i < HEIGHT; i++)
-  {
-      if(i == 0 || i == HEIGHT - 1)
-      {
-          for(j = 0; j < WIDTH; j++)
-          {
-              gamearray[i][j] = BORDER;
-          }
-      }
-      else
-      {
-          gamearray[i][0] = BORDER;
-          gamearray[i][WIDTH - 1] = BORDER;
-      }
-  }
-  
-  //Add Gotchi
-  gamearray[HEIGHT - 2][INITX - 1] = GOTCHI;
-  
-  //Add Basket and surrounding obstacle chars
-  j = 1;
-  if(j == 1)
-  {
-    gamearray[63][83] = BARRIER;
-    gamearray[YWINPOS1][XWINPOS1] = NET;
-    gamearray[63][85] = BARRIER;
-    gamearray[64][83] = BARRIER;
-    gamearray[64][85] = BARRIER;
-    for(i = 61; i < 69; i++)
-    {
-      gamearray[i][86] = BARRIER;
-    }
-  }
-  else if(j == 2)
-  {
-    gamearray[13][77] = BARRIER;
-    gamearray[YWINPOS2][XWINPOS2] = NET;
-    gamearray[13][79] = BARRIER;
-    gamearray[14][77] = BARRIER;
-    gamearray[14][79] = BARRIER;
-    for(i = 11; i < 19; i++)
-    {
-      gamearray[i][80] = BARRIER;
-    }
-    for(i = 65; i < 110; i++)
-    {	
-      gamearray[19][i] = BORDER;
-    }
-  }
-  Basketball(gamearray);
-
-  return 0;
-}
-*/
-
 int playBasketball(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw)	
 {
-    double angle = 0;			      	//Throw angle from user (temp)
-    double speed = 0;			      	//Throw speed from user (temp)
     char userinput[STRSIZE];		      	//User input speed and angle (for Jon's parser)
     char temp[STRSIZE];			      	//Temp string to deal with whitespace in user's input
-    long params;			      	//Temp variable for user's angle and speed input
+    double params;			      	//Temp variable for user's angle and speed input
     int CorrectInput = 0;		      	//Set to 1 if the user's input is ok
     char **end = NULL;			      	//For use with strtol
-    int number = 0;			      	//For game return until integration
     int Score = 0;			      	//For renderer, game score
     char GameMessage[MAX];  			//First string for renderer
     int NumberOfTries = 0;		      	//Number of attempted throws
     int Level = 0;			      	//Game level
     int i = 0, j = 0;			      	//Counters
     int Delay = 0;				//SDL render delay
-    int Winner = 0;
-    
-    strcpy(GameMessage, "Play Basketball!");
+    int Winner = 0;				//For return from parse function
+    int GameScores[MAXTURNS] = {		//Game scores
+      100, 50, 25, 20, 15, 10, 5, 4, 3, 1
+    };
     
     //First screen output
+    strcpy(GameMessage, "Play Basketball!");
     SDL(gamearray, GameMessage, Score, Delay, sw);
     
     //Which level is it?
@@ -184,195 +116,181 @@ int playBasketball(char gamearray[HEIGHT][WIDTH], SDL_Simplewin sw)
       //exit? Return an error at least..
     }
     
-    //Print these to terminal
-    printf("Use the Throw function to throw the basketball\n\n"); 
-    printf("Type \"throw\" , then the speed and throw angle separated by spaces, then press enter.\n");
-    printf("Make sure the speed is more than 0 and less than 250, and the angle \n");
-    printf("is between 10 and 80 degrees. You can use decimals if you want to:\n\n");
-    
-    //Get initial speed and throw angle from user
-    //scanf("%s", userinput);		//Remove these once parse code below is used instead
-    //scanf("%lf", &speed);
-    //scanf("%lf", &angle);
-    
-    //The loop scans in the inputs one by one and throws errors if it's not as expected
-    //If everything's ok, the output string is sent to Jon's parser.
-    //Set up another do while loop here to give the user 10 goes with Number of tries
     do
-    {  
-      for(i = 0; i < 3; i++)
-      {
-	scanf("%s", temp);
-	printf("%s\n", temp);
-	if(i == 0)
+    {
+      //Print these to terminal
+      printf("Use the Throw function to throw the basketball\n\n"); 
+      printf("Type \"throw\" , then the speed and throw angle separated by spaces, then press enter.\n");
+      printf("Make sure the speed is more than 0 and less than 250, and the angle \n");
+      printf("is between 10 and 80 degrees. You can use decimals if you want to:\n\n");
+      printf("Enter Command:");
+      
+      //The loop scans in the inputs one by one and throws errors if it's not as expected
+      //If everything's ok, the output string is sent to Jon's parser.
+      do
+      {  
+	for(i = 0; i < 3; i++)
 	{
-	  if(strcmp(temp, "throw") != 0)
+	  scanf("%s", temp);
+	  if(i == 0)
 	  {
-	    printf("Wrong function!\n\nTry again\n");
-	    i = 3;
-	    fflush(stdin);
-	  }
-	  else
-	  {
-	    strcpy(userinput, temp);
-	  }
-	}
-	else if(i == 1)
-	{
-	  params = strtol(temp, end, 0);
-	  if((params <= 0) || (params >= 250))
-	  {
-	    printf("Enter a speed more than 0 and less than 250!\n\nTry again\n");
-	    i = 3;
-	    fflush(stdin);
-	  } 
-	  else
-	  {
-	    strcat(userinput, " ");
-	    strcat(userinput, temp);
-	  }
-	}
-	else
-	{
-	  params = strtol(temp, end, 0);
-	  if((params < 10) || (params > 80))
-	  {
-	    printf("Enter an angle between 10 and 80 degrees!\n\nTry again\n");
-	    i = 3;
-	    fflush(stdin);
-	  } 
-	  else
-	  {
-	    strcat(userinput, " ");
-	    strcat(userinput, temp);
-	    CorrectInput = 1;
-	  }
-	}
-      }
-    }while(CorrectInput == 0);		//Put a loop breaker in here? E.g. 10 tries
-    
-    //Jon's parser
-    Winner = runcommand(sw, gamearray, userinput);
-    
-    //Return Fail if Quit returned from runcommand
-    //Bad_Command??
-    
-    //If win break loop
-    
-    //Else loop
-    
-    //Reset gamearray
-	
-	//Initialise board with spaces
-	for(i = 0; i < HEIGHT; i++)
-	{
-	    for(j = 0; j < WIDTH - 2; j++)
+	    if(strcmp(temp, "quit") == 0)
 	    {
-	      gamearray[i][j] = FREE_SPACE;
+	      printf("reached quit\n");
+	      printf("LOSE %d\n", LOSE);
+	      return LOSE;
 	    }
-	}
-	
-	//Add edges
-	for(i = 0; i < HEIGHT; i++)
-	{
-	    if(i == 0 || i == HEIGHT - 1)
+	    else if(strcmp(temp, "throw") != 0)
 	    {
-		for(j = 0; j < WIDTH - 2; j++)
-		{
-		    gamearray[i][j] = BORDER;
-		}
+	      printf("\n\nWrong function!\n\nTry again\n\nEnter Command:");
+	      i = 3;
+	      //Can't get this to work?
+	      fflush(stdin);
 	    }
 	    else
 	    {
-		gamearray[i][0] = BORDER;
-		gamearray[i][WIDTH - 3] = BORDER;
+	      strcpy(userinput, temp);
 	    }
-	}
-	
-	//Add Gotchi
-	gamearray[HEIGHT - 2][INITX - 1] = GOTCHI;
-	
-	//Add Basket and surrounding obstacle chars
-	j = 1;
-	if(j == 1)
-	{
-	  gamearray[63][83] = BARRIER;
-	  gamearray[YWINPOS1][XWINPOS1] = NET;
-	  gamearray[63][85] = BARRIER;
-	  gamearray[64][83] = BARRIER;
-	  gamearray[64][85] = BARRIER;
-	  for(i = 61; i < 69; i++)
+	  }
+	  else if(i == 1)
 	  {
-	    gamearray[i][86] = BARRIER;
+	    params = strtod(temp, end);
+	    if((params <= 0) || (params >= 250))
+	    {
+	      printf("\n\nEnter a speed more than 0 and less than 250!\n\nTry again\n\nEnter Command:");
+	      i = 3;
+	      //Can't get this to work?
+	      fflush(stdin);
+	    } 
+	    else
+	    {
+	      strcat(userinput, " ");
+	      strcat(userinput, temp);
+	    }
 	  }
-	}
-	else if(j == 2)
-	{
-	  gamearray[13][77] = BARRIER;
-	  gamearray[YWINPOS2][XWINPOS2] = NET;
-	  gamearray[13][79] = BARRIER;
-	  gamearray[14][77] = BARRIER;
-	  gamearray[14][79] = BARRIER;
-	  for(i = 11; i < 19; i++)
+	  else
 	  {
-	    gamearray[i][80] = BARRIER;
-	  }
-	  for(i = 65; i < 108; i++)
-	  {	
-	    gamearray[19][i] = BORDER;
+	    params = strtod(temp, end);
+	    if((params < 10) || (params > 80))
+	    {
+	      printf("\n\nEnter an angle between 10 and 80 degrees!\n\nTry again\n\nEnter Command:");
+	      i = 3;
+	      //Can't get this to work?
+	      fflush(stdin);
+	    } 
+	    else
+	    {
+	      strcat(userinput, " ");
+	      strcat(userinput, temp);
+	      CorrectInput = 1;
+	    }
 	  }
 	}
+      }while(CorrectInput == 0);
       
+      //Jon's parser
+      Winner = runcommand(sw, gamearray, userinput);
+      
+      if(Winner == HIT_BASKET)
+      {
+	Score = GameScores[NumberOfTries];
+	snprintf(GameMessage, MAX, "Gotchi power!! :-) Score %d", Score);
+	Delay = ENDGAMEPAUSE;
+	SDL(gamearray, GameMessage, Score, Delay, sw);
+	return Score;
+      }
+      
+      //Reset gamearray
+      //Use .txt file if time
+      for(i = 0; i < HEIGHT; i++)
+      {
+	  for(j = 0; j < WIDTH - 2; j++)
+	  {
+	    gamearray[i][j] = FREE_SPACE;
+	  }
+      }
+      
+      //Add edges
+      for(i = 0; i < HEIGHT; i++)
+      {
+	  if(i == 0 || i == HEIGHT - 1)
+	  {
+	      for(j = 0; j < WIDTH - 2; j++)
+	      {
+		  gamearray[i][j] = BORDER;
+	      }
+	  }
+	  else
+	  {
+	      gamearray[i][0] = BORDER;
+	      gamearray[i][WIDTH - 3] = BORDER;
+	  }
+      }
+      
+      //Add Gotchi
+      gamearray[HEIGHT - 2][INITX - 1] = GOTCHI;
+      
+      //Replace ball
+      gamearray[HEIGHT - 3][INITX] = BALL;
+      
+      //Add Basket and surrounding obstacle chars
+      if(Level == 1)
+      {
+	gamearray[63][83] = BARRIER;
+	gamearray[YWINPOS1][XWINPOS1] = NET;
+	gamearray[63][85] = BARRIER;
+	gamearray[64][83] = BARRIER;
+	gamearray[64][85] = BARRIER;
+	for(i = 61; i < 69; i++)
+	{
+	  gamearray[i][86] = BARRIER;
+	}
+      }
+      else if(Level == 2)
+      {
+	gamearray[13][77] = BARRIER;
+	gamearray[YWINPOS2][XWINPOS2] = NET;
+	gamearray[13][79] = BARRIER;
+	gamearray[14][77] = BARRIER;
+	gamearray[14][79] = BARRIER;
+	for(i = 11; i < 19; i++)
+	{
+	  gamearray[i][80] = BARRIER;
+	}
+	for(i = 65; i < 108; i++)
+	{	
+	  gamearray[19][i] = BORDER;
+	}
+      }
       
       //reprint the board
-      strcpy(GameMessage, "Try again - Turn number 2");
-      SDL(gamearray, "Try again - Turn number 2", Score, Delay, sw);
+      NumberOfTries++;
+      snprintf(GameMessage, MAX, "Try again - throw %d", NumberOfTries + 1);
+      SDL(gamearray, GameMessage, Score, Delay, sw);
       
-      
-      //end if
-      //loop * 10
+    }while(NumberOfTries < MAXTURNS);
     
+    //Game over
+    strcpy(GameMessage, "Game over! Gotchi is sad :-(");
+    Delay = ENDGAMEPAUSE;
+    SDL(gamearray, GameMessage, Score, Delay, sw);
     
-    //End of number of tries loop
-    
-    //More code here to set the number of points given the number of tries
-    
-    //reprint the board with number of points
-    //SDL(gamearray, "Winner", Score, Delay, sw);
-    /*
-    //Flag win or lose - need support for multiple attempts!
-    //Print these to renderer
-    //SDL(gamearray, Empty, Winner, Delay, sw);
-    if(Winner == 1)
-    {
-      //Print to renderer
-      printf("Winner!! Gotchi power :-)\n\n"); 
-    }
-    else
-    {
-      printf("Loooooser!! Gotchi is sad :-(\n\n");
-    }
-    */
-    
-    //number = Basketball(gamearray, speed, angle, sw);		//Remove once parser is used
-    
-    return 0;		//return LOSE or WIN here
+    return LOSE;
     
 }
 
 int Basketball(char gamearray[HEIGHT][WIDTH], double speed, double angle, SDL_Simplewin sw)
 {
-    int i = 0, j = 0;                         	//Counters
     int MaxIter = ITERATIONS;			//No of frames to calculate
     Obj *Ball = NULL;			      	//Ball object
     int Level = 0;				//Use the W char to determine the level
     int Winner = 0;				//Set to 1 if the game is won
-    char Empty[MAX];				//Empty string to pass to SDL renderer
+    char Empty[MAX] = {"\0"};			//Empty string to pass to SDL renderer
     char GameMessage[MAX];			//String for renderer
     int NoScore = 0;				//Zero score to pass to render while ball is in motion
-    int Delay = 0;
+    int Delay = 0;				//Delay for renderer
     
-    strcpy(Empty, "");
+    //strcpy(Empty, "");
     strcpy(GameMessage, "Play Basketball!");
     
     //Which level is it?
@@ -412,18 +330,6 @@ int Basketball(char gamearray[HEIGHT][WIDTH], double speed, double angle, SDL_Si
       //Render gamearray
       SDL(gamearray, Empty, NoScore, Delay, sw);		
  
-      //Print					Don't need board print
-      for(i = 0; i < HEIGHT; i++)
-      {
-        for(j = 0; j < WIDTH; j++)
-        {
-            printf("%c", gamearray[i][j]);
-            if(j == WIDTH - 1)
-            {
-                printf("\n");
-            }
-        }
-      }
       MaxIter--;
     }while(MaxIter != 0 && Winner == 0);
     
@@ -435,19 +341,29 @@ int TranslatePosition(Obj *Ball, char gamearray[HEIGHT][WIDTH], int Level, int *
   double vxOld = Ball->vx, vyOld = Ball->vy;		//Store previous vx and vy	
   double xdist = 0, ydist = 0;				//x and y distances travelled in interval MILLISECONDDELAY, initialise to 0
   int WinnerTemp = 0;					//Game won if set to 1, temp as need to keep the game running while ball comes to rest
-  int Winner = LOSE;					//Set to one when ball comes to rest after a winning throw
+  int Winner = LOSE;					//Set to WIN when ball comes to rest after a winning throw
   static long rolling = 0;				//Use this to store the y pos over a number of iterations, if it's the same after e.g. 120 iterations, the ball is rolling
   static int isrolling = 0;				//Set this to 1 when the ball is rolling
   const double drag = -0.1;				//Drag force (modified from calculated value below to make the game look (slightly!) better
-  const double bounce = 0.85;				//Coeff. of restitution - 0.85 for a FIBA basketball
+  double bounce = 0.85;					//Coeff. of restitution is between 0.82 and 0.88 for a FIBA basketball
   const double RollResist = 6;				//Rolling resistance (force is the coefficient of rolling resistance times the normal force, 
 							//6.5N @ basketball weight of .65kg & g = 10ms-2. With estimated C = 0.1 (same as car tyres on concrete)
 							// --> 6.5N*0.1 = 0.65N, try this first
-  const double RollingSpeed = 8.5;			//If y speed is less than this and y pos is the same as the floor position over 120 iterations, ball is rolling (cludge :-) )
+  const double RollingSpeed = 9.5;			//If y speed is less than this and y pos is the same as the floor position over 120 iterations, ball is rolling (cludge, source of bugs :-( )
   int i = 0;						//Counter
   static long ypos = 0;					//If this is the same after 120 iterations, the ball is in the winning position
+  double ydistIntraFrame = 0;				//How far has ball move in y after a given amount of movement in x inbetween frame prints? 
+							//Used to calculate bounce point for floor in level2
+  double xdistIntraFrame = 0;				//Same again for x
+  int yEdge = 0;					//Test whether ball hits edge of level 2 floor
+  int Floor = 0;					//Test whether ball hits level 2 floor
   
-  //Reset Statics if it's a new game
+  //If ball hits the NET char with downward velocity, then the game has been won
+  //Ball bounces off all other obstacle and edge chars
+  //Assumes the ball is a whole gameboard cell in size - change the bounce point to give 
+  //the impression of a smaller ball..or make the basket three cells wide?
+  
+  //Reset statics if it's a new game
   if(*Iterations == ITERATIONS)
   {
     rolling = 0;
@@ -455,19 +371,18 @@ int TranslatePosition(Obj *Ball, char gamearray[HEIGHT][WIDTH], int Level, int *
     ypos = 0;
   }
   
-  //If ball hits the NET char with downward velocity, then the game has been won
-  //Ball bounces off all other obstacle and edge chars
-  //Assumes the ball is a whole gameboard cell in size - change the bounce point to give 
-  //the impression of a smaller ball..or make the basket three cells wide?
-  
-  //Is the ball in the basket, and y velocity -ve?
+  //Is the ball in the basket, and y velocity -ve? Winner if so
   if(Level == 1 && gamearray[YWINPOS1][XWINPOS1] == BALL && Ball->vy < 0)
   {
     WinnerTemp = 1;
+    //*Iterations = WINPERIOD;
+    bounce = 0.45;		//Make ball stop sooner
   }
   else if(Level == 2 && gamearray[YWINPOS2][XWINPOS2] == BALL && Ball->vy < 0)
   {
     WinnerTemp = 1;
+    //*Iterations = WINPERIOD;
+    bounce = 0.45;
   }
   
   //Replace previous object char with a blank char
@@ -491,11 +406,36 @@ int TranslatePosition(Obj *Ball, char gamearray[HEIGHT][WIDTH], int Level, int *
     ydist = ((double)MILLISECONDDELAY/(double)MSEC)*(abs(vyOld) + abs(Ball->vy))/2;
   }
   
-  //Need to bounce off if ball hits a wall
-  //Add wall for level two here too
-  //Rhs wall
+  //Need to bounce off if ball hits a wall or the edge of the extra floor in level 2
   if(WinnerTemp == 0)
   {
+    
+    /*
+    //If the ball traverses the level 2 floor edge position, what's the intraframe distance to the edge?
+    if(Ball->vx > 0 && Ball->sx < (double)(XFLOOREDGE2) && Ball->sx + xdist > (double)(XFLOOREDGE2) && Level == 2)
+    {
+      ydistIntraFrame = ydist*(((Ball->sx + xdist) - (double)(XFLOOREDGE2))/xdist);
+    }
+    
+    //If yposition + intraframe distance is then equal to the edge position in y plane, it's hit the edge  
+    if(ydistIntraFrame != 0 && Ball->vy > 0)
+    {
+      if(round(Ball->sy - ydistIntraFrame) == YFLOOREDGE2)
+      {
+	yEdge = 1;
+      }
+    }
+    //Motion down
+    else if(ydistIntraFrame != 0 && Ball->vy < 0)
+    {
+      if(round(Ball->sy + ydistIntraFrame) == YFLOOREDGE2)
+      {
+	yEdge = 1;
+      }
+    }
+    */
+    
+    //Rhs wall
     if((Ball->sx + xdist > (double)(WIDTH - 4) && Ball->vx > 0))
     {
       Ball->sx = (double)(WIDTH - 4) - (xdist - ((double)(WIDTH - 4) -Ball->sx)); 
@@ -508,7 +448,7 @@ int TranslatePosition(Obj *Ball, char gamearray[HEIGHT][WIDTH], int Level, int *
       Ball->vx = Ball->vx*(-bounce);
     }
     //Motion right
-    else if(Ball->vx > 0)	//Unlikely but could be 0, >0 and <0 will miss
+    else if(Ball->vx > 0)	//Unlikely but could be 0, >0 and <0 will miss this case
     {
       Ball->sx = Ball->sx + xdist;
     }
@@ -519,15 +459,52 @@ int TranslatePosition(Obj *Ball, char gamearray[HEIGHT][WIDTH], int Level, int *
     }
   }
   
-  //Floor
-  //Reversed due to array structure
-  //International Basketball Federation coefficient of restitution 
-  //of a basketball between 0.82 & 0.88
+  //Need to bounce off if ball hits the floor or ceiling - reversed due to array structure
   if(WinnerTemp == 0)
   {
-    if((Ball->sy + ydist > (double)(HEIGHT - 2) && Ball->vy < 0))
+    //If the ball traverses the floor in level 2, what's the intraframe distance to the ceiling?
+    if(Ball->vy > 0 && Ball->sy > (double)(FLOOR2 + 1) && Ball->sy - ydist < (double)(FLOOR2 + 1) && Level == 2)
+    {
+      xdistIntraFrame = xdist*(((double)(FLOOR2 + 1) - (Ball->sy - ydist))/ydist);
+    }
+    //Or to the floor?
+    else if(Ball->vy < 0 && Ball->sy < (double)(FLOOR2) && Ball->sy + ydist > (double)(FLOOR2) && Level == 2)
+    {
+      xdistIntraFrame = xdist*(((Ball->sy + ydist) - (double)(FLOOR2))/ydist);
+    }
+    
+    //If xposition + intraframe distance is beyond the start of the floor edge, it's hit the level 2 ceiling or floor
+    if(xdistIntraFrame != 0 && Ball->vx > 0)
+    {
+      if(round(Ball->sx + xdistIntraFrame) >= XFLOOREDGE2)
+      {
+	Floor = 1;
+      }
+    }
+    else if(xdistIntraFrame != 0 && Ball->vx < 0)
+    {  
+      if(round(Ball->sx - xdistIntraFrame) >= XFLOOREDGE2)
+      {
+	Floor = 1;
+      }
+    }
+    
+    //Hits extra floor in level 2 if true - buggy
+    if(Ball->vy < 0 && Ball->sy < (double)(FLOOR2) && Ball->sy + ydist > (double)(FLOOR2) && Floor == 1 && Level == 2)
+    {
+      Ball->sy = (double)(FLOOR2) - (ydist - ((double)(FLOOR2) - Ball->sy));
+      Ball->vy = Ball->vy*(-bounce);
+    }
+    //Floor
+    else if((Ball->sy + ydist > (double)(HEIGHT - 2) && Ball->vy < 0))
     {
       Ball->sy = (double)(HEIGHT - 2) - (ydist - ((double)(HEIGHT - 2) -Ball->sy)); 
+      Ball->vy = Ball->vy*(-bounce);
+    }
+    //Hits extra ceiling in level 2 if true
+    else if(Ball->vy > 0 && Ball->sy > (double)(FLOOR2 + 1) && Ball->sy - ydist < (double)(FLOOR2 + 1) && Floor == 1 && Level == 2)
+    {
+      Ball->sy = (double)(FLOOR2 + 1) + (ydist - (Ball->sy - (double)(FLOOR2 + 1)));
       Ball->vy = Ball->vy*(-bounce);
     }
     //Ceiling
@@ -573,7 +550,7 @@ int TranslatePosition(Obj *Ball, char gamearray[HEIGHT][WIDTH], int Level, int *
   {
     rolling = Ball->y;
   }
-  //Cludges to force this to work :-) Ball is approximately rolling if it's on a "floor" surface
+  //Cludges to force this to work :-S Ball is approximately rolling if it's on a "floor" surface
   //for a couple of seconds, and if the y speed is low 
   if((*Iterations % FRAMES == FRAMES - 1) && (rolling == Ball->y) && ((rolling == FLOOR1) || (rolling == FLOOR2)) && (Ball->vy < RollingSpeed))
   {
@@ -604,7 +581,7 @@ int TranslatePosition(Obj *Ball, char gamearray[HEIGHT][WIDTH], int Level, int *
   */
   
   //Replace Gotchi, obstacles, and basket
-  //Hardcoded..find a better way if time
+  //Hardcoded, use .txt file if time
   gamearray[HEIGHT - 2][INITX - 1] = GOTCHI;
   if(Level == 1)
   {
@@ -678,7 +655,7 @@ Obj *InitialiseBall(Obj *Ball)
   NewBall->sx = 0;				//Ball exact positions (doubles)
   NewBall->sy = 0;				
   NewBall->x = INITX;				//Ball discrete gameboard positions
-  NewBall->y = HEIGHT - 3;				//Initially above and to the right of the Gotchi
+  NewBall->y = HEIGHT - 3;			//Initially above and to the right of the Gotchi
   return NewBall;
   
 }
